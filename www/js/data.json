@@ -1,0 +1,79 @@
+{
+  "news": [
+    {
+      "id": 1,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/-evgpZbNQ_k/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/screen-shot-2016-04-06-at-8-44-15-am.png?w=210&h=158&crop=1",
+      "title": "Amazon’s Web Services are shining in its latest earnings beat",
+      "hashtag": "#tech #amazon",
+      "star": false
+    },
+    {
+      "id": 2,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/nsQUgeoG00c/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/495511748.jpg?w=210&h=158&crop=1",
+      "title": "Apple’s loudest activist investor just dumped his stake",
+      "hashtag": "#tech #apple",
+      "star": false
+    },
+    {
+      "id": 3,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/NUpqMvTzHwI/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/bnbsitter-scores-2-5-million-funding.jpg",
+      "title": "Bnbsitter raises $2.5M for on-demand concierge service for short-term rentals",
+      "hashtag": "#startup #europe",
+      "star": false
+    },
+    {
+      "id": 4,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/ESNqE9PA_gY/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/company_003.jpg",
+      "title": "AbbVie acquiring cancer drug startup StemcenTrx for $5.8 billion",
+      "hashtag": "#bio #venturecapital #funding",
+      "star": false
+    },
+    {
+      "id": 5,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/J-LNGBNktkU/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/shutterstock_244082968.jpg",
+      "title": "Oracle buys Textura for $663M to build up its construction IT business",
+      "hashtag": "#cloud #enterpirse #oracle",
+      "star": false
+    },
+    {
+      "id": 6,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/_4Wdm35YCWU/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/shutterstock_343030715.jpg",
+      "title": "Tour booking software startup Xola scores $5M Series A led by Rakuten Travel",
+      "hashtag": "#startup #asia",
+      "star": false
+    },
+    {
+      "id": 7,
+      "url": "http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/nNriWjzRq4o/",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2015/05/2016-chevrolet-volt-011.jpg",
+      "title": "Drivy grabs $35 million for its car rental marketplace",
+      "hashtag": "#europe #startup",
+      "star": false
+    },
+    {
+      "id": 8,
+      "url": "",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2016/04/sbir_selections_apr_27_2016.jpg",
+      "title": "NASA makes it rain with $243M in contracts to institutions and small businesses",
+      "hashtag": "#robotics #science",
+      "star": false
+    }
+  ],
+  "keywords": [
+    {"keyword": "game", "isChecked": true},
+    {"keyword": "tech", "isChecked": true},
+    {"keyword": "politic", "isChecked": true},
+    {"keyword": "sex", "isChecked": true},
+    {"keyword": "food", "isChecked": true},
+    {"keyword": "China", "isChecked": true},
+    {"keyword": "Adele", "isChecked": true},
+    {"keyword": "billboard", "isChecked": true},
+    {"keyword": "DonaldTrump", "isChecked": true}
+  ]
+}

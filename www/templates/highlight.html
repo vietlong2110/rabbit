@@ -1,0 +1,31 @@
+<ion-view view-title="Highlight News">
+  <ion-nav-buttons side="secondary">
+    <a href="#/app/newsfeed/{{currentNewsState.id}}"
+    class="icon ion-android-arrow-forward button button-icon"></a>
+  </ion-nav-buttons>
+
+  <ion-content>
+    <ion-list id="newsfeed">
+      <ion-item ng-repeat="item in highlightNews" ng-class="{'star': item.star}" 
+      class="item-thumbnail-left item-text-wrap item-icon-right">
+        <img src="{{item.thumbnail}}" alt="thumbnail">
+        <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
+          <h2>{{item.title}}</h2>
+          <p>{{item.hashtag}}</p>
+        </a>
+        <button class="button button-clear button-energized icon ion-star"
+        ng-click="deleteItem(item)">
+        </button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+  <div class="bar bar-footer list item item-input-inset no-padding">
+    <div class="subscribe-field">
+      <label class="item item-input-wrapper">
+        <input type="text" placeholder="Follow anything (food, game, celebrity...)">
+      </label>
+    </div>
+    <button class="icon ion-plus-round button button-positive full-button"></button>  
+  </div>
+</ion-view>

@@ -1,0 +1,62 @@
+/* Empty. Add your own CSS if you like */
+.no-padding {
+	padding: 0px !important;
+	margin: 0px;
+}
+
+.subscribe-field {
+	width: 100%;
+}
+
+.full-button {
+	height: 100%;
+	border-radius: 0px;
+}
+
+.star {
+	background-color: #EEE8D6 !important;
+}
+
+.custom {
+  background-color: #06647e !important; /* This sets the background color #06647e */
+ }
+ 
+/*Set the background to transparent for ion-item*/
+.custom .item {
+  background-color: transparent;
+  border:none;   /*Removes all borders*/
+  border-top: 1px solid;   /*Top Border for each menu item*/
+  border-bottom:1px solid;   /*Bottom border for each menu item*/
+  border-color: #006583;   /*Sets colors for top and bottom border*/
+  color: white;   
+}
+ 
+/*Changes the border for the last item*/
+.custom .item:last-child {
+  border-bottom: 1px solid #006583;
+}
+ 
+.custom .item-complex .item-content, .dark .item-radio .item-content {
+  background-color: transparent;
+}
+
+.custom a {
+	color: white;
+	text-decoration: none;
+}
+
+#newsfeed a {
+	text-decoration: none;
+}
+
+#header-menu {
+	background-color: #055166;
+}
+
+#keyword-list {
+	border-color: #005169;
+}
+
+#trash {
+	font-size: 150%;
+}

@@ -19,12 +19,15 @@
     </ion-list>
   </ion-content>
 
+  <form>
   <div class="bar bar-footer list item item-input-inset no-padding">
     <div class="subscribe-field">
       <label class="item item-input-wrapper">
         <input type="text" placeholder="Follow anything (food, game, celebrity...)">
       </label>
     </div>
-    <button class="icon ion-plus-round button button-positive full-button"></button>  
+    <button ng-click="addKeyword()" type="submit"
+    class="icon ion-plus-round button button-positive full-button"></button>  
   </div>
+  </form>
 </ion-view>

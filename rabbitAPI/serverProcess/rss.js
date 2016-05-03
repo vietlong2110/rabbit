@@ -18,14 +18,19 @@ var feedParse = function(url, callback) {
 									publishedDate: entries[i].publishedDate});
 				}
 				async.each(articles, function(article, cb) {
-					var a = new Article();
-					a.url = article.url; 
-					a.title = article.url; 
-					a.publishedDate = article.publishedDate;
-					// Article.findOne(article).exec(
-					a.save(function(err, article) {
+					Article.findOne({url: article.url})
+					.exec(function(err, item) {
 						if (err)
 							cb(err);
+						else if (item === null) {
+							var a = new Article({url: article.url,
+									title: article.title,
+									publishedDate: article.publishedDate});
+							a.save(function(err) {
+								if (err)
+									res.send('Error storing data!');
+							});
+						}
 						cb();
 					});
 				}, function(err) {

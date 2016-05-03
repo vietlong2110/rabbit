@@ -14,4 +14,8 @@ router.get('/rss/:url', function(req, res) {
 	});
 });
 
+router.get('/extract/:url', function(req, res) {
+	
+});
+
 module.exports = router;

@@ -2,7 +2,7 @@
 Type keyword, follow news with hashtag
 
 ## What's in rabbit
-* Complete mobile UI only for rabbit
+* Complete mobile UI for rabbit
 * A local server API for testing any server-side functionalities
 
 ## v0.1.1 new features

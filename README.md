@@ -12,13 +12,17 @@ Type keyword, follow news with hashtag
 ## Testing server
 * A local server API for testing any server-side functionalities (rabbitAPI/serverController/serverAPI.js)
 
-##Features
+## Features
+### v0.1
 * Mobile UI version (will update more)
+### v0.1
 * RSS Reader
+### v0.2
 * Extract content from feed and store into database
 * Extract keyword from the content and store its information for search purpose
 
-## Next minor
+## Next minor (0.3)
+* Extract thumbnail
 * Apply tf-idf algorithm for searching
 * Build the first client api for searching keyword
 

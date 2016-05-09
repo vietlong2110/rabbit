@@ -8,8 +8,8 @@ var extractContent = function(url, callback) { //extract content of an article u
  	boilerpipe.getText(function(err, content) {
  		if (err)
  			callback(err);
- 		extractKeyword(content, function(keywordSet) {
- 			callback(keywordSet);
+ 		extractKeyword(content, function(keywordSet, tf) {
+ 			callback(keywordSet, tf);
  		});
  	});
 };
@@ -19,21 +19,14 @@ var extractKeyword = function(content, callback) { //extract keyword from a cont
 	var stringFuncs = require('../libs/stringfunctions.js');
 	stringFuncs.contentToKeywords(content, function(keywords) { //convert content to a list of keyword
 		var keywordSet = []; //filter repeating keyword list to a set of keyword(non-repeat)
-		for (i in keywords) {
-			var found = false;
-			for (j in keywordSet) 
-				if (keywordSet[j].word === keywords[i]) {
-					keywordSet[j].num++;
-					found = true;
-					break;
-				}
-			if (!found)
-				keywordSet.push({
-					word: keywords[i], 
-					num: 1
-				});
-		}
-		callback(keywordSet);
+		var tf = [];
+		for (i in keywords)
+			if (keywordSet.indexOf(keywords[i]) === -1) {
+				keywordSet.push(keywords[i]);
+				tf.push(1);
+			}
+			else tf[keywordSet.indexOf(keywords[i])]++;
+		callback(keywordSet, tf);
 	});
 };
 module.exports.extractKeyword = extractKeyword;

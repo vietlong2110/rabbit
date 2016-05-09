@@ -1,5 +1,5 @@
 # Rabbit Version 0.2.2
-Type keyword, follow news with hashtag
+Input keyword, follow news with hashtag
 
 ## What's in rabbit
 * Mobile UI for rabbit
@@ -25,7 +25,7 @@ Type keyword, follow news with hashtag
 
 ## Next minor (0.3)
 * Apply tf-idf algorithm for searching
-* Build the first client api for searching keyword
+* Build the first client API for searching keyword
 
 ## Requirement installation
 * npm

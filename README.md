@@ -15,8 +15,8 @@ Type keyword, follow news with hashtag
 ## Features
 ### v0.1
 * Mobile UI version (will update more)
-### v0.1
 * RSS Reader
+
 ### v0.2
 * Extract content from feed and store into database
 * Extract keyword from the content and store its information for search purpose

@@ -34,6 +34,11 @@ router.post('/extract/keywords', function(req, res) { //test the extracting keyw
 
 router.post('/extract/image', function(req, res){
 	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
+	var url = req.body.url;
+	var Extract = require('../serverProcess/extract.js');
+ 	Extract.extractImage(url, function(image) {
+ 		res.json({imageURL: image});
+ 	});
 });
 
 module.exports = router;

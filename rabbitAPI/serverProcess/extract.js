@@ -38,7 +38,15 @@ var extractKeyword = function(content, callback) { //extract keyword from a cont
 };
 module.exports.extractKeyword = extractKeyword;
 
-// var extractImage = function(url, callback) {
-
-// };
-// module.exports.extractImage = extractImage;
+var extractImage = function(url, callback) { //extract thumbnail of an article url
+	var boilerpipe = new Boilerpipe({
+		extractor: Boilerpipe.Extractor.Article,
+		url: url
+ 	});
+	boilerpipe.getImages(function(err, images) {
+		if (images.length > 0)
+			callback(images[0].src);
+		else callback();
+	});
+};
+module.exports.extractImage = extractImage;

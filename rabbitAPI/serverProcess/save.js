@@ -34,6 +34,7 @@ var saveArticle = function(articles, callback) { //save information of an articl
 					var a = new Article({
 						url: article.url,
 						title: article.title,
+						thumbnail: article.thumbnail,
 						publishedDate: article.publishedDate,
 						keywords: keywordSet
 					});
@@ -42,11 +43,11 @@ var saveArticle = function(articles, callback) { //save information of an articl
 							console.log(err);
 							cb();
 						}
-						saveKeyword(keywordSet);
+						saveKeyword(keywordSet);		
+						cb();
 					});
 				});
 			}
-			cb();
 		});
 	}, function(err) {
 		if (err) {

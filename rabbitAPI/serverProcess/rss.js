@@ -1,4 +1,5 @@
 var request = require('request');
+var async = require('async');
 
 var feedParse = function(url, callback) { //rss reader
 	var google_api_url = "https://ajax.googleapis.com/ajax/services/feed/load?v=2.0&q=" + url + "&num=30";
@@ -7,14 +8,24 @@ var feedParse = function(url, callback) { //rss reader
 			if (JSON.parse(body).responseData !== null && JSON.parse(body).responseData.feed !== null) {
 				var entries = JSON.parse(body).responseData.feed.entries;
 				var articles = [];
-				for (i = 0; i < entries.length; i++) {
-					articles.push({url: entries[i].link, 
-									title: entries[i].title,
-									publishedDate: entries[i].publishedDate});
-				}
-				var Save = require('./save.js');
-				Save.saveArticle(articles, function() {
-					callback(articles);
+				async.each(entries, function(entry, cb) {
+					var Extract = require('./extract.js');
+					Extract.extractImage(entry.link, function(thumbnail) {
+						articles.push({
+							url: entry.link, 
+							title: entry.title,
+							thumbnail: thumbnail,
+							publishedDate: entry.publishedDate
+						});
+						cb();
+					});
+				}, function(err) {
+					if (err)
+						callback(err);
+					var Save = require('./save.js');
+					Save.saveArticle(articles, function() {
+						callback(articles);
+					});
 				});
 			}
 		}

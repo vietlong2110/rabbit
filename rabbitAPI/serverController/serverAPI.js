@@ -4,7 +4,6 @@ var router = express.Router();
 var urlencode = require('urlencode');
 
 var mongoose = require('mongoose');
-var Article = require('../models/articles.js');
 
 router.post('/rss', function(req, res) { //test global function
 	// var url = 'http://feeds.feedburner.com/TechCrunch/fundings-exits';
@@ -16,11 +15,11 @@ router.post('/rss', function(req, res) { //test global function
 });
 
 router.post('/extract/content', function(req, res) { //test the extracting content function
-	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
+	var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
 	var url = req.body.url;
 	var Extract = require('../serverProcess/extract.js');
- 	Extract.extractContent(url, function(content) {
- 		res.json({KeywordSet: content});
+ 	Extract.extractContent(url, function(keywordSet, tf) {
+ 		res.json({KeywordSet: keywordSet});
  	});
 });
 
@@ -32,16 +31,24 @@ router.post('/extract/keywords', function(req, res) { //test the extracting keyw
 	});
 });
 
-router.post('/search/vector', function(req, res) {
-	var query = req.body.q;
-	var articleID = req.body.articleID;
+router.get('/vector/doc', function(req, res) {
+	var query = ['alibaba','fund'];
+	var articleID = '5731402ade8d328a24722863';
 	var Search = require('../libs/searchfunctions.js');
 	Search.docVector(query, articleID, function(vector) {
 		res.json({Vector: vector});
 	});
 });
 
-router.post('/extract/image', function(req, res){
+router.get('/vector/query', function(req, res) {
+	var query = [{word: 'fund', num: 1}];
+	var Search = require('../libs/searchfunctions.js');
+	Search.queryVector(query, function(vector) {
+		res.json({Vector: vector});
+	});
+});
+
+router.post('/extract/image', function(req, res){ //test the extracting thumbnail function
 	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
 	var url = req.body.url;
 	var Extract = require('../serverProcess/extract.js');

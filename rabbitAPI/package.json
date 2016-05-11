@@ -19,6 +19,7 @@
     "boilerpipe": "0.0.7",
     "express": "^4.13.4",
     "mongoose": "^4.4.14",
+    "natural": "^0.4.0",
     "porter-stemmer": "^0.9.1",
     "request": "^2.72.0",
     "urlencode": "^1.1.0"

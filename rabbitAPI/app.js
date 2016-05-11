@@ -14,6 +14,9 @@ var port = process.env.PORT || 8080;
 var serverapi = require('./serverController/serverAPI.js');
 app.use('/serverapi', serverapi);
 
+var clientapi = require('./clientAPI/clientAPI.js');
+app.use('/clientapi', clientapi);
+
 app.listen(port, function() {
 	console.log('App is running on port ' + port);
 });

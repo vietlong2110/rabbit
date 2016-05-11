@@ -7,7 +7,7 @@ var Article = new Schema({
 	thumbnail: String,
 	publishedDate: {type: Date, default: Date.now()},
 	keywords: [String],
-	tf:[Number]
+	tf: [Number]
 });
 
 module.exports = mongoose.model('articles', Article);

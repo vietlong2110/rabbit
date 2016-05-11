@@ -1,4 +1,4 @@
-# Rabbit Version 0.3
+# Rabbit Version 0.3.1
 Input keyword, follow news with hashtag
 
 ## What's in rabbit

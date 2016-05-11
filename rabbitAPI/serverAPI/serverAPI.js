@@ -8,7 +8,7 @@ var mongoose = require('mongoose');
 router.post('/rss', function(req, res) { //test global function
 	// var url = 'http://feeds.feedburner.com/TechCrunch/fundings-exits';
 	var url = req.body.url;
-	var RSS = require('../serverProcess/rss.js');
+	var RSS = require('../serverController/rss.js');
 	RSS.feedParse(urlencode(url), function(data) {
 		res.json(data);
 	});
@@ -17,7 +17,7 @@ router.post('/rss', function(req, res) { //test global function
 router.post('/extract/content', function(req, res) { //test the extracting content function
 	var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
 	var url = req.body.url;
-	var Extract = require('../serverProcess/extract.js');
+	var Extract = require('../serverController/extract.js');
  	Extract.extractContent(url, function(keywordSet, tf) {
  		res.json({KeywordSet: keywordSet});
  	});
@@ -25,7 +25,7 @@ router.post('/extract/content', function(req, res) { //test the extracting conte
 
 router.post('/extract/keywords', function(req, res) { //test the extracting keyword function
 	var content = req.body.content;
-	var Extract = require('../serverProcess/extract.js');
+	var Extract = require('../serverController/extract.js');
 	Extract.extractKeyword(content, function(keywords) {
 		res.json({Keywords: keywords});
 	});
@@ -51,7 +51,7 @@ router.get('/vector/query', function(req, res) {
 router.post('/extract/image', function(req, res){ //test the extracting thumbnail function
 	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
 	var url = req.body.url;
-	var Extract = require('../serverProcess/extract.js');
+	var Extract = require('../serverController/extract.js');
  	Extract.extractImage(url, function(image) {
  		res.json({imageURL: image});
  	});

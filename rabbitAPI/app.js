@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8080;
 
-var serverapi = require('./serverController/serverAPI.js');
+var serverapi = require('./serverAPI/serverAPI.js');
 app.use('/serverapi', serverapi);
 
 var clientapi = require('./clientAPI/clientAPI.js');

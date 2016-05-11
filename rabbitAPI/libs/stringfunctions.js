@@ -1,19 +1,19 @@
 var preProcess = function(content) {
-    content = content.replace(/<[^>]+>/g,""); //remove tags
-    content = content.replace(/[\n\r]+/g," "); //remove newline character
-    content = content.replace(/[\*\^\+\?\\\.\[\]\^\$\|\{\)\(\}\"\-~!\/@#£$%&=`´;><:,]+/g,""); //remove unnecssary character
-    content = content.replace(/\'+/g," ");
-    content = content.replace(/ +/g," ");
+    content = content.replace(/[\n\r]+/g,' '); //remove newline character
+    content = content.replace(/[\*\^\+\?\\\.\[\]\^\$\|\{\)\(\}\'\"\-~!\/@#£$%&=`´“”‘’;><:,]+/g,''); //remove unnecssary character
+    content = content.replace(/\s\s+/g,' ');
     content = content.trim();
     return content;
 };
 module.exports.preProcess = preProcess;
 
 var wordTokenize = function(content) {
-    content = content.split(" ");
-    for (i in content)
-        content[i] = content[i].toLowerCase();
-    return content;
+    var natural = require('natural');
+    tokenizer = new natural.WordTokenizer();
+    var wordList = tokenizer.tokenize(content);
+    for (i in wordList)
+    	wordList[i] = wordList[i].toLowerCase();
+    return wordList;
 };
 module.exports.wordTokenize = wordTokenize;
 
@@ -22,6 +22,7 @@ var removeStopWords = function(wordList, callback) {
 	fs.readFile('./libs/stopwords.txt', function(err, stopwords) {
 		if (err)
 			throw err;
+		// stopwords = stopwords.split("\n");
 		var Words = [];
 		for (i in wordList)
 			if (stopwords.indexOf(wordList[i]) === -1)

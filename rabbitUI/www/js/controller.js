@@ -1,9 +1,12 @@
 angular.module('starter.controller', [])
 
-.controller('NewsfeedController', ['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
+.controller('NewsfeedController', ['$rootScope', '$scope', '$http', 
+function($rootScope, $scope, $http) {
     $http.get('js/data.json').success(function(data) {
         $rootScope.news = data.news;
         $rootScope.highlightNews = [];
+        $scope.showSearchResult = false;
+        $scope.searchResult = [];
 
         $scope.toggleStar = function(item) {
             item.star = !item.star;
@@ -14,6 +17,20 @@ angular.module('starter.controller', [])
         $scope.assignCurrentNews = function(item) {
         	$rootScope.currentNewsState = item;
         };
+        $scope.search = function(value) {
+            if (value === undefined)
+                $scope.showSearchResult = false;
+            else {
+                $http.get('http://localhost:8080/clientapi/search', {
+                    params: {
+                        q: value
+                    }
+                }).success(function(data) {
+                    $scope.showSearchResult = true;
+                    $scope.searchResult = data.searchResult;
+                })
+            }
+        }
     });
 }])
 

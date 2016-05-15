@@ -3,11 +3,15 @@ var app = express();
 var bodyParser = require('body-parser');
 
 var database = require('./database.js');
-// var mongoose = require('mongoose');
-// mongoose.connect('mongodb://localhost:27017/rabbit');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', "*");
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+	res.header('Access-Control-Allow-Headers', 'Content-Type');
+	next();
+});
 
 var port = process.env.PORT || 8080;
 
@@ -19,4 +23,4 @@ app.use('/clientapi', clientapi);
 
 app.listen(port, function() {
 	console.log('App is running on port ' + port);
-});
+});	

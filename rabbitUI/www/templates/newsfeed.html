@@ -5,7 +5,7 @@
   </ion-nav-buttons>
 
   <ion-content>
-    <ion-list id="newsfeed" ng-repeat="item in news">
+    <ion-list id="newsfeed" ng-repeat="item in news" ng-hide="showSearchResult">
       <ion-item ng-class="{'star': item.star}" 
       class="item-thumbnail-left item-text-wrap item-icon-right">
         <img src="{{item.thumbnail}}" alt="thumbnail">
@@ -17,17 +17,27 @@
         ng-class="{'button-energized': item.star}"></button>
       </ion-item>
     </ion-list>
+    
+    <ion-list id="newsfeed" ng-repeat="item in searchResult" ng-show="showSearchResult">
+      <ion-item class="item-thumbnail-left item-text-wrap">
+        <img src="{{item.thumbnail}}" alt="thumbnail">
+        <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
+          <h2>{{item.title}}</h2>
+          <p>{{item.hastag}}</p>
+        </a>
+      </ion-item>
+    </ion-list>
   </ion-content>
 
-  <form>
-  <div class="bar bar-footer list item item-input-inset no-padding">
-    <div class="subscribe-field">
-      <label class="item item-input-wrapper">
-        <input type="text" placeholder="Follow anything (food, game, celebrity...)">
-      </label>
+  <form ng-submit="search(value)">
+    <div class="bar bar-footer list item item-input-inset no-padding">
+      <div class="subscribe-field">
+        <label class="item item-input-wrapper">
+          <input type="text" ng-model="value" placeholder="Follow something (food, game, celebrity...)">
+        </label>
+      </div>
+      <button type="submit"
+      class="icon ion-ios-search-strong button button-positive full-button"></button>  
     </div>
-    <button ng-click="addKeyword()" type="submit"
-    class="icon ion-plus-round button button-positive full-button"></button>  
-  </div>
   </form>
 </ion-view>

@@ -75,11 +75,3 @@ var cosEval = function(vector1, vector2) {
 	return score;
 };
 module.exports.cosEval = cosEval;
-
-var checkNonZero = function(vector) {
-	for (i in vector)
-		if (vector[i] !== 0)
-			return true;
-	return false;
-};
-module.exports.checkNonZero = checkNonZero;

@@ -49,6 +49,15 @@ angular.module('starter', ['ionic', 'starter.controller'])
             }
         }
     })
+    .state('app.search', {
+        url: '/search/:q',
+        views: {
+            'newsfeedContent': {
+                templateUrl: 'templates/search.html',
+                controller: 'SearchController'
+            }
+        }
+    })
     .state('app.highlight', {
         url: '/highlight',
         views: {

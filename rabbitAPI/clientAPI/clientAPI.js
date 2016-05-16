@@ -9,7 +9,7 @@ router.get('/search', function(req, res) {
 	var Feed = require('../clientController/feed.js');
 	Feed.searchFeed(req.query.q, function(searchResult) {
 		var feedResult = [];
-		var hashtag = '#' + req.body.q;
+		var hashtag = '#' + req.query.q;
 		for (i in searchResult)
 			feedResult.push({
 				id: i,
@@ -18,7 +18,10 @@ router.get('/search', function(req, res) {
 				thumbnail: searchResult[i].thumbnail,
 				hashtag: hashtag
 			});
-		res.json({searchResult: feedResult});
+		res.json({
+			searchResult: feedResult, 
+			keyword: req.query.q
+		});
 	});
 });
 

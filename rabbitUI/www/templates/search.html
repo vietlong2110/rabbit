@@ -1,0 +1,36 @@
+<ion-view view-title="{{keyword}}">
+	<ion-nav-bar class="bar bar-calm">
+		<ion-nav-back-button>
+			Back
+		</ion-nav-back-button>
+		<ion-nav-buttons side="secondary">
+    		<a ng-click="follow()" class="icon ion-android-add button button-icon" 
+    		ng-hide="followed"></a>
+    		<a class="icon ion-checkmark-round button button-icon" ng-show="followed"></a>
+    	</ion-nav-buttons>
+	</ion-nav-bar>
+
+	<ion-content>
+		<ion-list id="newsfeed" ng-repeat="item in searchResult">
+			<ion-item class="item-thumbnail-left item-text-wrap">
+			    <img src="{{item.thumbnail}}" alt="thumbnail">
+			    <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
+		      		<h2>{{item.title}}</h2>
+		      		<p>{{item.hastag}}</p>
+			    </a>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+
+	<form ng-submit="search(value)">
+	    <div class="bar bar-footer list item item-input-inset no-padding">
+	      <div class="subscribe-field">
+	        <label class="item item-input-wrapper">
+	          <input type="text" ng-model="value" placeholder="Follow something...">
+	        </label>
+	      </div>
+	      <button type="submit"
+	      class="icon ion-ios-search-strong button button-positive full-button"></button>  
+	    </div>
+    </form>
+</ion-view>

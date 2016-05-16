@@ -1,12 +1,13 @@
 angular.module('starter.controller', [])
 
-.controller('NewsfeedController', ['$rootScope', '$scope', '$http', 
-function($rootScope, $scope, $http) {
+.controller('NewsfeedController', ['$rootScope', '$scope', '$http', '$state',
+function($rootScope, $scope, $http, $state) {
     $http.get('js/data.json').success(function(data) {
         $rootScope.news = data.news;
         $rootScope.highlightNews = [];
         $scope.showSearchResult = false;
         $scope.searchResult = [];
+        $rootScope.firstBlood = false;
 
         $scope.toggleStar = function(item) {
             item.star = !item.star;
@@ -15,23 +16,42 @@ function($rootScope, $scope, $http) {
             else $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
         };
         $scope.assignCurrentNews = function(item) {
+            $rootScope.firstBlood = true;
         	$rootScope.currentNewsState = item;
         };
         $scope.search = function(value) {
-            if (value === undefined)
-                $scope.showSearchResult = false;
-            else {
-                $http.get('http://localhost:8080/clientapi/search', {
-                    params: {
-                        q: value
-                    }
-                }).success(function(data) {
-                    $scope.showSearchResult = true;
-                    $scope.searchResult = data.searchResult;
-                })
-            }
-        }
+            $http.get('http://localhost:8080/clientapi/search', {
+                params: {
+                    q: value
+                }
+            }).success(function(data) {
+                $rootScope.searchResult = data.searchResult;
+                $rootScope.keyword = data.keyword;
+                $state.go('app.search', {});
+            });
+        };
     });
+}])
+
+.controller('SearchController', ['$rootScope', '$scope', '$state', '$http',
+function($rootScope, $scope, $state, $http) {
+    $scope.assignCurrentNews = function(item) {
+        $rootScope.currentNewsState = item;
+    };
+    $scope.search = function(value) {
+        $http.get('http://localhost:8080/clientapi/search', {
+            params: {
+                q: value
+            }
+        }).success(function(data) {
+            $rootScope.searchResult = data.searchResult;
+            $rootScope.keyword = data.keyword;
+            $state.go('app.search', {});
+        });
+    };
+    $scope.follow = function() {
+        // $scope.followed = true;
+    };
 }])
 
 .controller('ReadingController', ['$rootScope', '$scope', '$sce', function($rootScope, $scope, $sce) {

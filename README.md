@@ -1,4 +1,4 @@
-# Rabbit Version 0.4.1
+# Rabbit Version 0.4.2
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -7,6 +7,18 @@ Input keywords and hashtags, follow news and social media
 
 ## Testing server
 * A local server API for testing any server-side functionalities (rabbitAPI/serverController/serverAPI.js)
+
+## Requirement installation
+* npm
+* cordova
+
+## Run UI
+* cd rabbitUI
+* ionic serve (ionic serve -l)
+
+## Run API
+* cd rabbitAPI
+* node app.js
 
 ## Features
 ### v0.1
@@ -26,19 +38,10 @@ Input keywords and hashtags, follow news and social media
 ### v0.4
 * Call search API from UI
 
-## Next minor(0.5)
+### v0.4.3
 * Add follow button to each search result
+* Put search to another ListView
+
+## Next minor(0.5)
 * Add keyword to following list
-* Ajax call to search
-
-## Requirement installation
-* npm
-* cordova
-
-## Run UI
-* cd rabbitUI
-* ionic serve (ionic serve -l)
-
-## Run API
-* cd rabbitAPI
-* node app.js
+* Sanitize keyword from input

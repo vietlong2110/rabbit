@@ -1,4 +1,4 @@
-# Rabbit Version 0.4.2
+# Rabbit Version 0.4.3
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit

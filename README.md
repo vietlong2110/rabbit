@@ -21,7 +21,7 @@ Input keywords and hashtags, follow news and social media
 * node app.js
 
 ## Issues
-* Some lagging happened when change from search view to another search view
+* lagging animation from plus-icon to check-icon when adding a new keyword
 
 ## Features
 ### v0.1
@@ -47,6 +47,10 @@ Input keywords and hashtags, follow news and social media
 * Add keyword to following list
 * Sanitize keyword from input
 
-## Next minor(v0.6)
+### v0.5.1
 * call post api from UI to add keyword from database
-* call post api from UI to load feed from database
+
+## Next minor(v0.6)
+* call get api from UI to get following list from database
+* call post api from UI to add feed from database
+* call get api from UI to load feed from database

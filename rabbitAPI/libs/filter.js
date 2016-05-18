@@ -17,9 +17,15 @@ module.exports.queryFilter = queryFilter;
 
 var querySanitize = function(query) {
 	var stringFuncs = require('./stringfunctions.js');
-	query = stringFuncs.preProcess(query);
+	query = stringFuncs.preProcess(query); //need to fix when use for hashtag
 	if (query.length > 1000) //max length
 		query = query.substring(0, 999);
 	return query;
 };
 module.exports.querySanitize = querySanitize;
+
+var keywordToHashtag = function(keyword) {
+	keyword = '#' + keyword.replace(/\s/g,'');
+	return keyword;
+};
+module.exports.keywordToHashtag = keywordToHashtag;

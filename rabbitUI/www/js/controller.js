@@ -43,8 +43,8 @@ function($rootScope, $scope, $state, $http) {
             break;
         }
     if (found)
-        $scope.followed = true;
-    else $scope.followed = false;
+        $rootScope.followed = true;
+    else $rootScope.followed = false;
     $scope.assignCurrentNews = function(item) {
         $rootScope.currentNewsState = item;
     };
@@ -64,18 +64,27 @@ function($rootScope, $scope, $state, $http) {
                     break;
                 }
             if (found)
-                $scope.followed = true;
-            else $scope.followed = false;
-            $state.go('app.search', {});
+                $rootScope.followed = true;
+            else $rootScope.followed = false;
+            $state.go('app.newsfeed', {});
+            setTimeout(function() {
+                $state.go('app.search', {});
+            }, 700);
         });
     };
     $scope.follow = function() { 
-        if (!$scope.followed) {
+        if (!$rootScope.followed) {
             $rootScope.keywords.push({
                 keyword: $rootScope.keywordSearch,
                 isChecked: true
             });
-            $scope.followed = true;
+            $http.post('http://localhost:8080/clientapi/follow', {
+                q: $rootScope.keywordSearch
+            }).success(function(data) {
+                console.log("Success!");
+                if (data.followed >= 1)
+                    $rootScope.followed = true;
+            });
         }
     };
 }])

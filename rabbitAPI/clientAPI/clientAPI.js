@@ -11,7 +11,7 @@ router.get('/search', function(req, res) {
 	var query = Query.querySanitize(req.query.q);
 	Feed.searchFeed(query, function(searchResult) {
 		var feedResult = [];
-		var hashtag = '#' + query;
+		var hashtag = Query.keywordToHashtag(query);
 		for (i in searchResult)
 			feedResult.push({
 				id: i,
@@ -23,7 +23,7 @@ router.get('/search', function(req, res) {
 		var stringFuncs = require('../libs/stringfunctions.js');
 		var queryTitle = stringFuncs.niceTitle(query);
 		res.json({
-			searchResult: feedResult, 
+			searchResult: feedResult,
 			keywordSearch: req.query.q,
 			queryTitle: queryTitle
 		});
@@ -31,7 +31,15 @@ router.get('/search', function(req, res) {
 });
 
 router.post('/follow', function(req, res) {
-	
+	var Query = require('../libs/filter.js');
+	var query = Query.querySanitize(req.body.q);
+	var Follow = require('../clientController/follow.js');
+	var userId = '573c48e0f1fe3a8823a2df30'; //replace after creating login part
+	Follow.addList(query, userId, function(followed) {
+		res.json({
+			followed: followed
+		});
+	});
 });
 
 module.exports = router;

@@ -20,9 +20,13 @@ router.get('/search', function(req, res) {
 			});
 		res.json({
 			searchResult: feedResult, 
-			keyword: req.query.q
+			keywordSearch: req.query.q
 		});
 	});
+});
+
+router.post('/follow', function(req, res) {
+	
 });
 
 module.exports = router;

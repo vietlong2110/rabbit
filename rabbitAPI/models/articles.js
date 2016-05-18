@@ -5,7 +5,10 @@ var Article = new Schema({
 	url: String,
 	title: String,
 	thumbnail: String,
-	publishedDate: {type: Date, default: Date.now()},
+	publishedDate: {
+		type: Date, 
+		default: Date.now()
+	},
 	keywords: [String],
 	tf: [Number]
 });

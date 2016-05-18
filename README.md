@@ -1,4 +1,4 @@
-# Rabbit Version 0.4.3
+# Rabbit Version 0.4.4
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -38,10 +38,10 @@ Input keywords and hashtags, follow news and social media
 ### v0.4
 * Call search API from UI
 
-### v0.4.3
+### v0.4.4
 * Add follow button to each search result
 * Put search to another ListView
+* Add keyword to following list
 
 ## Next minor(0.5)
-* Add keyword to following list
 * Sanitize keyword from input

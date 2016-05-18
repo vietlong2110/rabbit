@@ -26,7 +26,7 @@ function($rootScope, $scope, $http, $state) {
                 }
             }).success(function(data) {
                 $rootScope.searchResult = data.searchResult;
-                $rootScope.keyword = data.keyword;
+                $rootScope.keywordSearch = data.keywordSearch;
                 $state.go('app.search', {});
             });
         };
@@ -35,6 +35,15 @@ function($rootScope, $scope, $http, $state) {
 
 .controller('SearchController', ['$rootScope', '$scope', '$state', '$http',
 function($rootScope, $scope, $state, $http) {
+    var found = false;
+    for (i in $rootScope.keywords)
+        if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
+            found = true;
+            break;
+        }
+    if (found)
+        $scope.followed = true;
+    else $scope.followed = false;
     $scope.assignCurrentNews = function(item) {
         $rootScope.currentNewsState = item;
     };
@@ -45,12 +54,18 @@ function($rootScope, $scope, $state, $http) {
             }
         }).success(function(data) {
             $rootScope.searchResult = data.searchResult;
-            $rootScope.keyword = data.keyword;
+            $rootScope.keywordSearch = data.keywordSearch;
             $state.go('app.search', {});
         });
     };
-    $scope.follow = function() {
-        // $scope.followed = true;
+    $scope.follow = function() { 
+        if (!found) {
+            $rootScope.keywords.push({
+                keyword: $rootScope.keywordSearch,
+                isChecked: true
+            });
+            $scope.followed = true;
+        }
     };
 }])
 

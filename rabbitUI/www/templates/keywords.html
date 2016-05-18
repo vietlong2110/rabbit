@@ -1,11 +1,5 @@
 <ion-side-menus enable-menu-with-back-views="false">
 	<ion-side-menu side="left">
-	    <ion-header-bar class="list item item-input-inset no-padding">
-	    	<label class="item item-input-wrapper">
-	    		<i class="icon ion-ios-search placeholder-icon"></i>
-	    		<input type="search" placeholder="Search">
-	    	</label>
-	    </ion-header-bar>
     	<ion-content class="custom">
       		<ion-list>
       			<ion-item id="header-menu" class="item-divider item-icon-left item-icon-right">
@@ -19,7 +13,7 @@
     				<i id="trash" ng-click="toggleDelete()" class="icon ion-trash-a stable"></i>
   				</ion-item>
   			</ion-list>
-			<ion-scroll style="height:300px;">
+			<ion-scroll style="height:300px;" ng-hide="onHighlight">
 				<ion-list ng-repeat="item in keywords" show-delete="shouldShowDelete">
 		  			<ion-item id="keyword-list" class="item"
 		  			ng-class="{'item-icon-left item-checkbox': !shouldShowDelete}">
@@ -37,7 +31,7 @@
 		    	<ion-item id="header-menu" ng-hide="onHighlight" 
 		    	class="item-divider item-icon-left">
 		    		<a menu-close href="#/app/highlight" ng-click="toggleHighlight()">
-      					<i id="trash" class="icon ion-checkmark-circled stable"></i>
+      					<i id="trash" class="icon ion-star stable"></i>
       					Highlight news
       				</a>
   				</ion-item>
@@ -45,7 +39,7 @@
   				<ion-item id="header-menu" ng-show="onHighlight" 
   				class="item-divider item-icon-left">
   					<a menu-close href="#/app/newsfeed" ng-click="toggleHighlight()">
-      					<i id="trash" class="icon ion-checkmark-circled balanced"></i>
+      					<i id="trash" class="icon ion-star energized"></i>
       					Highlight news
       				</a>
   				</ion-item>

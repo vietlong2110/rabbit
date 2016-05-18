@@ -54,3 +54,10 @@ var contentToKeywords = function(content, callback) {
 	});
 };
 module.exports.contentToKeywords = contentToKeywords;
+
+var niceTitle = function(string) {
+	string = string.toLowerCase();
+	string = string.charAt(0).toUpperCase() + string.slice(1);
+	return string;
+};
+module.exports.niceTitle = niceTitle;

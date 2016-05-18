@@ -27,6 +27,7 @@ function($rootScope, $scope, $http, $state) {
             }).success(function(data) {
                 $rootScope.searchResult = data.searchResult;
                 $rootScope.keywordSearch = data.keywordSearch;
+                $rootScope.queryTitle = data.queryTitle;
                 $state.go('app.search', {});
             });
         };
@@ -55,11 +56,21 @@ function($rootScope, $scope, $state, $http) {
         }).success(function(data) {
             $rootScope.searchResult = data.searchResult;
             $rootScope.keywordSearch = data.keywordSearch;
+            $rootScope.queryTitle = data.queryTitle;
+            var found = false;
+            for (i in $rootScope.keywords)
+                if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
+                    found = true;
+                    break;
+                }
+            if (found)
+                $scope.followed = true;
+            else $scope.followed = false;
             $state.go('app.search', {});
         });
     };
     $scope.follow = function() { 
-        if (!found) {
+        if (!$scope.followed) {
             $rootScope.keywords.push({
                 keyword: $rootScope.keywordSearch,
                 isChecked: true

@@ -1,4 +1,4 @@
-# Rabbit Version 0.4.4
+# Rabbit Version 0.5
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -20,6 +20,9 @@ Input keywords and hashtags, follow news and social media
 * cd rabbitAPI
 * node app.js
 
+## Iussues
+* Some lagging happened when change from search view to another search view
+
 ## Features
 ### v0.1
 * Mobile UI version (will update more)
@@ -38,10 +41,12 @@ Input keywords and hashtags, follow news and social media
 ### v0.4
 * Call search API from UI
 
-### v0.4.4
+### v0.5
 * Add follow button to each search result
 * Put search to another ListView
 * Add keyword to following list
-
-## Next minor(0.5)
 * Sanitize keyword from input
+
+## Next minor(v0.6)
+* call post api from UI to add keyword from database
+* call post api from UI to load feed from database

@@ -81,7 +81,6 @@ function($rootScope, $scope, $state, $http) {
             $http.post('http://localhost:8080/clientapi/follow', {
                 q: $rootScope.keywordSearch
             }).success(function(data) {
-                console.log("Success!");
                 if (data.followed >= 1)
                     $rootScope.followed = true;
             });
@@ -120,7 +119,8 @@ function($rootScope, $scope, $state, $http) {
 }])
 
 .controller('KeywordsController',['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
-	$http.get('js/data.json').success(function(data) {
+	$http.get('http://localhost:8080/clientapi/getlist')
+    .success(function(data) {
 		$rootScope.keywords = data.keywords;
 		$scope.allListChecked = true;
 		$scope.shouldShowDelete = false;

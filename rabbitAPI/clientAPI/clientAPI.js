@@ -42,4 +42,20 @@ router.post('/follow', function(req, res) {
 	});
 });
 
+router.get('/getlist', function(req, res) {
+	var Follow = require('../clientController/follow.js');
+	var userId = '573c48e0f1fe3a8823a2df30'; //replace after creating login part
+	Follow.getList(userId, function(wordList, checkList) {
+		var followingList = [];
+		for (i in wordList)
+			followingList.push({
+				keyword: wordList[i],
+				isChecked: checkList[i]
+			});
+		res.json({
+			keywords: followingList
+		});
+	});
+});
+
 module.exports = router;

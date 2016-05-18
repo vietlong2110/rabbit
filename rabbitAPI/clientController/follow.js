@@ -27,6 +27,21 @@ var addList = function(keyword, userId, callback) {
 };
 module.exports.addList = addList;
 
+var getList = function(userId, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err) {
+			console.log(err);
+			callback([], []);
+		}
+		if (user === null) {
+			console.log('User not found!');
+			callback([], []);
+		}
+		callback(user.wordList, user.checkList);
+	});
+};
+module.exports.getList = getList;
+
 var addArticle = function(articles, userId, callback) {
 	User.findById(userId).exec(function(err, user) {
 		if (err) {

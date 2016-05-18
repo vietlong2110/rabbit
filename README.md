@@ -1,4 +1,4 @@
-# Rabbit Version 0.5.1
+# Rabbit Version 0.5.2
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -47,10 +47,10 @@ Input keywords and hashtags, follow news and social media
 * Add keyword to following list
 * Sanitize keyword from input
 
-### v0.5.1
+### v0.5.2
 * call post api from UI to add keyword from database
+* call get api from UI to get following list from database
 
 ## Next minor(v0.6)
-* call get api from UI to get following list from database
 * call post api from UI to add feed from database
 * call get api from UI to load feed from database

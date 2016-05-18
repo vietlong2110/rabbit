@@ -20,7 +20,7 @@ Input keywords and hashtags, follow news and social media
 * cd rabbitAPI
 * node app.js
 
-## Iussues
+## Issues
 * Some lagging happened when change from search view to another search view
 
 ## Features

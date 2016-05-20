@@ -2,18 +2,18 @@
 	<ion-side-menu side="left">
     	<ion-content class="custom">
       		<ion-list>
-      			<ion-item id="header-menu" class="item-divider item-icon-left item-icon-right">
-      				<i id="trash" ng-click="toggleCheckbox()" ng-show="allListChecked"
+      			<ion-item id="header-menu" class="item-divider">
+      				<!-- <i id="trash" ng-click="toggleCheckbox()" ng-show="allListChecked"
       				class="icon ion-checkmark-circled balanced"></i>
       				<i id="trash" ng-click="toggleCheckbox()" ng-hide="allListChecked"
-      				class="icon ion-checkmark-circled stable"></i>
+      				class="icon ion-checkmark-circled stable"></i> -->
 
       				Following List
 
-    				<i id="trash" ng-click="toggleDelete()" class="icon ion-trash-a stable"></i>
+    				<!-- <i id="trash" ng-click="toggleDelete()" class="icon ion-trash-a stable"></i> -->
   				</ion-item>
   			</ion-list>
-			<ion-scroll style="height:520px;">
+			<ion-scroll style="height:520px;" ng-hide="onHighlight">
 				<ion-list ng-repeat="item in keywords" show-delete="shouldShowDelete">
 		  			<ion-item id="keyword-list" class="item"
 		  			ng-class="{'item-icon-left item-checkbox': !shouldShowDelete}">
@@ -40,7 +40,7 @@
   				class="item-divider item-icon-left">
   					<a menu-close href="#/app/newsfeed" ng-click="toggleHighlight()">
       					<i id="trash" class="icon ion-star energized"></i>
-      					Highlight news
+      					Favorites
       				</a>
   				</ion-item>
 

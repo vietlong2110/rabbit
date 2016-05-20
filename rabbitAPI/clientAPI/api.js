@@ -5,6 +5,8 @@ var router = express.Router();
 var async = require('async');
 var mongoose = require('mongoose');
 
+var userId = '573e9637bb62788646415796'; //replace after creating login part
+
 router.get('/search', function(req, res) {
 	var Feed = require('../clientController/feed.js');
 	var Query = require('../libs/filter.js');
@@ -34,17 +36,19 @@ router.post('/follow', function(req, res) {
 	var Query = require('../libs/filter.js');
 	var query = Query.querySanitize(req.body.q);
 	var Follow = require('../clientController/follow.js');
-	var userId = '573c48e0f1fe3a8823a2df30'; //replace after creating login part
-	Follow.addList(query, userId, function(followed) {
-		res.json({
-			followed: followed
-		});
+	Follow.addList(query, userId, function(followed1) {
+		if (followed1 >= 1) {
+			Follow.addArticle(query, userId, function(followed2) {
+				res.json({
+					followed: followed2
+				});
+			})
+		}
 	});
 });
 
 router.get('/getlist', function(req, res) {
 	var Follow = require('../clientController/follow.js');
-	var userId = '573c48e0f1fe3a8823a2df30'; //replace after creating login part
 	Follow.getList(userId, function(wordList, checkList) {
 		var followingList = [];
 		for (i in wordList)

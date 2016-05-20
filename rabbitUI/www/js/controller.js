@@ -69,7 +69,7 @@ function($rootScope, $scope, $state, $http) {
             $state.go('app.newsfeed', {});
             setTimeout(function() {
                 $state.go('app.search', {});
-            }, 700);
+            }, 500);
         });
     };
     $scope.follow = function() { 

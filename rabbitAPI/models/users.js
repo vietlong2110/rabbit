@@ -8,6 +8,9 @@ var User = new Schema({
 	articles: [{
 		type: Schema.ObjectId,
 		ref: 'articles'
+	}],
+	articleKeywords: [{
+		keywords: [String]
 	}]
 });
 

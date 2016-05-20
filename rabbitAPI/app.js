@@ -15,10 +15,10 @@ app.use(function(req, res, next) {
 
 var port = process.env.PORT || 8080;
 
-var serverapi = require('./serverAPI/serverAPI.js');
+var serverapi = require('./serverAPI/api.js');
 app.use('/serverapi', serverapi);
 
-var clientapi = require('./clientAPI/clientAPI.js');
+var clientapi = require('./clientAPI/api.js');
 app.use('/clientapi', clientapi);
 
 app.listen(port, function() {

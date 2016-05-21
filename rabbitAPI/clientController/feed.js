@@ -21,10 +21,8 @@ var searchFeed = function(q, callback) {
 				searchFuncs.queryVector(queryArr, function(vector2) {
 					var evalScore = searchFuncs.cosEval(vector1, vector2);
 					if (evalScore > 0) {
-						// var today = article.publishedDate.getDate();
 						searchResult.push({
 							evalScore: evalScore,
-							// today: today,
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,
@@ -40,14 +38,10 @@ var searchFeed = function(q, callback) {
 				callback();
 			}
 			searchResult.sort(function(a,b) {
-				// if (b.today - a.today === 0) {
-					if (b.evalScore - a.evalScore === 0)
-						return b.publishedDate - a.publishedDate;
-					else return b.evalScore - a.evalScore;
-				// }
-				// else return b.today - a.today;
+				if (b.evalScore - a.evalScore === 0)
+					return b.publishedDate - a.publishedDate;
+				else return b.evalScore - a.evalScore;
 			});
-			// res.json({Results: searchResult});
 			callback(searchResult);
 		});
 	});
@@ -87,3 +81,82 @@ var getFeedId = function(keyword, callback) {
 	});
 };
 module.exports.getFeedId = getFeedId;
+
+var getFeedUser = function(keyword, articleIds, callback) {
+	// console.log(articleIds);
+	var stringFuncs = require('../libs/stringfunctions.js');
+	var query = stringFuncs.preProcess(keyword);
+	query = stringFuncs.wordTokenize(query);
+	query = stringFuncs.stemArr(query);
+	var searchFuncs = require('../libs/searchfunctions');
+	var searchResult = [];
+	var Ids = [];
+	async.each(articleIds, function(articleId, cb) {
+		searchFuncs.docVector(query, articleId, function(vector1) {
+			var Filter = require('../libs/filter.js');
+			var queryArr = Filter.queryFilter(query);
+			searchFuncs.queryVector(queryArr, function(vector2) {
+				var evalScore = searchFuncs.cosEval(vector1, vector2);
+				if (evalScore > 0) {
+					var Article = require('../models/articles.js');
+					Article.findById(articleId).exec(function(err, article){
+						if (err) {
+							console.log(err);
+							cb();
+						}
+						var today = article.publishedDate.getDate();
+						searchResult.push({
+							evalScore: evalScore,
+							today: today,
+							url: article.url,
+							title: article.title,
+							thumbnail: article.thumbnail,
+							publishedDate: article.publishedDate
+						});
+						Ids.push(articleId);
+						cb();
+					});
+				}
+				else cb();
+			});
+		});
+	}, function(err) {
+		if (err) {
+			console.log(err);
+			callback();
+		}
+		callback(searchResult, Ids);
+	});
+};
+module.exports.getFeedUser = getFeedUser;
+
+var getFeed = function(userId, callback) {
+	var User = require('../models/users.js');
+	User.findById(userId).exec(function(err, user) {
+		if (err) {
+			console.log(err);
+			callback([]);
+		}
+		var feedResult = [];
+		var articleIds = user.articles;
+		async.forEachOfSeries(user.checkList, function(check, i, cb) {
+			if (check) {
+				getFeedUser(user.wordList[i], articleIds, function(results, Ids) {
+					for (j in results) {
+						feedResult.push(results[j]);
+						//eliminate added result here
+						articleIds.splice(articleIds.indexOf(Ids[j]), 1);
+					}
+					cb();
+				});
+			}
+		}, function(err) {
+			if (err) {
+				console.log(err);
+				callback([]);
+			}
+			callback(feedResult);
+		});	
+	});
+};
+module.exports.getFeed = getFeed;

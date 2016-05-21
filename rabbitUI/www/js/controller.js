@@ -2,7 +2,7 @@ angular.module('starter.controller', [])
 
 .controller('NewsfeedController', ['$rootScope', '$scope', '$http', '$state',
 function($rootScope, $scope, $http, $state) {
-    $http.get('js/data.json').success(function(data) {
+    $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
         $rootScope.news = data.news;
         $rootScope.highlightNews = [];
         $scope.showSearchResult = false;
@@ -81,8 +81,12 @@ function($rootScope, $scope, $state, $http) {
             $http.post('http://localhost:8080/clientapi/follow', {
                 q: $rootScope.keywordSearch
             }).success(function(data) {
-                if (data.followed >= 1)
+                if (data.followed >= 1) {
                     $rootScope.followed = true;
+                    $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
+                        $rootScope.news = data.news;
+                    });
+                }
             });
         }
     };

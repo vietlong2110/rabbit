@@ -1,3 +1,7 @@
+/******************************************
+*		MAIN APP TO RUN ALL APIS		  *
+******************************************/
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -6,14 +10,14 @@ var database = require('./database.js');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(function(req, res, next) {
+app.use(function(req, res, next) { //prevent CORS
 	res.header('Access-Control-Allow-Origin', "*");
 	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
 	res.header('Access-Control-Allow-Headers', 'Content-Type');
 	next();
 });
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8080; 
 
 var serverapi = require('./serverAPI/api.js');
 app.use('/serverapi', serverapi);

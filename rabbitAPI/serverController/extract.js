@@ -1,3 +1,7 @@
+/************************************************************************
+*		This controller includes all functions relating to extraction	*
+************************************************************************/
+
 var Boilerpipe = require('boilerpipe');
 
 var extractContent = function(url, callback) { //extract content of an article url

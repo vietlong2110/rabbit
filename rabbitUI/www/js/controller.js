@@ -1,5 +1,6 @@
 angular.module('starter.controller', [])
 
+//Newsfeed controller
 .controller('NewsfeedController', ['$rootScope', '$scope', '$http', '$state',
 function($rootScope, $scope, $http, $state) {
     $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {

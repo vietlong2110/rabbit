@@ -1,35 +1,46 @@
+/********************************************************************************************
+*		This controller include all functions relating to saving data to server database	*
+********************************************************************************************/
+
 var async = require('async');
 
 var mongoose = require('mongoose');
 
-var saveKeyword = function(keywordSet) { //for calculating inverted document frequency
+//For calculating inverted document frequency
+var saveKeyword = function(keywordSet) {
 	var Keyword = require('../models/keywords.js');
+
 	async.each(keywordSet, function(keyword, callback) {
 		var query = {word: keyword};
-		var update = {$inc: {df: 1}};
+		var update = {$inc: {df: 1}}; //increase document frequency to one
 		var options = {upsert: true};
+
 		Keyword.findOneAndUpdate(query, update, options, function(err, item) {
-			if (err) {
+			if (err) { //process error case later
 				console.log(err);
 				callback();
 			}
 		});
 	}, function(err) {
-		if (err)
+		if (err) //process error case later
 			console.log(err);
 	});
 };
 module.exports.saveKeyword = saveKeyword;
 
-var saveArticle = function(articles, callback) { //save information of an article to database
+//Save information of an article to database
+var saveArticle = function(articles, callback) {
 	var Article = require('../models/articles.js');
+
 	async.each(articles, function(article, cb) {
+
 		Article.findOne({url: article.url})
 		.exec(function(err, item) {
-			if (err)
+			if (err) //process error case later
 				res.json({Error: err});
 			else if (item === null) {
 				var Extract = require('./extract.js');
+
 				Extract.extractContent(article.url, function(keywordSet, tf) {
 					var a = new Article({
 						url: article.url,
@@ -39,8 +50,9 @@ var saveArticle = function(articles, callback) { //save information of an articl
 						keywords: keywordSet,
 						tf: tf
 					});
+
 					a.save(function(err) {
-						if (err) {
+						if (err) { //process error case later
 							console.log(err);
 							cb();
 						}
@@ -52,10 +64,11 @@ var saveArticle = function(articles, callback) { //save information of an articl
 			else cb();
 		});
 	}, function(err) {
-		if (err) {
+		if (err) { //process error case later
 			console.log(err);
 			callback();
 		}
+		
 		callback();
 	});
 };

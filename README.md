@@ -1,4 +1,4 @@
-# Rabbit Version 0.6
+# Rabbit Version 0.6.1
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -53,6 +53,9 @@ Input keywords and hashtags, follow news and social media
 * Call post api from UI to add feed to database
 * Call get api from UI to load feed from database
 * Add hashtag to each newsfeed
+
+### v0.6.1
+* Comment everything
 
 ## Next minor(v0.7)
 * Redesign menu side, following list to popup setting, 

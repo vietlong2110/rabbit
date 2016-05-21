@@ -1,6 +1,6 @@
 {
   "name": "rabbitapi",
-  "version": "0.1.0",
+  "version": "0.6.1",
   "description": "making API call for rabbit app",
   "main": "app.js",
   "scripts": {

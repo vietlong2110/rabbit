@@ -1,3 +1,7 @@
+/****************************************************************************************************
+*		This file include all the calls to test every functions needed in loading data to server	*
+****************************************************************************************************/
+
 var express = require('express');
 var app = express();
 var router = express.Router();
@@ -5,7 +9,7 @@ var urlencode = require('urlencode');
 
 var mongoose = require('mongoose');
 
-router.post('/rss', function(req, res) { //test global function
+router.post('/rss', function(req, res) { //test rss reader
 	// var url = 'http://feeds.feedburner.com/TechCrunch/fundings-exits';
 	var url = req.body.url;
 	var RSS = require('../serverController/rss.js');
@@ -28,23 +32,6 @@ router.post('/extract/keywords', function(req, res) { //test the extracting keyw
 	var Extract = require('../serverController/extract.js');
 	Extract.extractKeyword(content, function(keywords) {
 		res.json({Keywords: keywords});
-	});
-});
-
-router.get('/vector/doc', function(req, res) {
-	var query = ['alibaba','fund'];
-	var articleID = '5731402ade8d328a24722863';
-	var Search = require('../libs/searchfunctions.js');
-	Search.docVector(query, articleID, function(vector) {
-		res.json({Vector: vector});
-	});
-});
-
-router.get('/vector/query', function(req, res) {
-	var query = [{word: 'fund', num: 1}];
-	var Search = require('../libs/searchfunctions.js');
-	Search.queryVector(query, function(vector) {
-		res.json({Vector: vector});
 	});
 });
 

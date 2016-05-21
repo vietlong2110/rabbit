@@ -1,3 +1,7 @@
+/************************************************************************
+*		This model stores all articles from rss, social media API...	*
+************************************************************************/
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -10,7 +14,7 @@ var Article = new Schema({
 		default: Date.now()
 	},
 	keywords: [String],
-	tf: [Number]
+	tf: [Number] //term frequency corresponding to keyword
 });
 
 module.exports = mongoose.model('articles', Article);

@@ -50,7 +50,8 @@ module.exports.searchFeed = searchFeed;
 
 var getFeedId = function(keyword, callback) {
 	var stringFuncs = require('../libs/stringfunctions.js');
-	var query = stringFuncs.wordTokenize(keyword);
+	var query = stringFuncs.preProcess(keyword);
+	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 	var Article = require('../models/articles.js');
 	var searchResult = [];

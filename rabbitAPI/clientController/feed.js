@@ -135,15 +135,16 @@ var getFeed = function(userId, callback) {
 	User.findById(userId).exec(function(err, user) {
 		if (err) {
 			console.log(err);
-			callback([]);
+			callback([], []);
 		}
-		var feedResult = [];
+		var feedResult = [], tmpIds = [];
 		var articleIds = user.articles;
 		async.forEachOfSeries(user.checkList, function(check, i, cb) {
 			if (check) {
 				getFeedUser(user.wordList[i], articleIds, function(results, Ids) {
 					for (j in results) {
 						feedResult.push(results[j]);
+						tmpIds.push(Ids[j]);
 						//eliminate added result here
 						articleIds.splice(articleIds.indexOf(Ids[j]), 1);
 					}
@@ -153,9 +154,18 @@ var getFeed = function(userId, callback) {
 		}, function(err) {
 			if (err) {
 				console.log(err);
-				callback([]);
+				callback([], []);
 			}
-			callback(feedResult);
+			User.findById(userId).exec(function(err, u) {
+				if (err) {
+					console.log(err);
+					callback([], []);
+				}
+				var hashtagResult = [];
+				for (i in tmpIds)
+					hashtagResult.push(u.articleKeywords[u.articles.indexOf(tmpIds[i])].keywords);
+				callback(feedResult, hashtagResult);
+			});
 		});	
 	});
 };

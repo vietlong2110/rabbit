@@ -64,7 +64,7 @@ router.get('/getlist', function(req, res) {
 
 router.get('/getfeed', function(req, res) {
 	var Feed = require('../clientController/feed.js');
-	Feed.getFeed(userId, function(articleResult) {
+	Feed.getFeed(userId, function(articleResult, hashtagResult) {
 		articleResult.sort(function(a,b) {
 			if (b.today - a.today === 0) {
 				if (b.evalScore - a.evalScore === 0)
@@ -74,13 +74,17 @@ router.get('/getfeed', function(req, res) {
 			else return b.today - a.today;
 		});
 		var feed = [];
+		var Filter = require('../libs/filter.js');
 		for (i in articleResult) {
+			var hashtag = '', hashtagLine = hashtagResult[i];
+			for (j in hashtagLine)
+				hashtag = hashtag + ' ' + Filter.keywordToHashtag(hashtagLine[j]);
 			feed.push({
 				id: i,
 				url: articleResult[i].url,
 				title: articleResult[i].title,
 				thumbnail: articleResult[i].thumbnail,
-				// hashtag: hashtag
+				hashtag: hashtag
 			});
 		}
 		res.json({news: feed});

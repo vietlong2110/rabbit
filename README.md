@@ -47,11 +47,14 @@ Input keywords and hashtags, follow news and social media
 * Add keyword to following list
 * Sanitize keyword from input
 
-### v0.5.4
-* call post api from UI to add keyword to database
-* call get api from UI to get following list from database
-* call post api from UI to add feed to database
-* call get api from UI to load feed from database
+### v0.6
+* Call post api from UI to add keyword to database
+* Call get api from UI to get following list from database
+* Call post api from UI to add feed to database
+* Call get api from UI to load feed from database
+* Add hashtag to each newsfeed
 
-## Next minor(v0.6)
-* add hashtag to each newsfeed
+## Next minor(v0.7)
+* Redesign menu side, following list to popup setting, 
+* Call post api from UI to check/uncheck a keyword,
+* Call post api from UI to unfollow a keyword

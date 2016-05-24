@@ -6,7 +6,7 @@
 
   <ion-content>
     <ion-list id="newsfeed">
-      <ion-item ng-repeat="item in highlightNews" ng-class="{'star': item.star}" 
+      <ion-item collection-repeat="item in highlightNews" ng-class="{'star': item.star}" 
       class="item-thumbnail-left item-text-wrap item-icon-right">
         <img src="{{item.thumbnail}}" alt="thumbnail">
         <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">

@@ -11,8 +11,8 @@
 	</ion-nav-bar>
 
 	<ion-content>
-		<ion-list id="newsfeed" ng-repeat="item in searchResult">
-			<ion-item class="item-thumbnail-left item-text-wrap">
+		<ion-list id="newsfeed">
+			<ion-item collection-repeat="item in searchResult" class="item-thumbnail-left item-text-wrap">
 			    <img src="{{item.thumbnail}}" alt="thumbnail">
 			    <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
 		      		<h2>{{item.title}}</h2>

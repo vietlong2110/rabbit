@@ -1,8 +1,7 @@
 angular.module('starter.controller', [])
 
 //Newsfeed controller
-.controller('NewsfeedController', ['$rootScope', '$scope', '$http', '$state',
-function($rootScope, $scope, $http, $state) {
+.controller('NewsfeedController', function($rootScope, $scope, $http, $state) {
     $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
         $rootScope.news = data.news;
         $rootScope.highlightNews = [];
@@ -33,10 +32,9 @@ function($rootScope, $scope, $http, $state) {
             });
         };
     });
-}])
+})
 
-.controller('SearchController', ['$rootScope', '$scope', '$state', '$http',
-function($rootScope, $scope, $state, $http) {
+.controller('SearchController', function($rootScope, $scope, $state, $http) {
     var found = false;
     for (i in $rootScope.keywords)
         if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
@@ -91,9 +89,9 @@ function($rootScope, $scope, $state, $http) {
             });
         }
     };
-}])
+})
 
-.controller('ReadingController', ['$rootScope', '$scope', '$sce', function($rootScope, $scope, $sce) {
+.controller('ReadingController', function($rootScope, $scope, $sce) {
 	$scope.url = $rootScope.currentNewsState.url;
 	$scope.highlight = $rootScope.currentNewsState.star;
 	$scope.trustSrc = function(src) {
@@ -111,9 +109,9 @@ function($rootScope, $scope, $state, $http) {
 				break;
 			}
 	};
-}])
+})
 
-.controller('HighlightController', ['$rootScope', '$scope', '$state', function($rootScope, $scope, $state) {
+.controller('HighlightController', function($rootScope, $scope, $state) {
 	$scope.deleteItem = function(item) {
 		$rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
 		$state.go('app.highlight', {});
@@ -121,15 +119,36 @@ function($rootScope, $scope, $state, $http) {
 	$scope.assignCurrentNews = function(item) {
     	$rootScope.currentNewsState = item;
     };
-}])
+})
 
-.controller('KeywordsController',['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
+.controller('KeywordsController',
+function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate) {
 	$http.get('http://localhost:8080/clientapi/getlist')
     .success(function(data) {
 		$rootScope.keywords = data.keywords;
 		$scope.allListChecked = true;
 		$scope.shouldShowDelete = false;
 		$scope.onHighlight = false;
+
+        $ionicModal.fromTemplateUrl('templates/home-settings.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.modal = modal;
+        });
+
+        $scope.openSetting = function() {
+            $scope.modal.show();
+        };
+
+        $scope.closeSetting = function() {
+            $scope.modal.hide();
+        };
+
+        $scope.save = function() {
+            $scope.modal.hide();
+            $ionicSideMenuDelegate.toggleLeft();
+        };
 
 		$scope.deleteItem = function(item) {
             for (i = 0; i < $rootScope.keywords.length; i++)
@@ -166,4 +185,4 @@ function($rootScope, $scope, $state, $http) {
         	}
         };
 	});
-}]);
+});

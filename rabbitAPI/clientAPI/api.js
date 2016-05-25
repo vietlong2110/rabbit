@@ -9,7 +9,7 @@ var router = express.Router();
 var async = require('async');
 var mongoose = require('mongoose');
 
-var userId = '574042c521541890eca796fd'; //replace after creating login part
+var userId = '574525f0fe6953487c13aa90'; //replace after creating login part
 
 //API router for searching a keyword/hashtag
 router.get('/search', function(req, res) { 
@@ -80,8 +80,12 @@ router.get('/getlist', function(req, res) {
 //API router for updating the following list
 router.post('/updatelist', function(req, res) {
 	var List = require('../clientController/list.js');
+	var checkList = [];
 
-	List.updatelist(userId, function(updated) {
+	for (i in req.body.keywords)
+		checkList.push(req.body.keywords[i].isChecked);
+
+	List.updateList(userId, checkList, function(updated) {
 		res.json({update: updated});
 	});
 });

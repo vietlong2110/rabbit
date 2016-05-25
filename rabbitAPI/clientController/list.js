@@ -1,6 +1,6 @@
 /********************************************************************************
 *		This controller include all functions relating to following list		*
-*********************************************************************************/
+********************************************************************************/
 
 var mongoose = require('mongoose');
 var User = require('../models/users.js');
@@ -8,7 +8,7 @@ var User = require('../models/users.js');
 //Get following list controller
 var getList = function(userId, callback) {
 	User.findById(userId).exec(function(err, user) {
-		if (err) {
+		if (err) { //process error case later
 			console.log(err);
 			callback([], []);
 		}
@@ -24,9 +24,9 @@ var getList = function(userId, callback) {
 module.exports.getList = getList;
 
 //Update following list controller
-var updateList = function(userId, callback) {
+var updateList = function(userId, checkList, callback) {
 	User.findById(userId).exec(function(err, user) {
-		if (err) {
+		if (err) { //process error case later
 			console.log(err);
 			callback(false);
 		}
@@ -36,7 +36,16 @@ var updateList = function(userId, callback) {
 			callback(false);
 		}
 
-		
+		user.checkList = checkList; //update item view
+
+		user.save(function(err) {
+			if (err) { //process error case later
+				console.log(err);
+				callback(false);
+			}
+
+			callback(true);
+		});
 	});
 };
 module.exports.updateList = updateList;

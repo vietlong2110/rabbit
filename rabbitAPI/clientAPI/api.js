@@ -9,7 +9,7 @@ var router = express.Router();
 var async = require('async');
 var mongoose = require('mongoose');
 
-var userId = '574525f0fe6953487c13aa90'; //replace after creating login part
+var userId = '5745b2c1b9c17b5d9d7604a6'; //replace after creating login part
 
 //API router for searching a keyword/hashtag
 router.get('/search', function(req, res) { 

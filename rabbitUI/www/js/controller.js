@@ -57,6 +57,7 @@ angular.module('starter.controller', [])
             $rootScope.keywordSearch = data.keywordSearch;
             $rootScope.queryTitle = data.queryTitle;
             var found = false;
+
             for (i in $rootScope.keywords)
                 if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
                     found = true;
@@ -126,7 +127,7 @@ angular.module('starter.controller', [])
 
 //Menu side Controller
 .controller('KeywordsController',
-function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate) {
+function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate, $ionicPopup) {
     $ionicModal.fromTemplateUrl('templates/home-settings.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -142,6 +143,10 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate)
             $scope.allListChecked = true;
             $scope.shouldShowDelete = false;
             $scope.onHighlight = false;
+
+            $scope.unfollow = function() {
+
+            };
 
             $scope.deleteItem = function(item) {
                 for (i = 0; i < $rootScope.keywords.length; i++)
@@ -164,13 +169,26 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate)
         $http.post('http://localhost:8080/clientapi/updatelist', {
             keywords: $rootScope.keywords
         }).success(function(updated) {
-            //if (!updated)
+            if (updated)
+                $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
+                    $rootScope.news = data.news;
+                });
+            //else
         });
     };
 
     $scope.save = function() {
         $ionicSideMenuDelegate.toggleLeft();
         $scope.modal.hide();
+        $http.post('http://localhost:8080/clientapi/updatelist', {
+            keywords: $rootScope.keywords
+        }).success(function(updated) {
+            if (updated)
+                $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
+                    $rootScope.news = data.news;
+                });
+            //else
+        });
     };
 
     $scope.toggleHighlight = function() {

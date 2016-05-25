@@ -24,18 +24,16 @@
         </div>
 
         <ion-scroll style="height:247px;" ng-hide="onHighlight">
-            <ion-list>
-                <ion-item id="list" collection-repeat="item in keywords" class="item item-icon-right 
-                item-icon-left item-checkbox">
-                    <label ng-show="!shouldShowDelete" class="checkbox checkbox-calm">
-                        <input type="checkbox" ng-model="item.isChecked">
-                    </label>
-                    {{item.keyword}}
-                    <i id="unfollow" class="button button-outline button-small icon">
-                        Unfollow
-                    </i>
-                </ion-item>
-            </ion-list>
+            <div id="list" collection-repeat="item in keywords" 
+            class="item item-icon-right item-icon-left item-checkbox">
+                <label class="checkbox checkbox-calm">
+                    <input type="checkbox" ng-model="item.isChecked">
+                </label>
+                {{item.keyword}}
+                <i id="unfollow" ng-click="unfollow()" class="button button-outline button-small icon">
+                    Unfollow
+                </i>
+            </div>
         </ion-scroll>
 
         <div class="item item-divider item-icon-left">
@@ -51,18 +49,16 @@
         </div>
 
         <ion-scroll style="height:247px;" ng-hide="onHighlight">
-            <ion-list>
-                <ion-item id="list" collection-repeat="item in keywords" class="item item-icon-right 
-                item-icon-left item-checkbox">
-                    <label ng-show="!shouldShowDelete" class="checkbox checkbox-calm">
-                        <input type="checkbox" ng-model="item.isChecked">
-                    </label>
-                    {{item.keyword}}
-                    <i id="unfollow" class="button button-outline button-small icon">
-                        Unfollow
-                    </i>
-                </ion-item>
-            </ion-list>
+            <div id="list" collection-repeat="item in keywords" 
+            class="item item-icon-right item-icon-left item-checkbox">
+                <label class="checkbox checkbox-calm">
+                    <input type="checkbox" ng-model="item.isChecked">
+                </label>
+                {{item.keyword}}
+                <i id="unfollow" ng-click="" class="button button-outline button-small icon">
+                    Unfollow
+                </i>
+            </div>
         </ion-scroll>
 
         <button id="list" ng-click="save()" class="button button-full button-positive">

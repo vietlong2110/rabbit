@@ -22,3 +22,21 @@ var getList = function(userId, callback) {
 	});
 };
 module.exports.getList = getList;
+
+//Update following list controller
+var updateList = function(userId, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err) {
+			console.log(err);
+			callback(false);
+		}
+
+		if (user === null) {
+			console.log('User not found!');
+			callback(false);
+		}
+
+		
+	});
+};
+module.exports.updateList = updateList;

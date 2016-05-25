@@ -3,20 +3,19 @@
         <ion-content class="custom">
             <ion-list>
                 <ion-item id="header-menu" class="item item-icon-left item-icon-right">
-                    <i menu-close class="icon ion-home"></i>
+                    <i menu-close class="icon ion-ios-list"></i>
                     <a menu-close href="#/app/newsfeed">
-                    Home
+                        Newsfeed
                     </a>
 
                     <i class="icon ion-gear-a" ng-click="openSetting()"></i>
                 </ion-item>
-                <ion-item id="header-menu" class="item item-icon-left item-icon-right">
-                    <i class="icon ion-android-list"></i>
+                <ion-item id="header-menu" class="item item-icon-left">
+                    <i class="icon ion-ios-arrow-forward"></i>
+                    <span class="badge badge-stable">0</span>
                     
                     Following list
 
-                    <i class="icon ion-ios-arrow-forward"></i>
-                    <!-- <i id="trash" ng-click="toggleDelete()" class="icon ion-trash-a stable"></i> -->
                 </ion-item>
                 <ion-item id="header-menu" ng-hide="onHighlight" 
                 class="item-icon-left">

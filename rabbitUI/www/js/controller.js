@@ -1,25 +1,24 @@
 angular.module('starter.controller', [])
 
-//Newsfeed controller
+//Newsfeed Controller
 .controller('NewsfeedController', function($rootScope, $scope, $http, $state) {
     $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
-        $rootScope.news = data.news;
-        $rootScope.highlightNews = [];
-        $scope.showSearchResult = false;
-        $scope.searchResult = [];
+        $rootScope.news = data.news; //newsfeed
+        $rootScope.highlightNews = []; //favorite links
+        $scope.searchResult = []; //search results
         $rootScope.firstBlood = false;
 
-        $scope.toggleStar = function(item) {
+        $scope.toggleStar = function(item) { //add to favorite list
             item.star = !item.star;
             if (item.star)
             	$rootScope.highlightNews.push(item);
             else $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
         };
-        $scope.assignCurrentNews = function(item) {
+        $scope.assignCurrentNews = function(item) { //save the last link that we read
             $rootScope.firstBlood = true;
         	$rootScope.currentNewsState = item;
         };
-        $scope.search = function(value) {
+        $scope.search = function(value) { //search a keyword/hashtag
             $http.get('http://localhost:8080/clientapi/search', {
                 params: {
                     q: value
@@ -34,6 +33,7 @@ angular.module('starter.controller', [])
     });
 })
 
+//Search Controller
 .controller('SearchController', function($rootScope, $scope, $state, $http) {
     var found = false;
     for (i in $rootScope.keywords)
@@ -77,6 +77,7 @@ angular.module('starter.controller', [])
                 keyword: $rootScope.keywordSearch,
                 isChecked: true
             });
+            $rootScope.listCount++;
             $http.post('http://localhost:8080/clientapi/follow', {
                 q: $rootScope.keywordSearch
             }).success(function(data) {
@@ -91,6 +92,7 @@ angular.module('starter.controller', [])
     };
 })
 
+//Reading iframe Controller
 .controller('ReadingController', function($rootScope, $scope, $sce) {
 	$scope.url = $rootScope.currentNewsState.url;
 	$scope.highlight = $rootScope.currentNewsState.star;
@@ -111,6 +113,7 @@ angular.module('starter.controller', [])
 	};
 })
 
+//Favorite links Controller
 .controller('HighlightController', function($rootScope, $scope, $state) {
 	$scope.deleteItem = function(item) {
 		$rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
@@ -121,11 +124,13 @@ angular.module('starter.controller', [])
     };
 })
 
+//Menu side Controller
 .controller('KeywordsController',
 function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate) {
 	$http.get('http://localhost:8080/clientapi/getlist')
     .success(function(data) {
 		$rootScope.keywords = data.keywords;
+        $rootScope.listCount = data.keywords.length;
 		$scope.allListChecked = true;
 		$scope.shouldShowDelete = false;
 		$scope.onHighlight = false;

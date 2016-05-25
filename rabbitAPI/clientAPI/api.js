@@ -77,6 +77,15 @@ router.get('/getlist', function(req, res) {
 	});
 });
 
+//API router for updating the following list
+router.post('/updatelist', function(req, res) {
+	var List = require('../clientController/list.js');
+
+	List.updatelist(userId, function(updated) {
+		res.json({update: updated});
+	});
+});
+
 //API router for loading the newsfeed
 router.get('/getfeed', function(req, res) {
 	var Feed = require('../clientController/feed.js');

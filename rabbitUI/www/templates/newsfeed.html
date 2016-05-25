@@ -1,33 +1,33 @@
 <ion-view view-title="News">
-  <ion-nav-buttons side="secondary">
-    <a href="#/app/newsfeed/{{currentNewsState.id}}" 
-    class="icon ion-ios-book-outline button button-icon" ng-show="firstBlood"></a>
-  </ion-nav-buttons>
+    <ion-nav-buttons side="secondary">
+        <a href="#/app/newsfeed/{{currentNewsState.id}}" 
+        class="icon ion-ios-book-outline button button-icon" ng-show="firstBlood"></a>
+    </ion-nav-buttons>
 
-  <ion-content>
-    <ion-list id="newsfeed">
-      <ion-item ng-class="{'star': item.star}" collection-repeat="item in news"
-      class="item-thumbnail-left item-text-wrap item-icon-right">
-        <img src="{{item.thumbnail}}" alt="thumbnail">
-        <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
-          <h2>{{item.title}}</h2>
-          <p>{{item.hashtag}}</p>
-        </a>
-        <button class="button button-clear icon ion-star" ng-click="toggleStar(item)"
-        ng-class="{'button-energized': item.star}"></button>
-      </ion-item>
-    </ion-list>
-  </ion-content>
+    <ion-content>
+        <ion-list id="newsfeed">
+            <ion-item ng-class="{'star': item.star}" collection-repeat="item in news"
+            class="item-thumbnail-left item-text-wrap item-icon-right">
+                <img src="{{item.thumbnail}}" alt="thumbnail">
+                <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
+                    <h2>{{item.title}}</h2>
+                    <p>{{item.hashtag}}</p>
+                </a>
+                <button class="button button-clear icon ion-star" ng-click="toggleStar(item)"
+                ng-class="{'button-energized': item.star}"></button>
+            </ion-item>
+        </ion-list>
+    </ion-content>
 
-  <form ng-submit="search(value)">
-    <div class="bar bar-footer list item item-input-inset no-padding">
-      <div class="subscribe-field">
-        <label class="item item-input-wrapper">
-          <input type="text" ng-model="value" placeholder="Follow something...">
-        </label>
-      </div>
-      <button type="submit"
-      class="icon ion-ios-search-strong button button-positive full-button"></button>  
-    </div>
-  </form>
+    <form ng-submit="search(value)">
+        <div class="bar bar-footer list item item-input-inset no-padding">
+            <div class="subscribe-field">
+                <label class="item item-input-wrapper">
+                    <input type="text" ng-model="value" placeholder="Follow something...">
+                </label>
+            </div>
+            <button type="submit"
+            class="icon ion-ios-search-strong button button-positive full-button"></button>  
+        </div>
+    </form>
 </ion-view>

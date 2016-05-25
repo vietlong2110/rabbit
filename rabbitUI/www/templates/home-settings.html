@@ -5,20 +5,12 @@
             Save
         </i>
 
-        <h1 id="list" class="title">List Settings</h1>
+        <h1 id="list" class="title">Newsfeed Settings</h1>
 
         <i class="button button-icon icon-right ion-ios-search-strong button-clear"></i>
     </ion-header-bar>
-    <!-- <div class="bar bar-subheader item-input-inset">
     
-    <label class="item-input-wrapper">
-      <i class="icon ion-ios-search placeholder-icon"></i>
-      <input type="search" ng-model="query" placeholder="Search">
-    </label>
-  </div> -->
     <ion-content>
-    <!-- <ion-scroll style="height:520px;" ng-hide="onHighlight"> -->
-        <!-- <ion-list> -->
         <div class="item item-divider item-icon-left">
             <i ng-click="toggleCheckbox()" ng-show="allListChecked"
             class="icon ion-ios-checkmark-outline positive"></i>
@@ -26,27 +18,55 @@
             <i ng-click="toggleCheckbox()" ng-hide="allListChecked"
             class="icon ion-ios-checkmark-outline"></i>
 
-            Keyword List
-
-            <!-- <i id="unfollow" class="button icon icon-right button-outline">Unfollow</i> -->
+            Following Keyword
+            
+            <span class="badge badge-positive">{{listCount}}</span>
         </div>
-        <!-- </ion-list> -->
-        <ion-list>
-            <ion-item id="list" collection-repeat="item in keywords" class="item item-icon-right 
-            item-icon-left item-checkbox">
-                <label ng-show="!shouldShowDelete" class="checkbox checkbox-calm">
-                  <input type="checkbox" ng-model="item.isChecked">
-                </label>
-                {{item.keyword}}
-                <i id="unfollow" class="button button-outline icon icon-left">Unfollow</i>
-            </ion-item>
-        </ion-list>
-        <ion-item class="item item-divider">
-            Hashtag List
-        </ion-item>
-    <!-- </ion-scroll> -->
+
+        <ion-scroll style="height:246px;" ng-hide="onHighlight">
+            <ion-list>
+                <ion-item id="list" collection-repeat="item in keywords" class="item item-icon-right 
+                item-icon-left item-checkbox">
+                    <label ng-show="!shouldShowDelete" class="checkbox checkbox-calm">
+                        <input type="checkbox" ng-model="item.isChecked">
+                    </label>
+                    {{item.keyword}}
+                    <i id="unfollow" class="button button-outline button-small icon">
+                        Unfollow
+                    </i>
+                </ion-item>
+            </ion-list>
+        </ion-scroll>
+
+        <div class="item item-divider item-icon-left">
+            <i ng-click="toggleCheckbox()" ng-show="allListChecked"
+            class="icon ion-ios-checkmark-outline positive"></i>
+
+            <i ng-click="toggleCheckbox()" ng-hide="allListChecked"
+            class="icon ion-ios-checkmark-outline"></i>
+
+            Following Hashtag
+
+            <span class="badge badge-positive">{{listCount}}</span>
+        </div>
+
+        <ion-scroll style="height:246px;" ng-hide="onHighlight">
+            <ion-list>
+                <ion-item id="list" collection-repeat="item in keywords" class="item item-icon-right 
+                item-icon-left item-checkbox">
+                    <label ng-show="!shouldShowDelete" class="checkbox checkbox-calm">
+                        <input type="checkbox" ng-model="item.isChecked">
+                    </label>
+                    {{item.keyword}}
+                    <i id="unfollow" class="button button-outline button-small icon">
+                        Unfollow
+                    </i>
+                </ion-item>
+            </ion-list>
+        </ion-scroll>
+
+        <button id="list" ng-click="save()" class="button button-full button-positive">
+            Go to Newsfeed
+        </button>
     </ion-content>
-    <ion-footer-bar class="item-input-inset">
-    <button id="list" ng-click="save()" class="button button-full button-positive">Go to Newsfeed</button>
-    </ion-footer-bar>
 </ion-modal-view>

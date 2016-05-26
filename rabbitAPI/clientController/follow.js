@@ -1,6 +1,6 @@
-/********************************************************************************
-*		This controller include all functions relating to follow a thing		*
-********************************************************************************/
+/****************************************************************************************
+*		This controller include all functions relating to follow/unfoloow a thing		*
+****************************************************************************************/
 
 var async = require('async');
 
@@ -53,17 +53,18 @@ var addArticle = function(keyword, userId, callback) {
 
 		Feed.getFeedId(keyword, function(articleIds) {
 
-			//Design a model of database in such a genius way!
 			for (i in articleIds) {
-				if (user.articles.indexOf(articleIds[i]) === -1) {
+				var index = user.articles.indexOf(articleIds[i]);
+
+				if (index === -1) {
 					//contain article's ID
 					user.articles.push(articleIds[i]);
 					//contain article's corresponding relating keywords from user following list
 					user.articleKeywords.push({keywords: []}); 
+					user.articleKeywords[user.articleKeywords.length - 1].keywords.push(keyword);
 				}
-				if (user.articleKeywords[user.articles.indexOf(articleIds[i])]
-				.keywords.indexOf(keyword) === -1)
-					user.articleKeywords[user.articles.indexOf(articleIds[i])].keywords.push(keyword);
+				else if (user.articleKeywords[index].keywords.indexOf(keyword) === -1)
+					user.articleKeywords[index].keywords.push(keyword);
 			}
 
 			user.save(function(err) {
@@ -91,9 +92,11 @@ var deleteList = function(keyword, userId, callback) {
 			callback(false);
 		}
 
-		if (user.wordList.indexOf(keyword) !== -1) {
-			user.wordList.splice(user.wordList.indexOf(keyword), 1);
-			user.checkList.splice(user.checkList[user.wordList.indexOf(keyword)], 1);
+		var index = user.wordList.indexOf(keyword);
+
+		if (index !== -1) { //delete from both wordlist and checklist
+			user.wordList.splice(index, 1);
+			user.checkList.splice(index, 1);
 			user.save(function(err) {
 				if (err) { //process error case later
 					console.log(err);
@@ -107,3 +110,45 @@ var deleteList = function(keyword, userId, callback) {
 	});
 };
 module.exports.deleteList = deleteList;
+
+//Delete all articles that only relate to an unfollow keyword
+var deleteArticle = function(keyword, userId, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err) { //process error case later
+			console.log(err);
+			callback(false);
+		}
+
+		if (user === null) { //there is no user has this id in database
+			console.log('User not found!');
+			callback(false);
+		}
+		var remainingArticles = [], remainingArticleKeywords = [], j = 0;
+
+		for (i in user.articleKeywords) {
+			if (user.articleKeywords[i].keywords.length === 1 
+			&& user.articleKeywords[i].keywords[0] === keyword) //don't save unfollowed article
+				continue;
+			remainingArticles.push(user.articles[i]);
+			remainingArticleKeywords.push({keywords: user.articleKeywords[i].keywords});
+			var index = remainingArticleKeywords[j].keywords.indexOf(keyword);
+
+			if (index !== -1) //delete unfollowed keyword
+				remainingArticleKeywords[j].keywords.splice(index, 1);
+			j++;
+		}
+
+		//save
+		user.articles = remainingArticles;
+		user.articleKeywords = remainingArticleKeywords;
+		user.save(function(err) {
+			if (err) {
+				console.log(err);
+				callback(false);
+			}
+
+			callback(true);
+		});
+	});
+};
+module.exports.deleteArticle = deleteArticle;

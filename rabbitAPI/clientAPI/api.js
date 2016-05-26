@@ -7,7 +7,7 @@ var app = express();
 var router = express.Router();
 
 var Extract = require('../clientController/extract.js');
-var userId = '5745b2c1b9c17b5d9d7604a6'; //replace after creating login part
+var userId = '5746fe228460ac23fc41a78d'; //replace after creating login part
 
 //API router for searching a keyword/hashtag
 router.get('/search', function(req, res) { 
@@ -45,26 +45,17 @@ router.post('/follow', function(req, res) {
 	var Follow = require('../clientController/follow.js');
 
 	Follow.addList(query, userId, function(addlist) { //add keyword/hashtag to following list
-		if (addlist) { //added keyword/hashtag successfully to database
+		if (addlist) //added keyword/hashtag successfully to database
 			
 			//add article to their newsfeed corresponding to whatever keyword/hashtag they followed
 			Follow.addArticle(query, userId, function(addarticle) {
-				if (addarticle) {
+				if (addarticle) //added article successfully to database
 					Extract.getFeed(userId, function(feed) {
 						res.json({news: feed});
 					});
-				}
-				else res.json({news: []});
+				// else 
 			});
-		}
-		else res.json({news: []});
-	});
-});
-
-//API router for loading the following list
-router.get('/getlist', function(req, res) {
-	Extract.getList(userId, function(list) {
-		res.json({keywords: list});
+		// else
 	});
 });
 
@@ -75,6 +66,7 @@ router.post('/updatelist', function(req, res) {
 
 	for (i in req.body.keywords)
 		checkList.push(req.body.keywords[i].isChecked);
+
 	List.updateList(userId, checkList, function(updated) {
 		Extract.getFeed(userId, function(feed) {
 			res.json({news: feed});
@@ -86,8 +78,23 @@ router.post('/updatelist', function(req, res) {
 router.post('/unfollow', function(req, res) {
 	var Follow = require('../clientController/follow.js');
 
-	Follow.deleteList(req.body.keyword, userId, function(deleted) {
-		res.json({deleted: deleted});
+	Follow.deleteList(req.body.keyword, userId, function(deletedList) {
+		if (deletedList) //deleted keyword/hashtag successfully from database
+
+			//delete article from their newsfeed corresponding to whatever keyword/hashtag they followed
+			Follow.deleteArticle(req.body.keyword, userId, function(deletedArticle) {
+				if (deletedArticle) //deleted article successfully from database
+					Extract.getFeed(userId, function(feed) {
+						Extract.getList(userId, function(list) {
+							res.json({
+								news: feed,
+								keywords: list
+							});
+						});
+					});
+				//else
+			});
+		// else
 	});
 });
 
@@ -95,6 +102,13 @@ router.post('/unfollow', function(req, res) {
 router.get('/getfeed', function(req, res) {
 	Extract.getFeed(userId, function(feed) {
 		res.json({news: feed});
+	});
+});
+
+//API router for loading the following list
+router.get('/getlist', function(req, res) {
+	Extract.getList(userId, function(list) {
+		res.json({keywords: list});
 	});
 });
 

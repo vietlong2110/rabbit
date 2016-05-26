@@ -4,6 +4,7 @@
 
 var mongoose = require('mongoose');
 
+//get current keyword/hashtag list controller
 var getList = function(userId, callback) {
 	var List = require('./list.js');
 
@@ -21,6 +22,7 @@ var getList = function(userId, callback) {
 };
 module.exports.getList = getList;
 
+//get current newsfeed controller
 var getFeed = function(userId, callback) {
 	var Feed = require('./feed.js');
 

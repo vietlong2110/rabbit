@@ -147,33 +147,17 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
                     var confirmPopup = $ionicPopup.confirm({
                         title: 'Are you sure you want to unfollow everything relating to "' 
                         + item.keyword + '"?',
-                        scope: $scope,
-                        buttons: [
-                            {text: 'Cancel'},
-                            {
-                                text: 'Unfollow',
-                                type: 'button-positive'
-                            }
-                        ]
+                        scope: $scope
                     });
 
                     confirmPopup.then(function(res) {
                         if (res) {
                             $http.post('http://localhost:8080/clientapi/unfollow', {
                                 keyword: item.keyword
-                            })
-                            .success(function(updated) {
-                                if (updated) {
-                                    $http.get('http://localhost:8080/clientapi/getlist')
-                                    .success(function(data) {
-                                        $rootScope.keywords = data.keywords;
-                                    });
-                                    $http.get('http://localhost:8080/clientapi/getfeed')
-                                    .success(function(data) {
-                                        $rootScope.news = data.news;
-                                    });
-                                }
-                                //else
+                            }).success(function(data) {
+                                $rootScope.keywords = data.keywords;        
+                                $rootScope.listCount = data.keywords.length;
+                                $rootScope.news = data.news;
                             })
                         }
                     });

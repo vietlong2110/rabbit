@@ -17,7 +17,7 @@ var addList = function(keyword, userId, callback) {
 
 		if (user === null) { //there is no user has this id in database
 			console.log('User not found!');
-			callback(0);
+			callback(false);
 		}
 
 		if (user.wordList.indexOf(keyword) === -1) { //add keyword and its default setting is checked
@@ -26,12 +26,12 @@ var addList = function(keyword, userId, callback) {
 			user.save(function(err) {
 				if (err) { //process error case later
 					console.log(err);
-					callback();
+					callback(false);
 				}
-				callback(1); //just followed!
+				callback(true); //just followed!
 			});
 		}
-		else callback(2); //already followed
+		else callback(true); //already followed
 	});
 };
 module.exports.addList = addList;
@@ -46,7 +46,7 @@ var addArticle = function(keyword, userId, callback) {
 
 		if (user === null) { //there is no user has this id in database
 			console.log('User not found!');
-			callback(0);
+			callback(false);
 		}
 
 		var Feed = require('./feed.js');
@@ -77,3 +77,33 @@ var addArticle = function(keyword, userId, callback) {
 	});
 };
 module.exports.addArticle = addArticle;
+
+//Delete an unfollow keyword from following list
+var deleteList = function(keyword, userId, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err) { //process error case later
+			console.log(err);
+			callback(false);	
+		}
+
+		if (user === null) { //there is no user has this id in database
+			console.log('User not found!');
+			callback(false);
+		}
+
+		if (user.wordList.indexOf(keyword) !== -1) {
+			user.wordList.splice(user.wordList.indexOf(keyword), 1);
+			user.checkList.splice(user.checkList[user.wordList.indexOf(keyword)], 1);
+			user.save(function(err) {
+				if (err) { //process error case later
+					console.log(err);
+					callback(false);
+				}
+
+				callback(true);
+			});
+		}
+		else callback(true);
+	});
+};
+module.exports.deleteList = deleteList;

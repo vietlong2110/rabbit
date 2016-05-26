@@ -82,12 +82,8 @@ angular.module('starter.controller', [])
             $http.post('http://localhost:8080/clientapi/follow', {
                 q: $rootScope.keywordSearch
             }).success(function(data) {
-                if (data.followed >= 1) {
-                    $rootScope.followed = true;
-                    $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
-                        $rootScope.news = data.news;
-                    });
-                }
+                $rootScope.followed = true;
+                $rootScope.news = data.news;
             });
         }
     };
@@ -135,76 +131,104 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
         $scope.modal = modal;
     });
 
-    $scope.openSetting = function() {
-        $scope.modal.show();
-        $http.get('http://localhost:8080/clientapi/getlist').success(function(data) {
-            $rootScope.keywords = data.keywords;
-            $rootScope.listCount = data.keywords.length;
-            $scope.allListChecked = true;
-            $scope.shouldShowDelete = false;
-            $scope.onHighlight = false;
+    $http.get('http://localhost:8080/clientapi/getlist').success(function(data) {
+        $rootScope.keywords = data.keywords;
+        $rootScope.listCount = data.keywords.length;
+        $scope.allListChecked = true;
+        $scope.onHighlight = false;
 
-            $scope.unfollow = function() {
+        $scope.openSetting = function() {
+            $scope.modal.show();
+            $http.get('http://localhost:8080/clientapi/getlist').success(function(data) {
+                $rootScope.keywords = data.keywords;
+                $rootScope.listCount = data.keywords.length;
 
-            };
+                $scope.unfollow = function(item) {
+                    var confirmPopup = $ionicPopup.confirm({
+                        title: 'Are you sure you want to unfollow everything relating to "' 
+                        + item.keyword + '"?',
+                        scope: $scope,
+                        buttons: [
+                            {text: 'Cancel'},
+                            {
+                                text: 'Unfollow',
+                                type: 'button-positive'
+                            }
+                        ]
+                    });
 
-            $scope.deleteItem = function(item) {
-                for (i = 0; i < $rootScope.keywords.length; i++)
-                    if ($rootScope.keywords[i].keyword === item.keyword) {
-                        $rootScope.keywords.splice(i, 1);
-                        break;
-                    }
-            };
+                    confirmPopup.then(function(res) {
+                        if (res) {
+                            $http.post('http://localhost:8080/clientapi/unfollow', {
+                                keyword: item.keyword
+                            })
+                            .success(function(updated) {
+                                if (updated) {
+                                    $http.get('http://localhost:8080/clientapi/getlist')
+                                    .success(function(data) {
+                                        $rootScope.keywords = data.keywords;
+                                    });
+                                    $http.get('http://localhost:8080/clientapi/getfeed')
+                                    .success(function(data) {
+                                        $rootScope.news = data.news;
+                                    });
+                                }
+                                //else
+                            })
+                        }
+                    });
+                };
 
-            $scope.toggleCheckbox = function() {
-                $scope.allListChecked = !$scope.allListChecked;
-                for (i = 0; i < $rootScope.keywords.length; i++)
-                    $rootScope.keywords[i].isChecked = $scope.allListChecked;
-            };
-        });
-    };
+                $scope.deleteItem = function(item) {
+                    for (i = 0; i < $rootScope.keywords.length; i++)
+                        if ($rootScope.keywords[i].keyword === item.keyword) {
+                            $rootScope.keywords.splice(i, 1);
+                            break;
+                        }
+                };
 
-    $scope.closeSetting = function() {
-        $scope.modal.hide();
-        $http.post('http://localhost:8080/clientapi/updatelist', {
-            keywords: $rootScope.keywords
-        }).success(function(updated) {
-            if (updated)
-                $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
-                    $rootScope.news = data.news;
-                });
-            //else
-        });
-    };
+                $scope.toggleCheckbox = function() {
+                    $scope.allListChecked = !$scope.allListChecked;
+                    for (i = 0; i < $rootScope.keywords.length; i++)
+                        $rootScope.keywords[i].isChecked = $scope.allListChecked;
+                };
+            });
+        };
 
-    $scope.save = function() {
-        $ionicSideMenuDelegate.toggleLeft();
-        $scope.modal.hide();
-        $http.post('http://localhost:8080/clientapi/updatelist', {
-            keywords: $rootScope.keywords
-        }).success(function(updated) {
-            if (updated)
-                $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
-                    $rootScope.news = data.news;
-                });
-            //else
-        });
-    };
+        $scope.closeSetting = function() {
+            $scope.modal.hide();
+            $http.post('http://localhost:8080/clientapi/updatelist', {
+                keywords: $rootScope.keywords
+            }).success(function(data) {
+                $rootScope.news = data.news;
+            });
+        };
 
-    $scope.toggleHighlight = function() {
-    	$scope.onHighlight = !$scope.onHighlight;
-    	if (!$scope.onHighlight) {
-    		for (i = 0; i < $rootScope.news.length; i++)
-    			if ($rootScope.news[i].star) {
-    				var ok = false;
-    				for (j = 0; j < $rootScope.highlightNews.length; j++)
-    					if ($rootScope.highlightNews[j] === $rootScope.news[i]) {
-    						ok = true;
-    						break;
-    					}
-    				if (!ok)
-    					$rootScope.news[i].star = false;
-    			}
-    	}
-    };
+        $scope.save = function() {
+            $ionicSideMenuDelegate.toggleLeft();
+            $scope.modal.hide();
+            $http.post('http://localhost:8080/clientapi/updatelist', {
+                keywords: $rootScope.keywords
+            }).success(function(data) {
+                $rootScope.news = data.news;
+            });
+        };
+
+        $scope.toggleHighlight = function() {
+        	$scope.onHighlight = !$scope.onHighlight;
+        	if (!$scope.onHighlight) {
+        		for (i = 0; i < $rootScope.news.length; i++)
+        			if ($rootScope.news[i].star) {
+        				var ok = false;
+        				for (j = 0; j < $rootScope.highlightNews.length; j++)
+        					if ($rootScope.highlightNews[j] === $rootScope.news[i]) {
+        						ok = true;
+        						break;
+        					}
+        				if (!ok)
+        					$rootScope.news[i].star = false;
+        			}
+        	}
+        };
+    });
 });

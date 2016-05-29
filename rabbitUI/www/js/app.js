@@ -23,6 +23,23 @@ angular.module('starter', ['ionic', 'starter.controller'])
   });
 })
 
+.directive('focus', function($timeout) {
+    return {
+        scope : {
+            trigger : '@focus'
+        },
+        link : function(scope, element) {
+            scope.$watch('trigger', function(value) {
+                if (value === "true") {
+                    $timeout(function() {
+                        element[0].focus();
+                    });
+                }
+            });
+        }
+    }
+})  
+
 .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
     .state('app', {
@@ -32,6 +49,7 @@ angular.module('starter', ['ionic', 'starter.controller'])
         controller: 'KeywordsController'
     })
     .state('app.newsfeed', {
+        // cache: false,
         url: '/newsfeed',
         views: {
             'newsfeedContent': {
@@ -49,8 +67,19 @@ angular.module('starter', ['ionic', 'starter.controller'])
             }
         }
     })
+    .state('app.suggest', {
+        cache: false,
+        url: '/suggest',
+        views: {
+            'newsfeedContent': {
+                templateUrl: 'templates/suggestion.html',
+                controller: 'SuggestController'
+            }
+        }
+    })
     .state('app.search', {
-        url: '/search/:q',
+        cache: false,
+        url: '/search',
         views: {
             'newsfeedContent': {
                 templateUrl: 'templates/search.html',

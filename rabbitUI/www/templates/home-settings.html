@@ -4,10 +4,16 @@
         class="button button-icon icon-left ion-ios-arrow-back button-clear">
             Save
         </i>
+        
+        <label id="search2" class="item-input item-input-wrapper">
+            <i class="icon icon-left ion-ios-search placeholder-icon"></i>
+            <input id="searchBarSetting" type="search" ng-model="query" placeholder="Search">
+        </label>
+        <!-- <h1 id="list" class="title">Newsfeed Settings</h1>
 
-        <h1 id="list" class="title">Newsfeed Settings</h1>
-
-        <i class="button button-icon icon-right ion-ios-search-strong button-clear"></i>
+        <button ng-click="onSearch()"
+        class="button button-icon icon-right ion-ios-search-strong button-clear">
+        </button> -->
     </ion-header-bar>
     
     <ion-content>
@@ -23,8 +29,8 @@
             <span class="badge badge-positive">{{listCount}}</span>
         </div>
 
-        <ion-scroll style="height:247px;" ng-hide="onHighlight">
-            <div id="list" collection-repeat="item in keywords" 
+        <ion-scroll style="height:529px;" ng-hide="onHighlight">
+            <div id="list" collection-repeat="item in keywords | filter:query" 
             class="item item-icon-right item-icon-left item-checkbox">
                 <label class="checkbox checkbox-calm">
                     <input type="checkbox" ng-model="item.isChecked">
@@ -36,7 +42,7 @@
             </div>
         </ion-scroll>
 
-        <div class="item item-divider item-icon-left">
+        <!-- <div class="item item-divider item-icon-left">
             <i ng-click="toggleCheckbox()" ng-show="allListChecked"
             class="icon ion-ios-checkmark-outline positive"></i>
 
@@ -49,7 +55,7 @@
         </div>
 
         <ion-scroll style="height:247px;" ng-hide="onHighlight">
-            <div id="list" collection-repeat="item in keywords" 
+            <div id="list" collection-repeat="item in keywords | filter:query" 
             class="item item-icon-right item-icon-left item-checkbox">
                 <label class="checkbox checkbox-calm">
                     <input type="checkbox" ng-model="item.isChecked">
@@ -59,7 +65,7 @@
                     Unfollow
                 </i>
             </div>
-        </ion-scroll>
+        </ion-scroll> -->
 
         <button id="list" ng-click="save()" class="button button-full button-positive">
             Go to Newsfeed

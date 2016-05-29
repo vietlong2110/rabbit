@@ -54,7 +54,8 @@ var getFeed = function(userId, callback) {
 				url: articleResult[i].url,
 				title: articleResult[i].title,
 				thumbnail: articleResult[i].thumbnail,
-				hashtag: articleResult[i].hashtag
+				hashtag: articleResult[i].hashtag,
+				star: false //will change later
 			});
 		
 		callback(feed);

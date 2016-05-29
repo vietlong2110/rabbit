@@ -1,13 +1,22 @@
 <ion-view view-title="{{queryTitle}}">
 	<ion-nav-bar class="bar bar-calm">
-		<ion-nav-back-button>
-			Back
-		</ion-nav-back-button>
+		<ion-nav-buttons side="left">
+			<button id="follow" ng-click="follow()" ng-hide="followed" 
+    		class="icon ion-android-add-circle button button-icon">
+    		Follow
+    		</button>
+    		<i class="icon ion-checkmark button button-icon" ng-show="followed"></i>
+		</ion-nav-buttons>
 		<ion-nav-buttons side="secondary">
-    		<a ng-click="follow()" class="icon ion-android-add button button-icon" 
-    		ng-hide="followed"></a>
-    		<a class="icon ion-checkmark-round button button-icon" ng-show="followed"></a>
+        	<a href="#/app/newfeed"> 
+        		<i class="button button-icon icon-right ion-home button-clear"></i>
+        	</a>
     	</ion-nav-buttons>
+    	<ion-nav-buttons side="right">
+			<button ng-click="back()" 
+        	class="button button-icon icon-right ion-ios-search-strong button-clear">
+        	</button>
+        </ion-nav-buttons>
 	</ion-nav-bar>
 
 	<ion-content>
@@ -21,8 +30,7 @@
 			</ion-item>
 		</ion-list>
 	</ion-content>
-
-	<form ng-submit="search(value)">
+	<!-- <form ng-submit="search(value)">
 	    <div class="bar bar-footer list item item-input-inset no-padding">
 	      <div class="subscribe-field">
 	        <label class="item item-input-wrapper">
@@ -32,5 +40,5 @@
 	      <button type="submit"
 	      class="icon ion-ios-search-strong button button-positive full-button"></button>  
 	    </div>
-    </form>
+    </form> -->
 </ion-view>

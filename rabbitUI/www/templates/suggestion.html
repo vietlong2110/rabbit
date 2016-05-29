@@ -1,0 +1,22 @@
+<ion-view>
+	<ion-nav-bar class="bar bar-calm">
+		<ion-nav-buttons side="left">
+			<button ng-click="back(value)"
+	        class="button button-icon icon-left ion-ios-arrow-back button-clear">
+	        </button>
+		</ion-nav-buttons>
+		<!-- <ion-nav-back-button>
+		</ion-nav-back-button> -->
+		<ion-nav-buttons side="right">
+	        <label id="search" class="item-input item-input-wrapper">
+	            <i class="icon icon-left ion-ios-search placeholder-icon"></i>
+	            <form ng-submit="search(value)">
+	                <input id="searchBar" type="search" ng-model="value" placeholder="Search" 
+	                focus="{{showSearchBar}}">
+	            </form>
+	        </label>
+	    </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content>
+    </ion-content>
+</ion-view>

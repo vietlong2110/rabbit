@@ -1,9 +1,9 @@
 angular.module('starter.controller', [])
 
 //Newsfeed Controller
-.controller('NewsfeedController', 
-function($rootScope, $scope, $http, $state, $ionicViewSwitcher) {
-    $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
+.controller('NewsfeedController', function($rootScope, $scope, apiServices, $state, $ionicViewSwitcher) {
+    // $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
+    apiServices.getFeed(function(data) {
         $rootScope.news = data.news; //newsfeed
         $rootScope.highlightNews = []; //favorite links
         $rootScope.searchResult = []; //search results
@@ -32,15 +32,11 @@ function($rootScope, $scope, $http, $state, $ionicViewSwitcher) {
     });
 })
 
-.controller('SuggestController', function($rootScope, $scope, $http, $state, $ionicHistory) {
+.controller('SuggestController', function($rootScope, $scope, apiServices, $state, $ionicHistory) {
     $rootScope.showSearchBar = true;
     $scope.search = function(value) { //search a keyword/hashtag
         $rootScope.value = value;
-        $http.get('http://localhost:8080/clientapi/search', {
-            params: {
-                q: value
-            }
-        }).success(function(data) {
+        apiServices.search(value, function(data) {
             $rootScope.searchResult = data.searchResult;
             $rootScope.keywordSearch = data.keywordSearch;
             $rootScope.queryTitle = data.queryTitle;
@@ -56,7 +52,7 @@ function($rootScope, $scope, $http, $state, $ionicViewSwitcher) {
 
 //Search Controller
 .controller('SearchController', 
-function($rootScope, $scope, $state, $http, $ionicHistory) {
+function($rootScope, $scope, $state, apiServices, $ionicHistory) {
     var found = false;
     for (i in $rootScope.keywords)
         if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
@@ -75,15 +71,13 @@ function($rootScope, $scope, $state, $http, $ionicHistory) {
 
     $scope.follow = function() { 
         if (!$rootScope.followed) {
-            $rootScope.followed = true;
             $rootScope.keywords.push({
                 keyword: $rootScope.keywordSearch,
                 isChecked: true
             });
             $rootScope.listCount++;
-            $http.post('http://localhost:8080/clientapi/follow', {
-                q: $rootScope.keywordSearch
-            }).success(function(data) {
+            apiServices.follow($rootScope.keywordSearch, function(data) {
+                $rootScope.followed = true;
                 $rootScope.news = data.news;
             });
         }
@@ -112,7 +106,12 @@ function($rootScope, $scope, $state, $http, $ionicHistory) {
 })
 
 //Favorite links Controller
-.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup) {
+.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup, $ionicViewSwitcher) {
+    $scope.onSearch = function() {
+        $ionicViewSwitcher.nextDirection('enter');
+        $state.go('app.suggest');
+    };
+
 	$scope.deleteItem = function(e, item) {
         e.preventDefault();
         e.stopPropagation();
@@ -140,7 +139,7 @@ function($rootScope, $scope, $state, $http, $ionicHistory) {
 
 //Menu side Controller
 .controller('KeywordsController',
-function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate, $ionicPopup) {
+function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, $ionicPopup, apiServices) {
     $ionicModal.fromTemplateUrl('templates/home-settings.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -148,7 +147,7 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
         $scope.modal = modal;
     });
 
-    $http.get('http://localhost:8080/clientapi/getlist').success(function(data) {
+    apiServices.getList(function(data) {
         $rootScope.keywords = data.keywords;
         $rootScope.listCount = data.keywords.length;
         $scope.allListChecked = true;
@@ -159,7 +158,7 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
             e.preventDefault(); 
             e.stopPropagation();
             $scope.modal.show();
-            $http.get('http://localhost:8080/clientapi/getlist').success(function(data) {
+            apiServices.getList(function(data) {
                 $rootScope.keywords = data.keywords;
                 $rootScope.listCount = data.keywords.length;
 
@@ -173,9 +172,7 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
 
                     confirmPopup.then(function(res) {
                         if (res) {
-                            $http.post('http://localhost:8080/clientapi/unfollow', {
-                                keyword: item.keyword
-                            }).success(function(data) {
+                            apiServices.unfollow(item.keyword, function(data) {
                                 $rootScope.keywords = data.keywords;        
                                 $rootScope.listCount = data.keywords.length;
                                 $rootScope.news = data.news;
@@ -202,19 +199,12 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
 
         $scope.closeSetting = function() {
             $scope.modal.hide();
-            $http.post('http://localhost:8080/clientapi/updatelist', {
-                keywords: $rootScope.keywords
-            }).success(function(data) {
-                $rootScope.news = data.news;
-            });
         };
 
         $scope.save = function() {
             $ionicSideMenuDelegate.toggleLeft();
             $scope.modal.hide();
-            $http.post('http://localhost:8080/clientapi/updatelist', {
-                keywords: $rootScope.keywords
-            }).success(function(data) {
+            apiServices.updateList($rootScope.keywords, function(data) {
                 $rootScope.news = data.news;
             });
         };
@@ -222,22 +212,5 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
         $scope.toggleList = function() {
             $scope.showList = !$scope.showList;
         };
-
-        // $scope.toggleHighlight = function() {
-        // 	$scope.onHighlight = !$scope.onHighlight;
-        // 	if (!$scope.onHighlight) {
-        // 		for (i = 0; i < $rootScope.news.length; i++)
-        // 			if ($rootScope.news[i].star) {
-        // 				var ok = false;
-        // 				for (j = 0; j < $rootScope.highlightNews.length; j++)
-        // 					if ($rootScope.highlightNews[j] === $rootScope.news[i]) {
-        // 						ok = true;
-        // 						break;
-        // 					}
-        // 				if (!ok)
-        // 					$rootScope.news[i].star = false;
-        // 			}
-        // 	}
-        // };
     });
 });

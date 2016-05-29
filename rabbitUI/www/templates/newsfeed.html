@@ -13,13 +13,13 @@
     <ion-content>
         <ion-list id="newsfeed">
             <ion-item ng-class="{'star': item.star}" collection-repeat="item in news"
-            class="item-thumbnail-left item-text-wrap item-icon-right">
+            class="item-thumbnail-left item-text-wrap item-icon-right" ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
                 <img src="{{item.thumbnail}}" alt="thumbnail">
-                <a nav-direction="forward" ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
+                <!-- <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}"> -->
                     <h2>{{item.title}}</h2>
                     <p>{{item.hashtag}}</p>
-                </a>
-                <i class="button button-clear icon ion-star padding-left" ng-click="toggleStar(item)"
+                <!-- </a> -->
+                <i class="button button-clear icon ion-star padding-left" ng-click="toggleStar($event, item)"
                 ng-class="{'button-energized': item.star}"></i>
             </ion-item>
         </ion-list>

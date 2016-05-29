@@ -47,7 +47,7 @@ module.exports.keywordToHashtag = keywordToHashtag;
 
 //Convert a string to a nice title
 var niceTitle = function(string) {
-	string = string.toLowerCase();
+	// string = string.toLowerCase();
 	string = string.charAt(0).toUpperCase() + string.slice(1); //Capitalize the first letter
 	return string;
 };

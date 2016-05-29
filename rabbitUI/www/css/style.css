@@ -1,6 +1,6 @@
 /* Empty. Add your own CSS if you like */
 
-.star {
+.star > .item-content {
 	background-color: #EEE8D6 !important;
 }
 
@@ -11,14 +11,14 @@
 /*Set the background to transparent for ion-item*/
 .custom .item {
   background-color: transparent;
-  border:none;   /*Removes all borders*/
-  border-top: 1px solid;   /*Top Border for each menu item*/
-  border-bottom:1px solid;   /*Bottom border for each menu item*/
-  border-color: #006583;   /*Sets colors for top and bottom border*/
+  border:none;  
+  border-top: 1px solid;   
+  border-bottom:1px solid;   
+  border-color: #006583; 
   color: white;   
 }
  
-/*Changes the border for the last item*/
+
 .custom .item:last-child {
   border-bottom: 1px solid #006583;
 }
@@ -40,9 +40,12 @@
 	background-color: #055166;
 }
 
-/*#keyword-list {
-	border-color: #005169;
-}*/
+#keyword-list {
+	background-color: transparent;
+	border:none;
+	border-bottom: 1px solid;
+	border-color: #055166;
+}
 
 #list-icon {
 	font-size: 150%;

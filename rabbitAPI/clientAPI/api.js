@@ -112,4 +112,8 @@ router.get('/getlist', function(req, res) {
 	});
 });
 
+router.get('/getfeedbykeyword', function(req, res) {
+	
+});
+
 module.exports = router;

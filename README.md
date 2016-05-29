@@ -60,9 +60,9 @@ Input keywords and hashtags, follow news and social media
 * Call post api from UI to check/uncheck a keyword and reload corresponding newfeed
 * Call post api from UI to unfollow a keyword
 
-### v0.7.1
+### v0.7.2
 * Redesign search UI (both in settings and newsfeed)
+* Create following list view and favorites view
 
 ## Next minor(v0.8)
-* Create following list view
 * Create loading effect

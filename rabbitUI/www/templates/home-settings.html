@@ -29,14 +29,15 @@
             <span class="badge badge-positive">{{listCount}}</span>
         </div>
 
-        <ion-scroll style="height:529px;" ng-hide="onHighlight">
+        <ion-scroll style="height:529px">
             <div id="list" collection-repeat="item in keywords | filter:query" 
             class="item item-icon-right item-icon-left item-checkbox">
                 <label class="checkbox checkbox-calm">
                     <input type="checkbox" ng-model="item.isChecked">
                 </label>
-                {{item.keyword}}
-                <i id="unfollow" ng-click="unfollow(item)" class="button button-outline button-small icon">
+                {{item.niceKeyword}}
+                <i id="unfollow" ng-click="unfollow(item)" 
+                class="button button-outline button-small icon">
                     Unfollow
                 </i>
             </div>

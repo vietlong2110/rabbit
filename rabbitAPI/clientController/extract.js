@@ -10,13 +10,17 @@ var getList = function(userId, callback) {
 
 	List.getList(userId, function(wordList, checkList) {
 		var followingList = [];
+		var Filter = require('../libs/filter.js');
 
-		for (i in wordList)
+		for (i in wordList) {
+			var niceKeyword = Filter.niceTitle(wordList[i]); //render a nice keyword
+
 			followingList.push({
+				niceKeyword: niceKeyword,
 				keyword: wordList[i],
 				isChecked: checkList[i]
 			});
-
+		}
 		callback(followingList);
 	});
 };

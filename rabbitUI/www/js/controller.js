@@ -8,7 +8,7 @@ function($rootScope, $scope, $http, $state, $ionicViewSwitcher) {
         $rootScope.highlightNews = []; //favorite links
         $rootScope.searchResult = []; //search results
         if ($rootScope.currentNewsState === undefined)
-            $rootScope.currentNewsState = '';
+            $rootScope.currentNewsState = $rootScope.news[0];
         // $rootScope.firstBlood = false;
 
         $scope.onSearch = function() {
@@ -16,7 +16,9 @@ function($rootScope, $scope, $http, $state, $ionicViewSwitcher) {
             $state.go('app.suggest');
         };
 
-        $scope.toggleStar = function(item) { //add to favorite list
+        $scope.toggleStar = function(e, item) { //add to favorite list
+            e.preventDefault(); 
+            e.stopPropagation();
             item.star = !item.star;
             if (item.star)
             	$rootScope.highlightNews.push(item);
@@ -61,9 +63,7 @@ function($rootScope, $scope, $state, $http, $ionicHistory) {
             found = true;
             break;
         }
-    if (found)
-        $rootScope.followed = true;
-    else $rootScope.followed = false;
+    $rootScope.followed = found;
 
     $scope.assignCurrentNews = function(item) {
         $rootScope.currentNewsState = item;
@@ -112,10 +112,26 @@ function($rootScope, $scope, $state, $http, $ionicHistory) {
 })
 
 //Favorite links Controller
-.controller('HighlightController', function($rootScope, $scope, $state) {
-	$scope.deleteItem = function(item) {
-		$rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
-		$state.go('app.highlight', {});
+.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup) {
+	$scope.deleteItem = function(e, item) {
+        e.preventDefault();
+        e.stopPropagation();
+        var confirmPopup = $ionicPopup.confirm({
+            title: 'Are you sure you want to remove this link from your favorite list?',
+            scope: $scope,
+            okText: 'Remove'
+        });
+
+        confirmPopup.then(function(res) {
+            if (res) {
+                for (i in $rootScope.news)
+                    if ($rootScope.news[i].star && $rootScope.news[i] === item)
+                        $rootScope.news[i].star = false;
+
+                $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
+                $state.go('app.highlight', {});    
+            }
+        });
 	};
 	$scope.assignCurrentNews = function(item) {
     	$rootScope.currentNewsState = item;
@@ -124,7 +140,7 @@ function($rootScope, $scope, $state, $http, $ionicHistory) {
 
 //Menu side Controller
 .controller('KeywordsController',
-function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate, $ionicPopup, $timeout) {
+function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate, $ionicPopup) {
     $ionicModal.fromTemplateUrl('templates/home-settings.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -137,8 +153,11 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
         $rootScope.listCount = data.keywords.length;
         $scope.allListChecked = true;
         $scope.onHighlight = false;
+        $scope.showList = false;
 
-        $scope.openSetting = function() {
+        $scope.openSetting = function(e) {
+            e.preventDefault(); 
+            e.stopPropagation();
             $scope.modal.show();
             $http.get('http://localhost:8080/clientapi/getlist').success(function(data) {
                 $rootScope.keywords = data.keywords;
@@ -200,21 +219,25 @@ function($rootScope, $scope, $http, $ionicModal, $state, $ionicSideMenuDelegate,
             });
         };
 
-        $scope.toggleHighlight = function() {
-        	$scope.onHighlight = !$scope.onHighlight;
-        	if (!$scope.onHighlight) {
-        		for (i = 0; i < $rootScope.news.length; i++)
-        			if ($rootScope.news[i].star) {
-        				var ok = false;
-        				for (j = 0; j < $rootScope.highlightNews.length; j++)
-        					if ($rootScope.highlightNews[j] === $rootScope.news[i]) {
-        						ok = true;
-        						break;
-        					}
-        				if (!ok)
-        					$rootScope.news[i].star = false;
-        			}
-        	}
+        $scope.toggleList = function() {
+            $scope.showList = !$scope.showList;
         };
+
+        // $scope.toggleHighlight = function() {
+        // 	$scope.onHighlight = !$scope.onHighlight;
+        // 	if (!$scope.onHighlight) {
+        // 		for (i = 0; i < $rootScope.news.length; i++)
+        // 			if ($rootScope.news[i].star) {
+        // 				var ok = false;
+        // 				for (j = 0; j < $rootScope.highlightNews.length; j++)
+        // 					if ($rootScope.highlightNews[j] === $rootScope.news[i]) {
+        // 						ok = true;
+        // 						break;
+        // 					}
+        // 				if (!ok)
+        // 					$rootScope.news[i].star = false;
+        // 			}
+        // 	}
+        // };
     });
 });

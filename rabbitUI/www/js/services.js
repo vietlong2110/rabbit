@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-.factory('apiServices', function($http) {
+.factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout) {
 	var domain = 'http://localhost:8080/clientapi';
 
 	var getFeedAPI = domain + '/getfeed';
@@ -18,7 +18,15 @@ angular.module('starter.services', [])
 
 	return {
 		getFeed: function(callback) {
+			$ionicLoading.show({
+				templateUrl: 'templates/loadingspinner.html',
+				noBackdrop: true
+			});
+			$timeout(function() {
+				$ionicLoading.hide();
+			}, 5000);
 			$http.get(getFeedAPI).success(function(data) {
+				$ionicLoading.hide();
 				callback(data);
 			});
 		},
@@ -35,25 +43,48 @@ angular.module('starter.services', [])
             });
 		},
 		search: function(value, callback) {
+			$ionicLoading.show({
+				templateUrl: 'templates/loadingspinner.html',
+				noBackdrop: true
+			});
+			$timeout(function() {
+				$ionicLoading.hide();
+			}, 5000);
 			$http.get(searchAPI, {
 	            params: {
 	                q: value
 	            }
 	        }).success(function(data) {
+	        	$ionicLoading.hide();
 	        	callback(data);
 	        });
 		},
-		follow: function(value, callback) {
+		follow: function(value, keyword, callback) {
+			$ionicLoading.show({
+				templateUrl: 'templates/unfollowspinner.html'
+			});
 			$http.post(followAPI, {
                 q: value
             }).success(function(data) {
+            	$ionicLoading.hide();
+            	var popup = $ionicPopup.alert({
+            		title: 'You have followed "' + keyword + '"',
+            		buttons: []
+            	});
+            	$timeout(function() {
+            		popup.close();
+            	}, 2000);
             	callback(data);
             });
 		},
 		unfollow: function(value, callback) {
+			$ionicLoading.show({
+				templateUrl: 'templates/unfollowspinner.html'
+			});
 			$http.post(unfollowAPI, {
                 keyword: value
             }).success(function(data) {
+            	$ionicLoading.hide();
             	callback(data);
             });
 		}

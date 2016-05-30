@@ -1,4 +1,4 @@
-# Rabbit Version 0.7.3
+# Rabbit Version 0.8
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -60,10 +60,15 @@ Input keywords and hashtags, follow news and social media
 * Call post api from UI to check/uncheck a keyword and reload corresponding newfeed
 * Call post api from UI to unfollow a keyword
 
-### v0.7.3
+### v0.8
 * Redesign search UI (both in settings and newsfeed)
 * Create following list view and favorites view
 * Put all client API to services
+* Create loading effect (all necessary action)
+* Redesign follow/unfollow button
+* Add announcement popups in all necessary action
 
-## Next minor(v0.8)
-* Create loading effect
+## Next minor(v0.9)
+* Call get api from UI to get only articles relating to a keyword but display them to newsfeed
+* Call post api from UI to update favorite articles/ update newsfeed
+* Call get api from UI to get favorite articles

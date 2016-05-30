@@ -1,22 +1,15 @@
 <ion-view view-title="{{queryTitle}}">
 	<ion-nav-bar class="bar bar-calm">
 		<ion-nav-buttons side="left">
-			<button id="follow" ng-click="follow()" ng-hide="followed" 
-    		class="icon ion-plus-circled button button-icon">
-    		Follow
-    		</button>
-    		<i class="icon ion-checkmark button button-icon" ng-show="followed"></i>
-		</ion-nav-buttons>
-		<ion-nav-buttons side="secondary">
-        	<a href="#/app/newfeed"> 
+			<a href="#/app/newfeed"> 
         		<i class="button button-icon icon-right ion-home button-clear"></i>
         	</a>
-    	</ion-nav-buttons>
-    	<ion-nav-buttons side="right">
-			<button ng-click="back()" 
+		</ion-nav-buttons>
+		<ion-nav-buttons side="secondary">
+    		<button ng-click="back()" 
         	class="button button-icon icon-right ion-ios-search-strong button-clear">
         	</button>
-        </ion-nav-buttons>
+    	</ion-nav-buttons>
 	</ion-nav-bar>
 
 	<ion-content>
@@ -30,4 +23,20 @@
 			</ion-item>
 		</ion-list>
 	</ion-content>
+
+	<div class="float-button" ng-hide="followed">
+		<span class="height-fix">
+			<a class="content">
+				<i class="ion-plus-round" ng-click="follow()"></i>
+			</a>
+		</span>
+	</div>
+	
+	<div class="float-button" ng-show="followed">
+		<span class="height-fix">
+			<a class="content">
+				<i class="ion-checkmark" ng-click="unfollow()"></i>
+			</a>
+		</span>
+	</div>
 </ion-view>

@@ -7,7 +7,7 @@ var app = express();
 var router = express.Router();
 
 var Extract = require('../clientController/extract.js');
-var userId = '5746fe228460ac23fc41a78d'; //replace after creating login part
+var userId = '574c8ac1bb33751a5ae7aa1a'; //replace after creating login part
 
 //API router for searching a keyword/hashtag
 router.get('/search', function(req, res) { 
@@ -51,7 +51,12 @@ router.post('/follow', function(req, res) {
 			Follow.addArticle(query, userId, function(addarticle) {
 				if (addarticle) //added article successfully to database
 					Extract.getFeed(userId, function(feed) {
-						res.json({news: feed});
+						Extract.getList(userId, function(list) {
+							res.json({
+								news: feed,
+								keywords: list
+							});
+						});
 					});
 				// else 
 			});

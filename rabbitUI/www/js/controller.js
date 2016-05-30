@@ -2,7 +2,6 @@ angular.module('starter.controller', [])
 
 //Newsfeed Controller
 .controller('NewsfeedController', function($rootScope, $scope, apiServices, $state, $ionicViewSwitcher) {
-    // $http.get('http://localhost:8080/clientapi/getfeed').success(function(data) {
     apiServices.getFeed(function(data) {
         $rootScope.news = data.news; //newsfeed
         $rootScope.highlightNews = []; //favorite links
@@ -10,26 +9,25 @@ angular.module('starter.controller', [])
         if ($rootScope.currentNewsState === undefined)
             $rootScope.currentNewsState = $rootScope.news[0];
         // $rootScope.firstBlood = false;
-
-        $scope.onSearch = function() {
-            $ionicViewSwitcher.nextDirection('enter');
-            $state.go('app.suggest');
-        };
-
-        $scope.toggleStar = function(e, item) { //add to favorite list
-            e.preventDefault(); 
-            e.stopPropagation();
-            item.star = !item.star;
-            if (item.star)
-            	$rootScope.highlightNews.push(item);
-            else $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
-        };
-
-        $scope.assignCurrentNews = function(item) { //save the last link that we read
-            // $rootScope.firstBlood = true;
-        	$rootScope.currentNewsState = item;
-        };
     });
+    $scope.onSearch = function() {
+        $ionicViewSwitcher.nextDirection('enter');
+        $state.go('app.suggest');
+    };
+
+    $scope.toggleStar = function(e, item) { //add to favorite list
+        e.preventDefault(); 
+        e.stopPropagation();
+        item.star = !item.star;
+        if (item.star)
+            $rootScope.highlightNews.push(item);
+        else $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
+    };
+
+    $scope.assignCurrentNews = function(item) { //save the last link that we read
+        // $rootScope.firstBlood = true;
+        $rootScope.currentNewsState = item;
+    };
 })
 
 .controller('SuggestController', function($rootScope, $scope, apiServices, $state, $ionicHistory) {
@@ -52,7 +50,7 @@ angular.module('starter.controller', [])
 
 //Search Controller
 .controller('SearchController', 
-function($rootScope, $scope, $state, apiServices, $ionicHistory) {
+function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
     var found = false;
     for (i in $rootScope.keywords)
         if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
@@ -69,18 +67,40 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory) {
         $ionicHistory.backView().go();
     };
 
-    $scope.follow = function() { 
+    $scope.follow = function() {
         if (!$rootScope.followed) {
             $rootScope.keywords.push({
                 keyword: $rootScope.keywordSearch,
                 isChecked: true
             });
             $rootScope.listCount++;
-            apiServices.follow($rootScope.keywordSearch, function(data) {
+            apiServices.follow($rootScope.keywordSearch, $rootScope.queryTitle, function(data) {
                 $rootScope.followed = true;
+                $rootScope.keywords = data.keywords;        
+                $rootScope.listCount = data.keywords.length;
                 $rootScope.news = data.news;
             });
         }
+    };
+
+    $scope.unfollow = function() {
+        var confirmPopup = $ionicPopup.confirm({
+            title: 'Are you sure you want to unfollow everything relating to "' 
+            + $rootScope.queryTitle + '"?',
+            scope: $scope,
+            okText: 'Unfollow'
+        });
+
+        confirmPopup.then(function(res) {
+            if (res) {
+                apiServices.unfollow($rootScope.keywordSearch, function(data) {
+                    $rootScope.followed = false;
+                    $rootScope.keywords = data.keywords;        
+                    $rootScope.listCount = data.keywords.length;
+                    $rootScope.news = data.news;
+                })
+            }
+        });
     };
 })
 

@@ -5,9 +5,8 @@
                 <ion-item menu-close href="#/app/newsfeed" id="header-menu" 
                 class="item-icon-left item-icon-right">
                     <i class="icon ion-ios-list"></i>
-                    <!-- <a menu-close href="#/app/newsfeed"> -->
+
                         Newsfeed
-                    <!-- </a> -->
 
                     <i class="icon ion-gear-a" ng-click="openSetting($event)"></i>
                 </ion-item>
@@ -20,7 +19,6 @@
                     Following list
 
                 </ion-item>
-            
 
                 <ion-scroll style="height:400px" ng-show="showList">
                     <ion-list ng-repeat="item in keywords">
@@ -51,13 +49,20 @@
     </ion-side-menu>
 
     <ion-side-menu-content>
-        <ion-nav-bar class="bar bar-calm">
-            <ion-nav-buttons side="left">
-                <button menu-toggle="left" class="icon ion-navicon button button-icon">
-                </button>
-            </ion-nav-buttons>
-        </ion-nav-bar>
+        <!-- <ion-tabs class="tabs-calm tabs-icon-top tabs-striped">
+            <ion-tab title="News" icon="ion-android-list" class="full-width-tab"> -->
+                <ion-nav-bar class="bar bar-calm">
+                    <ion-nav-buttons side="left">
+                        <button menu-toggle="left" class="icon ion-navicon button button-icon">
+                        </button>
+                    </ion-nav-buttons>
+                </ion-nav-bar>
+                <ion-nav-view name="newsfeedContent"></ion-nav-view>
+            <!-- </ion-tab>
 
-        <ion-nav-view name="newsfeedContent"></ion-nav-view>
+            <ion-tab title="Social Media" icon="ion-android-share-alt" class="full-width-tab">
+
+            </ion-tab>
+        </ion-tabs> -->
     </ion-side-menu-content>
 </ion-side-menus>

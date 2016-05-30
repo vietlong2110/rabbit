@@ -95,3 +95,51 @@
 	padding-left: 1px;
 	padding-right: 4px;
 }
+
+.full-width-tab {
+	max-width: 100% !important;
+	/*font-size: 200%;*/
+}
+
+.loading {
+	background: none !important;
+}
+
+.spinner svg {
+	width: 50px;
+	height: 50px;
+}
+
+.float-button {
+ 
+background-color: #387ef5;
+opacity: 0.9;
+color: white;
+border-radius: 50%;
+/*border-radius:15% 0 0 0;*/
+/*height: 30px;*/
+padding: 22px;
+position: fixed;
+bottom: 5%; /* Adjust height */
+right: 5%; /* Adjust position */
+/*z-index: 1000;*/
+}
+ 
+.float-button .height_fix {
+  margin-top: 100%;
+  border: 1px solid red;
+}
+ 
+.float-button .content {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 90%;
+  width: 90%;
+  font-size: 30px;
+  padding-top: 4px;
+  padding-left: 4px;
+  text-align: center;
+  margin-top: -20px;
+  color: white;
+}

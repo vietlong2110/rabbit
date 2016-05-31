@@ -1,7 +1,7 @@
 angular.module('starter.controller', [])
 
 //Newsfeed Controller
-.controller('NewsfeedController', function($rootScope, $scope, apiServices, $state, $ionicViewSwitcher) {
+.controller('NewsfeedController', function($rootScope, $scope, apiServices, $state) {
     apiServices.getFeed(function(data) {
         $rootScope.news = data.news; //newsfeed
         $rootScope.highlightNews = []; //favorite links
@@ -10,9 +10,9 @@ angular.module('starter.controller', [])
             $rootScope.currentNewsState = $rootScope.news[0];
         // $rootScope.firstBlood = false;
     });
+
     $scope.onSearch = function() {
-        $ionicViewSwitcher.nextDirection('enter');
-        $state.go('app.suggest');
+        $state.go('suggest');
     };
 
     $scope.toggleStar = function(e, item) { //add to favorite list
@@ -30,21 +30,24 @@ angular.module('starter.controller', [])
     };
 })
 
-.controller('SuggestController', function($rootScope, $scope, apiServices, $state, $ionicHistory) {
+.controller('SuggestController', 
+function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitcher) {
     $rootScope.showSearchBar = true;
+
     $scope.search = function(value) { //search a keyword/hashtag
         $rootScope.value = value;
         apiServices.search(value, function(data) {
             $rootScope.searchResult = data.searchResult;
             $rootScope.keywordSearch = data.keywordSearch;
             $rootScope.queryTitle = data.queryTitle;
-            $state.go('app.search');
+            $state.go('search');
         });
     };
 
     $scope.back = function(value) {
         $rootScope.value = value;
-        $ionicHistory.backView().go();
+        $ionicViewSwitcher.nextDirection('back');
+        $state.go('tabs.news');
     };
 })
 
@@ -52,6 +55,7 @@ angular.module('starter.controller', [])
 .controller('SearchController', 
 function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
     var found = false;
+    
     for (i in $rootScope.keywords)
         if ($rootScope.keywords[i].keyword === $rootScope.keywordSearch) {
             found = true;
@@ -66,6 +70,10 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
     $scope.back = function() {
         $ionicHistory.backView().go();
     };
+
+    // $scope.offFavor = function() {
+    //     $rootScope.onFavorite = false;
+    // };
 
     $scope.follow = function() {
         if (!$rootScope.followed) {
@@ -108,9 +116,11 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
 .controller('ReadingController', function($rootScope, $scope, $sce) {
 	$scope.url = $rootScope.currentNewsState.url;
 	$scope.highlight = $rootScope.currentNewsState.star;
+
 	$scope.trustSrc = function(src) {
 		return $sce.trustAsResourceUrl(src);
 	};
+
 	$scope.toggleStar = function() {
 		$scope.highlight = !$scope.highlight;
 		var item = $rootScope.currentNewsState;
@@ -126,10 +136,9 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
 })
 
 //Favorite links Controller
-.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup, $ionicViewSwitcher) {
+.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup) {
     $scope.onSearch = function() {
-        $ionicViewSwitcher.nextDirection('enter');
-        $state.go('app.suggest');
+        $state.go('suggest');
     };
 
 	$scope.deleteItem = function(e, item) {
@@ -148,18 +157,19 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
                         $rootScope.news[i].star = false;
 
                 $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
-                $state.go('app.highlight', {});    
+                $state.go('highlight');    
             }
         });
 	};
+
 	$scope.assignCurrentNews = function(item) {
     	$rootScope.currentNewsState = item;
     };
 })
 
 //Menu side Controller
-.controller('KeywordsController',
-function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, $ionicPopup, apiServices) {
+.controller('AppController', function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, 
+$ionicPopup, apiServices, $ionicHistory) {
     $ionicModal.fromTemplateUrl('templates/home-settings.html', {
         scope: $scope,
         animation: 'slide-in-up'
@@ -171,7 +181,6 @@ function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, $ionic
         $rootScope.keywords = data.keywords;
         $rootScope.listCount = data.keywords.length;
         $scope.allListChecked = true;
-        $scope.onHighlight = false;
         $scope.showList = false;
 
         $scope.openSetting = function(e) {
@@ -217,6 +226,20 @@ function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, $ionic
             });
         };
 
+        $scope.chooseItem = function() {
+            if ($ionicHistory.currentStateName() === 'tabs.highlight')
+                $scope.onFavorite = true;
+            else $scope.onFavorite = false;
+        };
+
+        $scope.onFavor = function() {
+            $scope.onFavorite = true;
+        };
+
+        $scope.offFavor = function() {
+            $scope.onFavorite = false;
+        };
+
         $scope.closeSetting = function() {
             $scope.modal.hide();
         };
@@ -227,6 +250,8 @@ function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, $ionic
             apiServices.updateList($rootScope.keywords, function(data) {
                 $rootScope.news = data.news;
             });
+            // $rootScope.onFavorite = false;
+            $state.go('tabs.news');
         };
 
         $scope.toggleList = function() {

@@ -1,25 +1,89 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+        <title></title>
 
-    <!-- compiled css output -->
-    <link href="css/ionic.app.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <!-- ionic/angularjs js -->
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
+        <!-- compiled css output -->
+        <link href="css/ionic.app.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+        <!-- ionic/angularjs js -->
+        <script src="lib/ionic/js/ionic.bundle.js"></script>
 
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
+        <!-- cordova script (this will be a 404 during development) -->
+        <script src="cordova.js"></script>
 
-    <!-- your app's js -->
-    <script src="js/app.js"></script>
-    <script src="js/controller.js"></script>
-    <script src="js/services.js"></script>
-  </head>
-  <body ng-app="starter">
-    <ion-nav-view></ion-nav-view>
-  </body>
+        <!-- your app's js -->
+        <script src="js/app.js"></script>
+        <script src="js/controller.js"></script>
+        <script src="js/services.js"></script>
+    </head>
+    <body ng-app="starter">
+        <ion-side-menus enable-menu-with-back-views="true" ng-controller="AppController">
+            <ion-side-menu side="left">
+                <ion-content class="custom">
+                    <ion-list>
+                        <ion-item menu-close href="#/tabs/news" id="header-menu" 
+                        class="item-icon-left item-icon-right" ng-click="offFavor()">
+                            <i class="icon ion-ios-list"></i>
+
+                                Newsfeed
+
+                            <i class="icon ion-gear-a" ng-click="openSetting($event)"></i>
+                        </ion-item>
+
+                        <ion-item id="header-menu" ng-click="toggleList()" class="item item-icon-left">
+                            <i class="icon ion-ios-arrow-right" ng-hide="showList"></i>
+                            <i class="icon ion-ios-arrow-down" ng-show="showList"></i>
+                            <span class="badge badge-stable">{{listCount}}</span>
+                            
+                            Following list
+
+                        </ion-item>
+
+                        <ion-scroll style="height:402px" ng-show="showList">
+                            <ion-list ng-repeat="item in keywords">
+                                <div id="keyword-list" class="item item-icon-left">
+                                    <i id="starList" class="icon ion-star stable"></i>
+                                    {{item.niceKeyword}}
+                                </div>
+                            </ion-list>
+                        </ion-scroll>
+
+                        <ion-item id="header-menu" menu-close href="#/tabs/highlight" 
+                        ng-click="onFavor()" class="item-icon-left">
+                            <i class="icon ion-star" ng-class="{'energized': onFavorite}"></i>
+
+                            Favorites
+
+                        </ion-item>
+
+                        <ion-item id="header-menu" class="item-icon-left">
+                            <i class="icon ion-arrow-graph-up-right stable"></i>
+                            Trending
+                        </ion-item>
+
+
+                        <ion-item id="header-menu" class="item-icon-left">
+                            <i class="icon ion-log-out stable"></i>
+                            Logout
+                        </ion-item>
+                    </ion-list>
+                </ion-content>
+            </ion-side-menu>
+
+            <ion-side-menu-content>
+                <ion-nav-bar class="bar bar-calm">
+                    <ion-nav-buttons side="left">
+                        <button menu-toggle="left" ng-click="chooseItem()"
+                        class="icon ion-navicon button button-icon">
+                        </button>
+                    </ion-nav-buttons>
+                </ion-nav-bar>
+
+                <ion-nav-view></ion-nav-view>
+            </ion-side-menu-content>
+        </ion-side-menus>
+    </body>
 </html>

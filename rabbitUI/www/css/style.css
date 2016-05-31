@@ -96,6 +96,10 @@
 	padding-right: 4px;
 }
 
+#starList {
+	font-size: 120%; padding-bottom: 4px;
+}
+
 .full-width-tab {
 	max-width: 100% !important;
 	/*font-size: 200%;*/

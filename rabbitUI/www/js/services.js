@@ -73,7 +73,7 @@ angular.module('starter.services', [])
             	});
             	$timeout(function() {
             		popup.close();
-            	}, 2000);
+            	}, 3000);
             	callback(data);
             });
 		},

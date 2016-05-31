@@ -43,59 +43,58 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     $ionicConfigProvider.tabs.position('bottom');
     $stateProvider
-    .state('app', {
-        url: '/app',
-        abstract: true,
-        templateUrl: 'templates/keywords.html',
-        controller: 'KeywordsController'
+    .state('suggest', {
+        cache: false,
+        url: '/suggest',
+        templateUrl: 'templates/suggestion.html',
+        controller: 'SuggestController'
     })
-    .state('app.newsfeed', {
-        // cache: false,
-        url: '/newsfeed',
+    .state('search', {
+        cache: false,
+        url: '/search',
+        templateUrl: 'templates/search.html',
+        controller: 'SearchController'
+    })
+    .state('tabs', {
+        url: '/tabs',
+        abstract: true,
+        templateUrl: 'templates/tabs.html'
+    })
+    .state('tabs.news', {
+        url: '/news',
         views: {
-            'newsfeedContent': {
+            'newsContent': {
                 templateUrl: 'templates/newsfeed.html',
                 controller: 'NewsfeedController'
             }
         }
     })
-    .state('app.reading', {
-        url: '/newsfeed/:newsfeedId',
+    .state('tabs.reading', {
+        url: '/news/:newsId',
         views: {
-            'newsfeedContent': {
+            'newsContent': {
                 templateUrl: 'templates/reading.html',
                 controller: 'ReadingController'
             }
         }
     })
-    .state('app.suggest', {
-        cache: false,
-        url: '/suggest',
+    .state('tabs.social', {
+        url: '/social',
         views: {
-            'newsfeedContent': {
-                templateUrl: 'templates/suggestion.html',
-                controller: 'SuggestController'
+            'socialmediaContent': {
+                templateUrl: 'templates/socialmedia.html'/*,
+                controller: 'NewsfeedController'*/
             }
         }
     })
-    .state('app.search', {
-        cache: false,
-        url: '/search',
-        views: {
-            'newsfeedContent': {
-                templateUrl: 'templates/search.html',
-                controller: 'SearchController'
-            }
-        }
-    })
-    .state('app.highlight', {
+    .state('tabs.highlight', {
         url: '/highlight',
         views: {
-            'newsfeedContent': {
+            'newsContent': {
                 templateUrl: 'templates/highlight.html',
                 controller: 'HighlightController'
             }
         }
     });
-    $urlRouterProvider.otherwise('/app/newsfeed');
+    $urlRouterProvider.otherwise('/tabs/news');
 });

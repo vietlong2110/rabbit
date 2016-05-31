@@ -1,8 +1,8 @@
 <ion-view view-title="{{queryTitle}}">
 	<ion-nav-bar class="bar bar-calm">
 		<ion-nav-buttons side="left">
-			<a href="#/app/newfeed"> 
-        		<i class="button button-icon icon-right ion-home button-clear"></i>
+			<a href="#/tabs/news"> 
+        		<i class="button button-icon icon-right ion-ios-list button-clear"></i>
         	</a>
 		</ion-nav-buttons>
 		<ion-nav-buttons side="secondary">
@@ -16,7 +16,7 @@
 		<ion-list id="newsfeed">
 			<ion-item collection-repeat="item in searchResult" class="item-thumbnail-left item-text-wrap">
 			    <img src="{{item.thumbnail}}" alt="thumbnail">
-			    <a ng-click="assignCurrentNews(item)" href="#/app/newsfeed/{{item.id}}">
+			    <a ng-click="assignCurrentNews(item)" href="#/tabs/news/{{item.id}}">
 		      		<h2>{{item.title}}</h2>
 		      		<p>{{item.hashtag}}</p>
 			    </a>

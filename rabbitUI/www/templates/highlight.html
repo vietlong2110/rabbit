@@ -1,6 +1,6 @@
 <ion-view view-title="Favorites">
     <ion-nav-buttons side="secondary">
-        <a href="#/app/newsfeed/{{currentNewsState.id}}" 
+        <a href="#/tabs/news/{{currentNewsState.id}}" 
         class="icon ion-ios-book-outline button button-icon"></a>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
@@ -12,7 +12,7 @@
     <ion-content>
         <ion-list id="newsfeed">
             <ion-item collection-repeat="item in highlightNews" ng-click="assignCurrentNews(item)" 
-            href="#/app/newsfeed/{{item.id}}" class="item-thumbnail-left item-text-wrap item-icon-right">
+            href="#/tabs/news/{{item.id}}" class="item-thumbnail-left item-text-wrap item-icon-right">
                 <img src="{{item.thumbnail}}" alt="thumbnail">
                 <h2>{{item.title}}</h2>
                 <p>{{item.hashtag}}</p>

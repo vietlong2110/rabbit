@@ -19,9 +19,17 @@ router.get('/search', function(req, res) {
 		var feedResult = [];
 		var hashtag = Filter.keywordToHashtag(query); //convert keyword to hashtag before sending JSON
 
+		searchResult.sort(function(a,b) { 
+			if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
+				return b.publishedDate - a.publishedDate; //sort by published date
+			else return b.evalScore - a.evalScore; //otherwise sort by ranking score
+		});
+
 		for (i in searchResult)
 			feedResult.push({
 				id: i,
+				eval: searchResult[i].evalScore,
+				date: searchResult[i].publishedDate,
 				url: searchResult[i].url,
 				title: searchResult[i].title,
 				thumbnail: searchResult[i].thumbnail,
@@ -106,7 +114,10 @@ router.post('/unfollow', function(req, res) {
 //API router for loading the newsfeed
 router.get('/getfeed', function(req, res) {
 	Extract.getFeed(userId, function(feed) {
-		res.json({news: feed});
+		res.json({
+			news: feed,
+			titleNews: 'News'
+		});
 	});
 });
 
@@ -118,7 +129,46 @@ router.get('/getlist', function(req, res) {
 });
 
 router.get('/getfeedbykeyword', function(req, res) {
-	
+	var Feed = require('../clientController/feed.js');
+	var Filter = require('../libs/filter.js');
+	var query = Filter.querySanitize(req.query.q); //sanitize query before processing
+
+	Feed.searchFeed(query, function(searchResult) { 
+		var feedResult = [];
+		var hashtag = Filter.keywordToHashtag(query); //convert keyword to hashtag before sending JSON
+
+		searchResult.sort(function(a,b) { 
+			var bToday = b.today[0] + b.today[1]*10 + b.today[2]*100;
+			var aToday = a.today[0] + a.today[1]*10 + a.today[2]*100;
+
+			if (bToday - aToday === 0) { //if 2 articles are on the same day
+				if (b.evalScore - a.evalScore === 0)  //if 2 articles have the same score
+					return b.publishedDate - a.publishedDate; //sort by published date
+				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
+			}
+			else return bToday - aToday; //otherwise sort by day first
+		});
+
+		for (i in searchResult)
+			feedResult.push({
+				id: i,
+				// eval: searchResult[i].evalScore,
+				// today: searchResult[i].today,
+				// date: searchResult[i].publishedDate,
+				url: searchResult[i].url,
+				title: searchResult[i].title,
+				thumbnail: searchResult[i].thumbnail,
+				hashtag: hashtag,
+				star: false //will change later
+			});
+
+		var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
+
+		res.json({
+			news: feedResult, //search results
+			titleNews: queryTitle //title for search view
+		});
+	});
 });
 
 module.exports = router;

@@ -42,6 +42,7 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.navBar.alignTitle('center');
     $stateProvider
     .state('suggest', {
         cache: false,
@@ -64,8 +65,8 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
         url: '/news',
         views: {
             'newsContent': {
-                templateUrl: 'templates/newsfeed.html',
-                controller: 'NewsfeedController'
+                templateUrl: 'templates/news.html',
+                controller: 'NewsController'
             }
         }
     })
@@ -82,8 +83,7 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
         url: '/social',
         views: {
             'socialmediaContent': {
-                templateUrl: 'templates/socialmedia.html'/*,
-                controller: 'NewsfeedController'*/
+                templateUrl: 'templates/socialmedia.html'
             }
         }
     })

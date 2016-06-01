@@ -1,5 +1,9 @@
 angular.module('starter.services', [])
 
+.factory('navServices', function() {
+
+})
+
 .factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout) {
 	var domain = 'http://localhost:8080/clientapi';
 
@@ -15,6 +19,8 @@ angular.module('starter.services', [])
 
 	var updateListAPI = domain + '/updatelist';
 
+	var getFeedByKeywordAPI = domain + '/getfeedbykeyword';
+
 
 	return {
 		getFeed: function(callback) {
@@ -26,6 +32,23 @@ angular.module('starter.services', [])
 				$ionicLoading.hide();
 			}, 5000);
 			$http.get(getFeedAPI).success(function(data) {
+				$ionicLoading.hide();
+				callback(data);
+			});
+		},
+		getFeedByKeyword: function(value, callback) {
+			$ionicLoading.show({
+				templateUrl: 'templates/loadingspinner.html',
+				noBackdrop: true
+			});
+			$timeout(function() {
+				$ionicLoading.hide();
+			}, 5000);
+			$http.get(getFeedByKeywordAPI, {
+				params: {
+					q: value
+				}
+			}).success(function(data) {
 				$ionicLoading.hide();
 				callback(data);
 			});

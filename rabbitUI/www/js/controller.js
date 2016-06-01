@@ -1,41 +1,43 @@
 angular.module('starter.controller', [])
 
-//Newsfeed Controller
-.controller('NewsfeedController', function($rootScope, $scope, apiServices, $state) {
+// Newsfeed Controller
+.controller('NewsController', function($rootScope, $scope, apiServices, $state) {
     apiServices.getFeed(function(data) {
-        $rootScope.news = data.news; //newsfeed
-        $rootScope.highlightNews = []; //favorite links
-        $rootScope.searchResult = []; //search results
+        $rootScope.news = data.news; // newsfeed
+        $rootScope.titleNews = data.titleNews; // title in newsfeed view
+        $rootScope.highlightNews = []; // favorite links
+
         if ($rootScope.currentNewsState === undefined)
             $rootScope.currentNewsState = $rootScope.news[0];
-        // $rootScope.firstBlood = false;
     });
 
-    $scope.onSearch = function() {
+    $scope.onSearch = function() { // enter search part
         $state.go('suggest');
     };
 
-    $scope.toggleStar = function(e, item) { //add to favorite list
+    $scope.toggleStar = function(e, item) { // add to favorite list
+        //prevent overlap effect
         e.preventDefault(); 
         e.stopPropagation();
-        item.star = !item.star;
+
+        item.star = !item.star; // add/remove link to/from favorite list
         if (item.star)
             $rootScope.highlightNews.push(item);
         else $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
     };
 
-    $scope.assignCurrentNews = function(item) { //save the last link that we read
-        // $rootScope.firstBlood = true;
+    $scope.assignCurrentNews = function(item) { // save the last link that we read
         $rootScope.currentNewsState = item;
     };
 })
 
+// Suggestion/Pre-search Controller
 .controller('SuggestController', 
 function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitcher) {
     $rootScope.showSearchBar = true;
 
-    $scope.search = function(value) { //search a keyword/hashtag
-        $rootScope.value = value;
+    $scope.search = function(value) { // search a keyword/hashtag
+        $rootScope.value = value; //save the value in order to show when is navigated back
         apiServices.search(value, function(data) {
             $rootScope.searchResult = data.searchResult;
             $rootScope.keywordSearch = data.keywordSearch;
@@ -45,8 +47,8 @@ function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitc
     };
 
     $scope.back = function(value) {
-        $rootScope.value = value;
-        $ionicViewSwitcher.nextDirection('back');
+        $rootScope.value = value; //save the value in order to show when is navigated back
+        $ionicViewSwitcher.nextDirection('back'); //animation effect
         $state.go('tabs.news');
     };
 })
@@ -70,10 +72,6 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
     $scope.back = function() {
         $ionicHistory.backView().go();
     };
-
-    // $scope.offFavor = function() {
-    //     $rootScope.onFavorite = false;
-    // };
 
     $scope.follow = function() {
         if (!$rootScope.followed) {
@@ -226,18 +224,31 @@ $ionicPopup, apiServices, $ionicHistory) {
             });
         };
 
-        $scope.chooseItem = function() {
-            if ($ionicHistory.currentStateName() === 'tabs.highlight')
-                $scope.onFavorite = true;
-            else $scope.onFavorite = false;
-        };
-
-        $scope.onFavor = function() {
-            $scope.onFavorite = true;
-        };
-
-        $scope.offFavor = function() {
+        $scope.chooseItem = function(item) {
             $scope.onFavorite = false;
+            for (i in $rootScope.keywords)
+                    $rootScope.keywords[i].star = false;
+            if (item === 'Newsfeed') {
+                apiServices.getFeed(function(data) {
+                    $rootScope.news = data.news; // newsfeed
+                    $rootScope.titleNews = data.titleNews; // title in newsfeed view
+
+                    if ($rootScope.currentNewsState === undefined)
+                        $rootScope.currentNewsState = $rootScope.news[0];
+                });
+                $state.go('tabs.news');
+            }
+            else if (item === 'Favorites') {
+                $scope.onFavorite = true;
+            }
+            else {
+                item.star = true;
+                apiServices.getFeedByKeyword(item.keyword, function(data) {
+                    $rootScope.news = data.news;
+                    $rootScope.titleNews = data.titleNews;
+                });
+                $state.go('tabs.news');
+            }
         };
 
         $scope.closeSetting = function() {
@@ -250,7 +261,6 @@ $ionicPopup, apiServices, $ionicHistory) {
             apiServices.updateList($rootScope.keywords, function(data) {
                 $rootScope.news = data.news;
             });
-            // $rootScope.onFavorite = false;
             $state.go('tabs.news');
         };
 

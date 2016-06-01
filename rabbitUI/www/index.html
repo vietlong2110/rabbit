@@ -25,7 +25,7 @@
                 <ion-content class="custom">
                     <ion-list>
                         <ion-item menu-close href="#/tabs/news" id="header-menu" 
-                        class="item-icon-left item-icon-right" ng-click="offFavor()">
+                        class="item-icon-left item-icon-right" ng-click="chooseItem('Newsfeed')">
                             <i class="icon ion-ios-list"></i>
 
                                 Newsfeed
@@ -44,15 +44,17 @@
 
                         <ion-scroll style="height:402px" ng-show="showList">
                             <ion-list ng-repeat="item in keywords">
-                                <div id="keyword-list" class="item item-icon-left">
-                                    <i id="starList" class="icon ion-star stable"></i>
+                                <div id="keyword-list" menu-close ng-click="chooseItem(item)" 
+                                class="item item-icon-left">
+                                    <i id="starList" ng-class="{'energized': item.star}" 
+                                    class="icon ion-star"></i>
                                     {{item.niceKeyword}}
                                 </div>
                             </ion-list>
                         </ion-scroll>
 
                         <ion-item id="header-menu" menu-close href="#/tabs/highlight" 
-                        ng-click="onFavor()" class="item-icon-left">
+                        ng-click="chooseItem('Favorites')" class="item-icon-left">
                             <i class="icon ion-star" ng-class="{'energized': onFavorite}"></i>
 
                             Favorites
@@ -76,8 +78,7 @@
             <ion-side-menu-content>
                 <ion-nav-bar class="bar bar-calm">
                     <ion-nav-buttons side="left">
-                        <button menu-toggle="left" ng-click="chooseItem()"
-                        class="icon ion-navicon button button-icon">
+                        <button menu-toggle="left" class="icon ion-navicon button button-icon">
                         </button>
                     </ion-nav-buttons>
                 </ion-nav-bar>

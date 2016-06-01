@@ -37,8 +37,13 @@ var searchFeed = function(q, callback) {
 					var evalScore = searchFuncs.cosEval(vector1, vector2);
 
 					if (evalScore > 0) { //add only relating article
+						var todayArr = [];
+						todayArr.push(article.publishedDate.getDate());
+						todayArr.push(article.publishedDate.getMonth());
+						todayArr.push(article.publishedDate.getFullYear());
 						searchResult.push({
 							evalScore: evalScore,
+							today: todayArr,
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,
@@ -53,12 +58,6 @@ var searchFeed = function(q, callback) {
 				console.log(err);
 				callback();
 			}
-
-			searchResult.sort(function(a,b) { 
-				if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
-					return b.publishedDate - a.publishedDate; //sort by published date
-				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
-			});
 			callback(searchResult);
 		});
 	});
@@ -144,11 +143,14 @@ var getFeedUser = function(keyword, articleIds, callback) {
 							cb();
 						}
 
-						var today = article.publishedDate.getDate();
+						var todayArr = [];
+						todayArr.push(article.publishedDate.getDate());
+						todayArr.push(article.publishedDate.getMonth());
+						todayArr.push(article.publishedDate.getFullYear());
 
 						searchResult.push({ //article's properties
 							evalScore: evalScore,
-							today: today,
+							today: todayArr,
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,

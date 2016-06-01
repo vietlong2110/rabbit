@@ -1,6 +1,6 @@
-/****************************************************************************************
-*		This controller include all functions relating to extract data from server		*
-****************************************************************************************/
+/********************************************************************************************
+*		This controller include common functions relating to extract data from server		*
+********************************************************************************************/
 
 var mongoose = require('mongoose');
 
@@ -44,23 +44,31 @@ var getFeed = function(userId, callback) {
 		}
 
 		articleResult.sort(function(a,b) {
-			if (b.today - a.today === 0) { //if 2 articles are on the same day
+			var bToday = b.today[0] + b.today[1]*10 + b.today[2]*100;
+			var aToday = a.today[0] + a.today[1]*10 + a.today[2]*100;
+
+			if (bToday - aToday === 0) { //if 2 articles are on the same day
 				if (b.evalScore - a.evalScore === 0)  //if 2 articles have the same score
 					return b.publishedDate - a.publishedDate; //sort by published date
 				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
 			}
-			else return b.today - a.today; //otherwise sort by day first
+			else return bToday - aToday; //otherwise sort by day first
 		});
 
-		for (i in articleResult)
+		for (i in articleResult) {
+			// console.log(articleResult[i].today);
 			feed.push({
 				id: i,
+				eval: articleResult[i].evalScore,
+				date: articleResult[i].publishedDate,
+				today: articleResult[i].today,
 				url: articleResult[i].url,
 				title: articleResult[i].title,
 				thumbnail: articleResult[i].thumbnail,
 				hashtag: articleResult[i].hashtag,
 				star: false //will change later
 			});
+		}
 		
 		callback(feed);
 	});

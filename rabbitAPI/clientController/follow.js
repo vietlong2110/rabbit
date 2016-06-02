@@ -59,6 +59,7 @@ var addArticle = function(keyword, userId, callback) {
 				if (index === -1) {
 					//contain article's ID
 					user.articles.push(articleIds[i]);
+					user.stars.push(false);
 					//contain article's corresponding relating keywords from user following list
 					user.articleKeywords.push({keywords: []}); 
 					user.articleKeywords[user.articleKeywords.length - 1].keywords.push(keyword);
@@ -123,13 +124,14 @@ var deleteArticle = function(keyword, userId, callback) {
 			console.log('User not found!');
 			callback(false);
 		}
-		var remainingArticles = [], remainingArticleKeywords = [], j = 0;
+		var remainingArticles = [], remainingArticleKeywords = [], remainingStars = [], j = 0;
 
 		for (i in user.articleKeywords) {
 			if (user.articleKeywords[i].keywords.length === 1 
 			&& user.articleKeywords[i].keywords[0] === keyword) //don't save unfollowed article
 				continue;
 			remainingArticles.push(user.articles[i]);
+			remainingStars.push(user.stars[i]);
 			remainingArticleKeywords.push({keywords: user.articleKeywords[i].keywords});
 			var index = remainingArticleKeywords[j].keywords.indexOf(keyword);
 
@@ -141,6 +143,7 @@ var deleteArticle = function(keyword, userId, callback) {
 		//save
 		user.articles = remainingArticles;
 		user.articleKeywords = remainingArticleKeywords;
+		user.stars = remainingStars;
 		user.save(function(err) {
 			if (err) {
 				console.log(err);

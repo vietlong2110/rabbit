@@ -6,8 +6,10 @@ var express = require('express');
 var app = express();
 var router = express.Router();
 
+var async = require('async');
+
 var Extract = require('../clientController/extract.js');
-var userId = '574c8ac1bb33751a5ae7aa1a'; //replace after creating login part
+var userId = '575082e254e90ede1bef24c6'; //replace after creating login part
 
 //API router for searching a keyword/hashtag
 router.get('/search', function(req, res) { 
@@ -27,9 +29,9 @@ router.get('/search', function(req, res) {
 
 		for (i in searchResult)
 			feedResult.push({
+				// eval: searchResult[i].evalScore,
+				// date: searchResult[i].publishedDate,
 				id: i,
-				eval: searchResult[i].evalScore,
-				date: searchResult[i].publishedDate,
 				url: searchResult[i].url,
 				title: searchResult[i].title,
 				thumbnail: searchResult[i].thumbnail,
@@ -149,25 +151,50 @@ router.get('/getfeedbykeyword', function(req, res) {
 			else return bToday - aToday; //otherwise sort by day first
 		});
 
-		for (i in searchResult)
-			feedResult.push({
-				id: i,
-				// eval: searchResult[i].evalScore,
-				// today: searchResult[i].today,
-				// date: searchResult[i].publishedDate,
-				url: searchResult[i].url,
-				title: searchResult[i].title,
-				thumbnail: searchResult[i].thumbnail,
-				hashtag: hashtag,
-				star: false //will change later
+		var User = require('../models/users.js');
+
+		async.eachSeries(searchResult, function(result, callback) {
+			User.findById(userId).exec(function(err, user) {
+				if (err) {
+					console.log(err);
+					res.json({});
+				}
+
+				var star = user.stars[user.articles.indexOf(result.id)];
+
+				feedResult.push({
+					id: result.id,
+					url: result.url,
+					title: result.title,
+					thumbnail: result.thumbnail,
+					hashtag: hashtag,
+					star: star
+				});
+				callback();
 			});
+		}, function(err) {
+			if (err) {
+				console.log(err);
+				res.json({});
+			}
 
-		var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
+			var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
 
-		res.json({
-			news: feedResult, //search results
-			titleNews: queryTitle //title for search view
+			res.json({
+				news: feedResult, //search results
+				titleNews: queryTitle //title for search view
+			});
 		});
+	});
+});
+
+router.post('/updatefavorite', function(req, res) {
+	var Feed = require('../clientController/feed.js');
+
+	Feed.updateFavorite(userId, req.body.id, function(updated) {
+		if (updated)
+			res.json({updated: true});
+		else res.json({updated: false});
 	});
 });
 

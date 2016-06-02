@@ -6,9 +6,7 @@ angular.module('starter.controller', [])
         $rootScope.news = data.news; // newsfeed
         $rootScope.titleNews = data.titleNews; // title in newsfeed view
         $rootScope.highlightNews = []; // favorite links
-
-        if ($rootScope.currentNewsState === undefined)
-            $rootScope.currentNewsState = $rootScope.news[0];
+        $rootScope.currentNewsState = $rootScope.news[0];
     });
 
     $scope.onSearch = function() { // enter search part
@@ -20,10 +18,9 @@ angular.module('starter.controller', [])
         e.preventDefault(); 
         e.stopPropagation();
 
-        item.star = !item.star; // add/remove link to/from favorite list
-        if (item.star)
-            $rootScope.highlightNews.push(item);
-        else $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
+        apiServices.updateFavorite(item.id, function() {
+            item.star = !item.star;
+        });
     };
 
     $scope.assignCurrentNews = function(item) { // save the last link that we read
@@ -134,7 +131,7 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
 })
 
 //Favorite links Controller
-.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup) {
+.controller('HighlightController', function($rootScope, $scope, $state, $ionicPopup, apiServices) {
     $scope.onSearch = function() {
         $state.go('suggest');
     };
@@ -150,12 +147,10 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
 
         confirmPopup.then(function(res) {
             if (res) {
-                for (i in $rootScope.news)
-                    if ($rootScope.news[i].star && $rootScope.news[i] === item)
-                        $rootScope.news[i].star = false;
-
-                $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
-                $state.go('highlight');    
+                apiServices.updateFavorite(item.id, function() {
+                    $rootScope.highlightNews.splice($rootScope.highlightNews.indexOf(item), 1);
+                    $state.go('highlight');
+                });    
             }
         });
 	};
@@ -232,14 +227,15 @@ $ionicPopup, apiServices, $ionicHistory) {
                 apiServices.getFeed(function(data) {
                     $rootScope.news = data.news; // newsfeed
                     $rootScope.titleNews = data.titleNews; // title in newsfeed view
-
-                    if ($rootScope.currentNewsState === undefined)
-                        $rootScope.currentNewsState = $rootScope.news[0];
+                    $rootScope.currentNewsState = $rootScope.news[0];
                 });
                 $state.go('tabs.news');
             }
             else if (item === 'Favorites') {
                 $scope.onFavorite = true;
+                for (i in $rootScope.news)
+                    if ($rootScope.news[i].star)
+                        $rootScope.highlightNews.push($rootScope.news[i]);
             }
             else {
                 item.star = true;

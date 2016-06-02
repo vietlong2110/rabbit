@@ -21,6 +21,7 @@ angular.module('starter.services', [])
 
 	var getFeedByKeywordAPI = domain + '/getfeedbykeyword';
 
+	var updateFavoriteAPI = domain + '/updatefavorite';
 
 	return {
 		getFeed: function(callback) {
@@ -96,7 +97,7 @@ angular.module('starter.services', [])
             	});
             	$timeout(function() {
             		popup.close();
-            	}, 3000);
+            	}, 2000);
             	callback(data);
             });
 		},
@@ -110,6 +111,14 @@ angular.module('starter.services', [])
             	$ionicLoading.hide();
             	callback(data);
             });
+		},
+		updateFavorite: function(id, callback) {
+			$http.post(updateFavoriteAPI, {
+				id: id
+			}).success(function(data) {
+				if (data.updated)
+					callback();
+			});
 		}
 	};
 });

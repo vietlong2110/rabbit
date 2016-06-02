@@ -32,7 +32,7 @@ var getFeed = function(userId, callback) {
 
 	// get all feeds with their keywords list corresponding to 
 	// the settings from following list
-	Feed.getFeed(userId, function(articleResult, hashtagResult) {
+	Feed.getFeed(userId, function(articleResult, hashtagResult, starResult) {
 		var feed = [];
 		var Filter = require('../libs/filter.js');
 
@@ -41,6 +41,7 @@ var getFeed = function(userId, callback) {
 			for (j in hashtagLine)
 				hashtag = hashtag + ' ' + Filter.keywordToHashtag(hashtagLine[j]);
 			articleResult[i].hashtag = hashtag;
+			articleResult[i].star = starResult[i];
 		}
 
 		articleResult.sort(function(a,b) {
@@ -56,17 +57,16 @@ var getFeed = function(userId, callback) {
 		});
 
 		for (i in articleResult) {
-			// console.log(articleResult[i].today);
 			feed.push({
-				id: i,
-				eval: articleResult[i].evalScore,
-				date: articleResult[i].publishedDate,
-				today: articleResult[i].today,
+				// eval: articleResult[i].evalScore,
+				// today: articleResult[i].today,
+				// date: articleResult[i].publishedDate,
+				id: articleResult[i].id,
 				url: articleResult[i].url,
 				title: articleResult[i].title,
 				thumbnail: articleResult[i].thumbnail,
 				hashtag: articleResult[i].hashtag,
-				star: false //will change later
+				star: articleResult[i].star
 			});
 		}
 		

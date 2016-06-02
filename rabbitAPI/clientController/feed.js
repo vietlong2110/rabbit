@@ -41,9 +41,11 @@ var searchFeed = function(q, callback) {
 						todayArr.push(article.publishedDate.getDate());
 						todayArr.push(article.publishedDate.getMonth());
 						todayArr.push(article.publishedDate.getFullYear());
+						
 						searchResult.push({
 							evalScore: evalScore,
 							today: todayArr,
+							id: article._id,
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,
@@ -151,6 +153,7 @@ var getFeedUser = function(keyword, articleIds, callback) {
 						searchResult.push({ //article's properties
 							evalScore: evalScore,
 							today: todayArr,
+							id: article._id,
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,
@@ -223,15 +226,51 @@ var getFeed = function(userId, callback) {
 					callback([], []);
 				}
 
-				var hashtagResult = [];
+				var hashtagResult = [], starResult = [];
 
-				for (i in tmpIds)
+				for (i in tmpIds) {
 					//use u.articles' ID to extract keyword list corresponding to each article
 					hashtagResult.push(u.articleKeywords[u.articles.indexOf(tmpIds[i])].keywords);
+					starResult.push(u.stars[u.articles.indexOf(tmpIds[i])]);
+				}
 
-				callback(feedResult, hashtagResult);
+				callback(feedResult, hashtagResult, starResult);
 			});
 		});	
 	});
 };
 module.exports.getFeed = getFeed;
+
+var updateFavorite = function(userId, articleId, callback) {
+	var User = require('../models/users.js');
+
+	User.findById(userId).exec(function(err, user) {
+		if (err) {
+			console.log(err);
+			callback(false);
+		}
+
+		if (user === null) {
+			console.log('User not found!');
+			callback(false);
+		}
+
+		var tmp = [];
+		for (i in user.stars)
+			tmp.push(user.stars[i]);
+
+		var index = user.articles.indexOf(articleId);
+		tmp[index] = !tmp[index];
+		user.stars = tmp;
+
+		user.save(function(err) {
+			if (err) {
+				console.log(err);
+				callback(false);
+			}
+
+			callback(true);
+		});
+	});
+};
+module.exports.updateFavorite = updateFavorite;

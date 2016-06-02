@@ -46,13 +46,17 @@ function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitc
     $scope.back = function(value) {
         $rootScope.value = value; //save the value in order to show when is navigated back
         $ionicViewSwitcher.nextDirection('back'); //animation effect
-        $state.go('tabs.news');
+        if ($rootScope.currentNewsfeedState === 'News')
+            $state.go('tabs.news');
+        else if ($rootScope.currentNewsfeedState === 'Favorites')
+            $state.go('tabs.favorites');
+        else $state.go('tabs.news');
     };
 })
 
 //Search Controller
 .controller('SearchController', 
-function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
+function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $ionicViewSwitcher) {
     var found = false;
     
     for (i in $rootScope.keywords)
@@ -68,6 +72,15 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup) {
 
     $scope.back = function() {
         $ionicHistory.backView().go();
+    };
+
+    $scope.backHome = function() {
+        $ionicViewSwitcher.nextDirection('forward');
+        if ($rootScope.currentNewsfeedState === 'News')
+            $state.go('tabs.news');
+        else if ($rootScope.currentNewsfeedState === 'Favorites')
+            $state.go('tabs.favorites');
+        else $state.go('tabs.news');
     };
 
     $scope.follow = function() {
@@ -229,6 +242,7 @@ $ionicPopup, apiServices, $ionicHistory) {
                     $rootScope.titleNews = data.titleNews; // title in newsfeed view
                     $rootScope.currentNewsState = $rootScope.news[0];
                 });
+                $rootScope.currentNewsfeedState = 'News';
                 $state.go('tabs.news');
             }
             else if (item === 'Favorites') {
@@ -236,6 +250,7 @@ $ionicPopup, apiServices, $ionicHistory) {
                 for (i in $rootScope.news)
                     if ($rootScope.news[i].star)
                         $rootScope.highlightNews.push($rootScope.news[i]);
+                $rootScope.currentNewsfeedState = 'Favorites';
             }
             else {
                 item.star = true;
@@ -243,6 +258,7 @@ $ionicPopup, apiServices, $ionicHistory) {
                     $rootScope.news = data.news;
                     $rootScope.titleNews = data.titleNews;
                 });
+                $rootScope.currentNewsfeedState = 'News';
                 $state.go('tabs.news');
             }
         };

@@ -87,7 +87,7 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             }
         }
     })
-    .state('tabs.highlight', {
+    .state('tabs.favorites', {
         url: '/highlight',
         views: {
             'newsContent': {

@@ -68,11 +68,13 @@ Input keywords and hashtags, follow news and social media
 * Redesign follow/unfollow button
 * Add announcement popups in all necessary action
 
-### v0.9.2
+### v0.9
 * Reconstruct the whole UI from only side-menu design to tabs-side-menu design
 * Call get api from UI to get only articles relating to a keyword but display them to newsfeed
 * Call post api from UI to update favorite articles/ update newsfeed
 * Store newsfeed current state in order to navigate back
+
+### v0.9.2
 * Create infinite scroll, pull-refresh UI feature
 * Redesign get api to get feed with pagination
 

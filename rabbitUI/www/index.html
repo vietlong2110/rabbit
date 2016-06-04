@@ -28,7 +28,7 @@
                         class="item-icon-left item-icon-right" ng-click="chooseItem('Newsfeed')">
                             <i class="icon ion-ios-list"></i>
 
-                                Newsfeed
+                            Newsfeed
 
                             <i class="icon ion-gear-a" ng-click="openSetting($event)"></i>
                         </ion-item>
@@ -44,16 +44,17 @@
 
                         <ion-scroll style="height:402px" ng-show="showList">
                             <ion-list ng-repeat="item in keywords">
-                                <div id="keyword-list" menu-close ng-click="chooseItem(item)" 
-                                class="item item-icon-left">
+                                <ion-item id="keyword-list" menu-close 
+                                href="#/tabs/followinglist/{{item.keyword}}" 
+                                ng-click="chooseItem(item)" class="item item-icon-left">
                                     <i id="starList" ng-class="{'energized': item.star}" 
                                     class="icon ion-star"></i>
                                     {{item.niceKeyword}}
-                                </div>
+                                </ion-item>
                             </ion-list>
                         </ion-scroll>
 
-                        <ion-item id="header-menu" menu-close href="#/tabs/highlight" 
+                        <ion-item id="header-menu" menu-close href="#/tabs/favorites" 
                         ng-click="chooseItem('Favorites')" class="item-icon-left">
                             <i class="icon ion-star" ng-class="{'energized': onFavorite}"></i>
 

@@ -233,7 +233,7 @@ var getFeed = function(userId, callback) {
 					hashtagResult.push(u.articleKeywords[u.articles.indexOf(tmpIds[i])].keywords);
 					starResult.push(u.stars[u.articles.indexOf(tmpIds[i])]);
 				}
-
+			
 				callback(feedResult, hashtagResult, starResult);
 			});
 		});	
@@ -274,3 +274,50 @@ var updateFavorite = function(userId, articleId, callback) {
 	});
 };
 module.exports.updateFavorite = updateFavorite;
+
+var getFavorite = function(userId, callback) {
+	var User = require('../models/users.js');
+
+	User.findById(userId).exec(function(err, user) {
+		if (err) {
+			console.log(err);
+			callback([]);
+		}
+
+		if (user === null) {
+			console.log('User not found!');
+			callback([]);
+		}
+
+		var favoriteList = [];
+		var Article = require('../models/articles.js');
+
+		async.forEachOfSeries(user.stars, function(star, i, cb) {
+			if (star)
+				Article.findById(user.articles[i]).exec(function(err, article) {
+					if (err) { //process error case later
+						console.log(err);
+						cb();
+					}
+
+					favoriteList.push({ //article's properties
+						id: article._id,
+						url: article.url,
+						title: article.title,
+						thumbnail: article.thumbnail,
+						publishedDate: article.publishedDate
+					});
+					cb();
+				});
+			else cb();
+		}, function(err) {
+			if (err) {
+				console.log(err);
+				callback([]);
+			}
+
+			callback(favoriteList);
+		});
+	});
+};
+module.exports.getFavorite = getFavorite;

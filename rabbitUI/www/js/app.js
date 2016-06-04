@@ -1,8 +1,4 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
+// Rabbit App
 angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
 
 .run(function($ionicPlatform) {
@@ -70,6 +66,24 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             }
         }
     })
+    .state('tabs.followinglist', {
+        url: '/followinglist/:followinglistId',
+        views: {
+            'newsContent': {
+                templateUrl: 'templates/followinglist.html',
+                controller: 'FollowingListController'
+            }
+        }
+    })
+    .state('tabs.favorites', {
+        url: '/favorites',
+        views: {
+            'newsContent': {
+                templateUrl: 'templates/highlight.html',
+                controller: 'FavoritesController'
+            }
+        }
+    })
     .state('tabs.reading', {
         url: '/news/:newsId',
         views: {
@@ -84,15 +98,6 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
         views: {
             'socialmediaContent': {
                 templateUrl: 'templates/socialmedia.html'
-            }
-        }
-    })
-    .state('tabs.favorites', {
-        url: '/highlight',
-        views: {
-            'newsContent': {
-                templateUrl: 'templates/highlight.html',
-                controller: 'HighlightController'
             }
         }
     });

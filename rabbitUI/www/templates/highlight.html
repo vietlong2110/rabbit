@@ -11,7 +11,7 @@
 
     <ion-content>
         <ion-list id="newsfeed">
-            <ion-item collection-repeat="item in highlightNews" ng-click="assignCurrentNews(item)" 
+            <ion-item collection-repeat="item in favoriteNews" ng-click="assignCurrentNews(item)" 
             href="#/tabs/news/{{item.id}}" class="item-thumbnail-left item-text-wrap item-icon-right">
                 <img src="{{item.thumbnail}}" alt="thumbnail">
                 <h2>{{item.title}}</h2>

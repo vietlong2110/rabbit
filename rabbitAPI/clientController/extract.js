@@ -27,7 +27,7 @@ var getList = function(userId, callback) {
 module.exports.getList = getList;
 
 //get current newsfeed controller
-var getFeed = function(userId, callback) {
+var getFeed = function(userId, querySize, callback) {
 	var Feed = require('./feed.js');
 
 	// get all feeds with their keywords list corresponding to 
@@ -56,7 +56,19 @@ var getFeed = function(userId, callback) {
 			else return bToday - aToday; //otherwise sort by day first
 		});
 
-		for (i in articleResult) {
+		var offset = (articleResult.length < 8) ? articleResult.length : 8;
+		var size = 5;
+		var n = 0, moreData = true;
+		if (querySize === 0)
+			n = offset;
+		else if (querySize + size <= articleResult.length)
+			n = querySize + size;
+		else {
+			n = articleResult.length;
+			moreData = false;
+		}
+
+		for (i = 0; i < n; i++) {
 			feed.push({
 				// eval: articleResult[i].evalScore,
 				// today: articleResult[i].today,
@@ -70,7 +82,7 @@ var getFeed = function(userId, callback) {
 			});
 		}
 		
-		callback(feed);
+		callback(feed, moreData);
 	});
 };
 module.exports.getFeed = getFeed;

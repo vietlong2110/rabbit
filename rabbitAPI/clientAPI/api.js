@@ -9,7 +9,7 @@ var router = express.Router();
 var async = require('async');
 
 var Extract = require('../clientController/extract.js');
-var userId = '575082e254e90ede1bef24c6'; //replace after creating login part
+var userId = '5751ec552c5b3f4aa587bb66'; //replace after creating login part
 
 //API router for searching a keyword/hashtag
 router.get('/search', function(req, res) { 
@@ -60,11 +60,12 @@ router.post('/follow', function(req, res) {
 			//add article to their newsfeed corresponding to whatever keyword/hashtag they followed
 			Follow.addArticle(query, userId, function(addarticle) {
 				if (addarticle) //added article successfully to database
-					Extract.getFeed(userId, function(feed) {
+					Extract.getFeed(userId, 0, function(feed, moreData) {
 						Extract.getList(userId, function(list) {
 							res.json({
 								news: feed,
-								keywords: list
+								keywords: list,
+								moreData: moreData
 							});
 						});
 					});
@@ -83,8 +84,11 @@ router.post('/updatelist', function(req, res) {
 		checkList.push(req.body.keywords[i].isChecked);
 
 	List.updateList(userId, checkList, function(updated) {
-		Extract.getFeed(userId, function(feed) {
-			res.json({news: feed});
+		Extract.getFeed(userId, 0, function(feed, moreData) {
+			res.json({
+				news: feed,
+				moreData: moreData
+			});
 		});
 	});
 });
@@ -99,11 +103,12 @@ router.post('/unfollow', function(req, res) {
 			//delete article from their newsfeed corresponding to whatever keyword/hashtag they followed
 			Follow.deleteArticle(req.body.keyword, userId, function(deletedArticle) {
 				if (deletedArticle) //deleted article successfully from database
-					Extract.getFeed(userId, function(feed) {
+					Extract.getFeed(userId, 0, function(feed, moreData) {
 						Extract.getList(userId, function(list) {
 							res.json({
 								news: feed,
-								keywords: list
+								keywords: list,
+								moreData: moreData
 							});
 						});
 					});
@@ -115,10 +120,10 @@ router.post('/unfollow', function(req, res) {
 
 //API router for loading the newsfeed
 router.get('/getfeed', function(req, res) {
-	Extract.getFeed(userId, function(feed) {
+	Extract.getFeed(userId, parseInt(req.query.size), function(feed, moreData) {
 		res.json({
 			news: feed,
-			titleNews: 'News'
+			moreData: moreData
 		});
 	});
 });
@@ -152,6 +157,15 @@ router.get('/getfeedbykeyword', function(req, res) {
 		});
 
 		var User = require('../models/users.js');
+		var offset = (searchResult.length < 8) ? searchResult.length : 8;
+		var size = 5, moreData = true;
+		var querySize = parseInt(req.query.size);
+
+		if (querySize === 0)
+			searchResult = searchResult.slice(0, offset);
+		else if (querySize + size < searchResult.length)
+			searchResult = searchResult.slice(0, querySize + size);
+		else moreData = false;
 
 		async.eachSeries(searchResult, function(result, callback) {
 			User.findById(userId).exec(function(err, user) {
@@ -182,7 +196,8 @@ router.get('/getfeedbykeyword', function(req, res) {
 
 			res.json({
 				news: feedResult, //search results
-				titleNews: queryTitle //title for search view
+				titleNews: queryTitle, //title for search view
+				moreData: moreData
 			});
 		});
 	});
@@ -195,6 +210,14 @@ router.post('/updatefavorite', function(req, res) {
 		if (updated)
 			res.json({updated: true});
 		else res.json({updated: false});
+	});
+});
+
+router.get('/getfavorite', function(req, res) {
+	var Feed = require('../clientController/feed.js');
+
+	Feed.getFavorite(userId, function(favoriteList) {
+		res.json({favoriteNews: favoriteList});
 	});
 });
 

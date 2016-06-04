@@ -1,9 +1,5 @@
 angular.module('starter.services', [])
 
-.factory('navServices', function() {
-
-})
-
 .factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout) {
 	var domain = 'http://localhost:8080/clientapi';
 
@@ -23,8 +19,10 @@ angular.module('starter.services', [])
 
 	var updateFavoriteAPI = domain + '/updatefavorite';
 
+	var getFavoriteAPI = domain + '/getfavorite';
+
 	return {
-		getFeed: function(callback) {
+		getFeed: function(value, callback) {
 			$ionicLoading.show({
 				templateUrl: 'templates/loadingspinner.html',
 				noBackdrop: true
@@ -32,12 +30,16 @@ angular.module('starter.services', [])
 			$timeout(function() {
 				$ionicLoading.hide();
 			}, 5000);
-			$http.get(getFeedAPI).success(function(data) {
+			$http.get(getFeedAPI, {
+				params: {
+					size: value
+				}
+			}).success(function(data) {
 				$ionicLoading.hide();
 				callback(data);
 			});
 		},
-		getFeedByKeyword: function(value, callback) {
+		getFeedByKeyword: function(value, size, callback) {
 			$ionicLoading.show({
 				templateUrl: 'templates/loadingspinner.html',
 				noBackdrop: true
@@ -47,7 +49,8 @@ angular.module('starter.services', [])
 			}, 5000);
 			$http.get(getFeedByKeywordAPI, {
 				params: {
-					q: value
+					q: value,
+					size: size
 				}
 			}).success(function(data) {
 				$ionicLoading.hide();
@@ -119,6 +122,11 @@ angular.module('starter.services', [])
 				if (data.updated)
 					callback();
 			});
+		},
+		getFavorite: function(callback) {
+			$http.get(getFavoriteAPI).success(function(data) {
+				callback(data);
+			})
 		}
 	};
 });

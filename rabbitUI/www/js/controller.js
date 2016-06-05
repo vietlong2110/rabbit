@@ -1,7 +1,8 @@
 angular.module('starter.controller', [])
 
 // Newsfeed Controller
-.controller('NewsController', function($rootScope, $scope, apiServices, $state, $http) {
+.controller('NewsController', 
+function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate) {
     $rootScope.moreData = false;
     apiServices.getFeed(0, function(data) {
         $rootScope.news = data.news; // newsfeed
@@ -11,6 +12,10 @@ angular.module('starter.controller', [])
 
     $scope.onSearch = function() { // enter search part
         $state.go('suggest');
+    };
+
+    $scope.scrollTop = function() {
+        $ionicScrollDelegate.scrollTop(true);
     };
 
     $scope.doRefresh = function() {
@@ -80,7 +85,8 @@ function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitc
 
 //Search Controller
 .controller('SearchController', 
-function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $ionicViewSwitcher) {
+function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, 
+$ionicViewSwitcher, $ionicScrollDelegate) {
     var found = false;
     
     for (i in $rootScope.keywords)
@@ -92,6 +98,10 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
 
     $scope.assignCurrentNews = function(item) {
         $rootScope.currentNewsState = item;
+    };
+
+    $scope.scrollTop = function() {
+        $ionicScrollDelegate.scrollTop(true);
     };
 
     $scope.back = function() {
@@ -168,9 +178,14 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
 })
 
 //Favorite links Controller
-.controller('FavoritesController', function($rootScope, $scope, $state, $ionicPopup, apiServices) {
+.controller('FavoritesController', 
+function($rootScope, $scope, $state, $ionicPopup, $ionicScrollDelegate, apiServices) {
     $scope.onSearch = function() {
         $state.go('suggest');
+    };
+
+    $scope.scrollTop = function() {
+        $ionicScrollDelegate.scrollTop(true);
     };
 
 	$scope.deleteItem = function(e, item) {
@@ -207,9 +222,14 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
     };
 })
 
-.controller('FollowingListController', function($rootScope, $scope, $state, $http, apiServices) {
+.controller('FollowingListController', 
+function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices) {
     $scope.onSearch = function() { // enter search part
         $state.go('suggest');
+    };
+
+    $scope.scrollTop = function() {
+        $ionicScrollDelegate.scrollTop(true);
     };
 
     $scope.toggleStar = function(e, item) { // add to favorite list
@@ -252,7 +272,7 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
 
 //Menu side Controller
 .controller('AppController', function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, 
-$ionicPopup, apiServices, $ionicHistory) {
+$ionicPopup, apiServices, $ionicHistory, $ionicScrollDelegate) {
     apiServices.getList(function(data) {
         $rootScope.keywords = data.keywords;
         $rootScope.listCount = data.keywords.length;
@@ -307,6 +327,7 @@ $ionicPopup, apiServices, $ionicHistory) {
 
         $scope.chooseItem = function(item) {
             $scope.onFavorite = false;
+            $ionicScrollDelegate.scrollTop();
             for (i in $rootScope.keywords)
                     $rootScope.keywords[i].star = false;
             if (item === 'Newsfeed') {

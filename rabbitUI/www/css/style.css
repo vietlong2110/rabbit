@@ -147,3 +147,7 @@ right: 5%; /* Adjust position */
   margin-top: -20px;
   color: white;
 }
+
+#title {
+	padding-top: 5px;
+}

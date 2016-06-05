@@ -1,4 +1,9 @@
-<ion-view view-title="Favorites">
+<ion-view>
+    <ion-nav-title>
+        <button id="title" on-double-tap="scrollTop()" class="button button-clear">
+            Favorites
+        </button>
+    </ion-nav-title>
     <ion-nav-buttons side="secondary">
         <a href="#/tabs/news/{{currentNewsState.id}}" 
         class="icon ion-ios-book-outline button button-icon"></a>

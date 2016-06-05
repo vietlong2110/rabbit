@@ -1,4 +1,9 @@
-<ion-view view-title="{{queryTitle}}">
+<ion-view>
+	<ion-nav-title>
+        <button id="title" on-double-tap="scrollTop()" class="button button-clear">
+            {{queryTitle}}
+        </button>
+    </ion-nav-title>
 	<ion-nav-bar class="bar bar-calm">
 		<ion-nav-buttons side="left"> 
         	<i class="button button-icon icon-right ion-ios-list button-clear" ng-click="backHome()">

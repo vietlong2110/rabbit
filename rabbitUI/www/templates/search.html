@@ -21,6 +21,9 @@
 			    </a>
 			</ion-item>
 		</ion-list>
+
+		<ion-infinite-scroll ng-if="moreDataSearch" on-infinite="loadMore()" distance="1%">
+        </ion-infinite-scroll>
 	</ion-content>
 
 	<div class="float-button" ng-hide="followed">

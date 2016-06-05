@@ -69,7 +69,7 @@ angular.module('starter.services', [])
             	callback(data);
             });
 		},
-		search: function(value, callback) {
+		search: function(value, size, callback) {
 			$ionicLoading.show({
 				templateUrl: 'templates/loadingspinner.html',
 				noBackdrop: true
@@ -79,7 +79,8 @@ angular.module('starter.services', [])
 			}, 5000);
 			$http.get(searchAPI, {
 	            params: {
-	                q: value
+	                q: value,
+	                size: size
 	            }
 	        }).success(function(data) {
 	        	$ionicLoading.hide();
@@ -123,8 +124,12 @@ angular.module('starter.services', [])
 					callback();
 			});
 		},
-		getFavorite: function(callback) {
-			$http.get(getFavoriteAPI).success(function(data) {
+		getFavorite: function(size, callback) {
+			$http.get(getFavoriteAPI, {
+				params: {
+					size: size
+				}
+			}).success(function(data) {
 				callback(data);
 			})
 		}

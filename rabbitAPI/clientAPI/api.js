@@ -27,6 +27,16 @@ router.get('/search', function(req, res) {
 			else return b.evalScore - a.evalScore; //otherwise sort by ranking score
 		});
 
+		var offset = (searchResult.length < 8) ? searchResult.length : 8;
+		var size = 5, moreData = true;
+		var querySize = parseInt(req.query.size);
+
+		if (querySize === 0)
+			searchResult = searchResult.slice(0, offset);
+		else if (querySize + size < searchResult.length)
+			searchResult = searchResult.slice(0, querySize + size);
+		else moreData = false;
+
 		for (i in searchResult)
 			feedResult.push({
 				// eval: searchResult[i].evalScore,
@@ -35,7 +45,7 @@ router.get('/search', function(req, res) {
 				url: searchResult[i].url,
 				title: searchResult[i].title,
 				thumbnail: searchResult[i].thumbnail,
-				hashtag: hashtag
+				hashtag: hashtag,
 			});
 
 		var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
@@ -43,7 +53,8 @@ router.get('/search', function(req, res) {
 		res.json({
 			searchResult: feedResult, //search results
 			keywordSearch: req.query.q, //return whatever users typed in to compare with their following list
-			queryTitle: queryTitle //title for search view
+			queryTitle: queryTitle, //title for search view
+			moreData: moreData
 		});
 	});
 });
@@ -217,7 +228,20 @@ router.get('/getfavorite', function(req, res) {
 	var Feed = require('../clientController/feed.js');
 
 	Feed.getFavorite(userId, function(favoriteList) {
-		res.json({favoriteNews: favoriteList});
+		var offset = (favoriteList.length < 8) ? favoriteList.length : 8;
+		var size = 5, moreData = true;
+		var querySize = parseInt(req.query.size);
+
+		if (querySize === 0)
+			favoriteList = favoriteList.slice(0, offset);
+		else if (querySize + size < favoriteList.length)
+			favoriteList = favoriteList.slice(0, querySize + size);
+		else moreData = false;
+
+		res.json({
+			favoriteNews: favoriteList,
+			moreData: moreData
+		});
 	});
 });
 

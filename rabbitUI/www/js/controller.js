@@ -56,8 +56,9 @@ function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitc
 
     $scope.search = function(value) { // search a keyword/hashtag
         $rootScope.value = value; //save the value in order to show when is navigated back
-        apiServices.search(value, function(data) {
+        apiServices.search(value, 0, function(data) {
             $rootScope.searchResult = data.searchResult;
+            $rootScope.moreDataSearch = data.moreData;
             $rootScope.keywordSearch = data.keywordSearch;
             $rootScope.queryTitle = data.queryTitle;
             $state.go('search');
@@ -106,6 +107,13 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
         else if ($rootScope.currentNewsfeedState === 'Following')
             $state.go('tabs.followinglist');
         else $state.go('tabs.news');
+    };
+
+    $scope.loadMore = function() {
+        apiServices.search($rootScope.keywordSearch, $rootScope.searchResult.length, function(data) {
+            $rootScope.searchResult = data.searchResult;
+            $rootScope.moreDataSearch = data.moreData;
+        });
     };
 
     $scope.follow = function() {
@@ -177,8 +185,9 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
         confirmPopup.then(function(res) {
             if (res) {
                 apiServices.updateFavorite(item.id, function() {
-                    apiServices.getFavorite(function(data) {
+                    apiServices.getFavorite($rootScope.favoriteNews.length, function(data) {
                         $rootScope.favoriteNews = data.favoriteNews;
+                        $rootScope.moreDataFavorite = data.moreData;
                     });
                     $state.go('tabs.favorites');
                 });    
@@ -186,12 +195,19 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
         });
 	};
 
+    $scope.loadMore = function() {
+        apiServices.getFavorite($rootScope.favoriteNews.length, function(data) {
+            $rootScope.favoriteNews = data.favoriteNews;
+            $rootScope.moreDataFavorite = data.moreData;
+        });
+    };
+
 	$scope.assignCurrentNews = function(item) {
     	$rootScope.currentNewsState = item;
     };
 })
 
-.controller('FollowingListController', function($rootScope, $scope, $state, apiServices) {
+.controller('FollowingListController', function($rootScope, $scope, $state, $http, apiServices) {
     $scope.onSearch = function() { // enter search part
         $state.go('suggest');
     };
@@ -203,6 +219,20 @@ function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, $i
 
         apiServices.updateFavorite(item.id, function() {
             item.star = !item.star;
+        });
+    };
+
+    $scope.doRefresh = function() {
+        $http.get('http://localhost:8080/clientapi/getfeedbykeyword', {
+            params: {
+                q: $rootScope.followingKeyword,
+                size: 0
+            }
+        }).success(function(data) {
+            $rootScope.followingNews = data.news; // newsfeed
+            $rootScope.moreDataFollowing = data.moreData;
+        }).finally(function() {
+            $scope.$broadcast('scroll.refreshComplete');
         });
     };
 
@@ -289,8 +319,9 @@ $ionicPopup, apiServices, $ionicHistory) {
             }
             else if (item === 'Favorites') {
                 $scope.onFavorite = true;
-                apiServices.getFavorite(function(data) {
+                apiServices.getFavorite(0, function(data) {
                     $rootScope.favoriteNews = data.favoriteNews;
+                    $rootScope.moreDataFavorite = data.moreData;
                     $rootScope.currentNewsfeedState = 'Favorites';
                 });
             }
@@ -301,7 +332,6 @@ $ionicPopup, apiServices, $ionicHistory) {
                     $rootScope.followingKeyword = item.keyword;
                     $rootScope.titleNews = data.titleNews;
                     $rootScope.moreDataFollowing = data.moreData;
-                    console.log(data.moreData);
                     $rootScope.currentNewsfeedState = 'Following';
                 });
             }

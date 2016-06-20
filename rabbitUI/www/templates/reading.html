@@ -8,8 +8,15 @@
 			class="button button-clear icon ion-star"></button>
 		</ion-nav-buttons>
 	</ion-nav-bar>
-	<ion-content overflow-scroll="true">
+	<ion-content scroll="false">
 		<!-- Hello {{currentNews.url}} -->
-		<iframe src="{{trustSrc(url)}}" width="100%" height="100%"></iframe>
+		<ion-slides options="options" slider="data.slider">
+			<ion-slide-page ng-click="slide($event)">
+				<iframe src="{{trustSrc(url)}}" width="100%" height="90%"></iframe>
+			</ion-slide-page>
+			<ion-slide-page ng-click="slide($event)">
+				<iframe src="{{trustSrc(url)}}" width="100%" height="90%"></iframe>
+			</ion-slide-page>
+		</ion-slides>
 	</ion-content>
 </ion-view>

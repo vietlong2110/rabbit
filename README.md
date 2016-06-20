@@ -1,4 +1,4 @@
-# Rabbit Version 0.9.4
+# Rabbit Version 0.10.6
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -74,11 +74,21 @@ Input keywords and hashtags, follow news and social media
 * Call post api from UI to update favorite articles/ update newsfeed
 * Store newsfeed current state in order to navigate back
 
-### v0.9.4
+### v0.10
 * Create infinite scroll, pull-refresh UI feature
 * Redesign get api to get feed with pagination
 * Redesign get api to get favorite, search with pagination
 * Create double tap to back top of the list
 
-## Next minor(v0.10)
+### v0.10.6
+* Authentication by passport JWT
+* Rewrite api structure to adapt passport security
+* Create frontend authentication
+* Reorganize side menu and tab structure to fit new authentication view
+* Reorganize some frontend views
+* Fix loadmore offset bug
+
+## Next minor(v0.11)
+* Load social media data
+* Create social media view
 * Redesign reading UI to swipe reading each article in each list

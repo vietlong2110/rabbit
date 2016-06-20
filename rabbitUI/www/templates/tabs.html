@@ -1,9 +1,78 @@
-<ion-tabs class="tabs-background-stable tabs-color-calm tabs-icon-top tabs-striped">
-    <ion-tab title="News" icon="ion-android-list" class="full-width-tab" href="#/tabs/news">
-        <ion-nav-view name="newsContent"></ion-nav-view>
-    </ion-tab>
+<ion-side-menus enable-menu-with-back-views="true" ng-controller="AppController">
+    <ion-side-menu side="left">
+        <ion-content class="custom">
+            <ion-list>
+                <ion-item menu-close href="#/tabs/news" id="header-menu" 
+                class="item-icon-left item-icon-right" ng-click="chooseItem('Newsfeed')">
+                    <i class="icon ion-ios-list"></i>
 
-    <ion-tab title="Social Media" icon="ion-ios-people" class="full-width-tab" href="#/tabs/social">
-        <ion-nav-view name="socialmediaContent"></ion-nav-view>
-    </ion-tab>
-</ion-tabs>
+                    Newsfeed
+
+                    <i class="icon ion-gear-a" ng-click="openSetting($event)"></i>
+                </ion-item>
+
+                <ion-item id="header-menu" ng-click="toggleList()" class="item item-icon-left">
+                    <i class="icon ion-ios-arrow-right" ng-hide="showList"></i>
+                    <i class="icon ion-ios-arrow-down" ng-show="showList"></i>
+                    <span class="badge badge-stable">{{listCount}}</span>
+                    
+                    Following list
+
+                </ion-item>
+
+                <ion-scroll style="height:402px" ng-show="showList">
+                    <ion-list>
+                        <ion-item id="keyword-list" menu-close ng-repeat="item in keywords"
+                        href="#/tabs/followinglist/{{item.keyword}}" 
+                        ng-click="chooseItem(item)" class="item item-icon-left">
+                            <i id="starList" ng-class="{'energized': item.star}" 
+                            class="icon ion-star"></i>
+                            {{item.niceKeyword}}
+                        </ion-item>
+                    </ion-list>
+                </ion-scroll>
+
+                <ion-item id="header-menu" menu-close href="#/tabs/favorites" 
+                ng-click="chooseItem('Favorites')" class="item-icon-left">
+                    <i class="icon ion-star" ng-class="{'energized': onFavorite}"></i>
+
+                    Favorites
+
+                </ion-item>
+
+                <ion-item id="header-menu" class="item-icon-left">
+                    <i class="icon ion-arrow-graph-up-right stable"></i>
+                    Trending
+                </ion-item>
+
+
+                <ion-item id="header-menu" class="item-icon-left" menu-close
+                ng-click="chooseItem('Logout')">
+                    <i class="icon ion-log-out stable"></i>
+
+                    Logout
+
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
+
+    <ion-side-menu-content>
+        <ion-nav-bar class="bar bar-calm">
+            <ion-nav-buttons side="left">
+                <button menu-toggle="left" class="icon ion-navicon button button-icon">
+                </button>
+            </ion-nav-buttons>
+        </ion-nav-bar>
+        
+        <ion-tabs class="tabs-background-stable tabs-color-calm tabs-icon-top tabs-striped">
+		    <ion-tab title="News" icon="ion-android-list" class="full-width-tab" href="#/tabs/news">
+		        <ion-nav-view name="newsContent"></ion-nav-view>
+		    </ion-tab>
+
+		    <ion-tab title="Social Media" icon="ion-ios-people" class="full-width-tab" href="#/tabs/social">
+		        <ion-nav-view name="socialmediaContent"></ion-nav-view>
+		    </ion-tab>
+		</ion-tabs>
+    </ion-side-menu-content>
+</ion-side-menus>

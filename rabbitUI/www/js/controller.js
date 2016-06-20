@@ -1,8 +1,63 @@
 angular.module('starter.controller', [])
 
+//Login Controller
+.controller('LoginController',
+function($rootScope, $scope, $ionicPopup, $state, $ionicViewSwitcher, AuthService, apiServices) {
+    $scope.user = {
+        email: '',
+        password: ''
+    };
+
+    $scope.login = function() {
+        AuthService.login($scope.user).then(function(message) {
+            apiServices.getList(function(data) {
+                $rootScope.keywords = data.keywords;
+                $rootScope.listCount = data.keywords.length;
+            });
+            apiServices.getFeed(0, function(data) {
+                $rootScope.news = data.news; // newsfeed
+                $rootScope.currentNewsState = $rootScope.news[0];
+                $rootScope.moreData = data.moreData;
+                $rootScope.currentNewsfeedState = 'News';
+                $ionicViewSwitcher.nextDirection('swap');
+                $state.go('tabs.news');
+            });
+        }, function(errMessage) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Login failed!',
+                template: errMessage
+            })
+        });
+    };
+})
+
+//Register Controller
+.controller('RegisterController', function($scope, $ionicPopup, $state, AuthService) {
+    $scope.user = {
+        email: '',
+        password: '',
+        passwordConfirm: ''
+    };
+
+    $scope.signup = function() {
+        AuthService.register($scope.user).then(function(message) {
+            $state.go('login');
+            var alertPopup = $ionicPopup.alert({
+                title: 'Register success!',
+                template: message
+            });
+        }, function(errMessage) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Register failed!',
+                template: errMessage
+            });
+        });
+    };
+})
+
 // Newsfeed Controller
 .controller('NewsController', 
-function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate) {
+function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate, $ionicViewSwitcher) {
     $rootScope.moreData = false;
     apiServices.getFeed(0, function(data) {
         $rootScope.news = data.news; // newsfeed
@@ -11,6 +66,7 @@ function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate) {
     });
 
     $scope.onSearch = function() { // enter search part
+        $ionicViewSwitcher.nextDirection('enter');
         $state.go('suggest');
     };
 
@@ -56,7 +112,7 @@ function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate) {
 
 // Suggestion/Pre-search Controller
 .controller('SuggestController', 
-function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitcher) {
+function($rootScope, $scope, apiServices, $state, $ionicViewSwitcher) {
     $rootScope.showSearchBar = true;
 
     $scope.search = function(value) { // search a keyword/hashtag
@@ -66,7 +122,8 @@ function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitc
             $rootScope.moreDataSearch = data.moreData;
             $rootScope.keywordSearch = data.keywordSearch;
             $rootScope.queryTitle = data.queryTitle;
-            $state.go('search');
+            $ionicViewSwitcher.nextDirection('forward');
+            $state.go('tabs.search');
         });
     };
 
@@ -85,7 +142,7 @@ function($rootScope, $scope, apiServices, $state, $ionicHistory, $ionicViewSwitc
 
 //Search Controller
 .controller('SearchController', 
-function($rootScope, $scope, $state, apiServices, $ionicHistory, $ionicPopup, 
+function($rootScope, $scope, $state, apiServices, $ionicPopup, 
 $ionicViewSwitcher, $ionicScrollDelegate) {
     var found = false;
     
@@ -105,7 +162,8 @@ $ionicViewSwitcher, $ionicScrollDelegate) {
     };
 
     $scope.back = function() {
-        $ionicHistory.backView().go();
+        $ionicViewSwitcher.nextDirection('back');
+        $state.go('suggest');
     };
 
     $scope.backHome = function() {
@@ -164,9 +222,31 @@ $ionicViewSwitcher, $ionicScrollDelegate) {
 })
 
 //Reading iframe Controller
-.controller('ReadingController', function($rootScope, $scope, $sce) {
-	$scope.url = $rootScope.currentNewsState.url;
-	$scope.highlight = $rootScope.currentNewsState.star;
+.controller('ReadingController', function($rootScope, $scope, $sce, $ionicSideMenuDelegate) {
+    $scope.url = $rootScope.currentNewsState.url;
+    $scope.highlight = $rootScope.currentNewsState.star;
+
+    $scope.slide = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    $scope.$on('$ionicView.enter', function() {
+        $ionicSideMenuDelegate.canDragContent(false);
+    });
+
+    $scope.$on('$ionicView.leave', function() {
+        $ionicSideMenuDelegate.canDragContent(true);
+    });
+
+    $scope.options = {
+        loop: false,
+        speed: 500
+    };
+
+    $scope.$on("$ionicSlides.sliderInitialized", function(event, data) {
+        $scope.slider = data.slider;
+    });
 
 	$scope.trustSrc = function(src) {
 		return $sce.trustAsResourceUrl(src);
@@ -257,7 +337,6 @@ function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices) {
     };
 
     $scope.loadMore = function() {
-        console.log('In here!');
         apiServices.getFeedByKeyword(
         $rootScope.followingKeyword, $rootScope.followingNews.length, function(data) {
             $rootScope.followingNews = data.news; // newsfeed
@@ -272,114 +351,130 @@ function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices) {
 
 //Menu side Controller
 .controller('AppController', function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, 
-$ionicPopup, apiServices, $ionicHistory, $ionicScrollDelegate) {
+$ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices, AUTH_EVENTS) {
+    $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+        AuthService.logout();
+        $state.go('login');
+        var alertPopup = $ionicPopup.alert({
+            title: 'Session Lost!',
+            template: 'Sorry, You have to login again.'
+        });
+    });
+
     apiServices.getList(function(data) {
         $rootScope.keywords = data.keywords;
         $rootScope.listCount = data.keywords.length;
         $scope.allListChecked = true;
         $scope.showList = false;
-
-        $ionicModal.fromTemplateUrl('templates/home-settings.html', {
-            scope: $scope,
-            animation: 'slide-in-up'
-        }).then(function(modal) {
-            $scope.modal = modal;
-        });
-
-        $scope.openSetting = function(e) {
-            e.preventDefault(); 
-            e.stopPropagation();
-            $scope.modal.show();
-
-            $scope.unfollow = function(item) {
-                var confirmPopup = $ionicPopup.confirm({
-                    title: 'Are you sure you want to unfollow everything relating to "' 
-                    + item.keyword + '"?',
-                    scope: $scope,
-                    okText: 'Unfollow'
-                });
-
-                confirmPopup.then(function(res) {
-                    if (res) {
-                        apiServices.unfollow(item.keyword, function(data) {
-                            $rootScope.keywords = data.keywords;        
-                            $rootScope.listCount = data.keywords.length;
-                            $rootScope.news = data.news;
-                        })
-                    }
-                });
-            };
-
-            $scope.deleteItem = function(item) {
-                for (i = 0; i < $rootScope.keywords.length; i++)
-                    if ($rootScope.keywords[i].keyword === item.keyword) {
-                        $rootScope.keywords.splice(i, 1);
-                        break;
-                    }
-            };
-
-            $scope.toggleCheckbox = function() {
-                $scope.allListChecked = !$scope.allListChecked;
-                for (i = 0; i < $rootScope.keywords.length; i++)
-                    $rootScope.keywords[i].isChecked = $scope.allListChecked;
-            };
-        };
-
-        $scope.chooseItem = function(item) {
-            $scope.onFavorite = false;
-            $ionicScrollDelegate.scrollTop();
-            for (i in $rootScope.keywords)
-                    $rootScope.keywords[i].star = false;
-            if (item === 'Newsfeed') {
-                apiServices.getFeed(0, function(data) {
-                    $rootScope.news = data.news; // newsfeed
-                    $rootScope.currentNewsState = $rootScope.news[0];
-                    $rootScope.moreData = data.moreData;
-                    $rootScope.currentNewsfeedState = 'News';
-                });
-            }
-            else if (item === 'Favorites') {
-                $scope.onFavorite = true;
-                apiServices.getFavorite(0, function(data) {
-                    $rootScope.favoriteNews = data.favoriteNews;
-                    $rootScope.moreDataFavorite = data.moreData;
-                    $rootScope.currentNewsfeedState = 'Favorites';
-                });
-            }
-            else {
-                $rootScope.keywords[$rootScope.keywords.indexOf(item)].star = true;
-                apiServices.getFeedByKeyword(item.keyword, 0, function(data) {
-                    $rootScope.followingNews = data.news;
-                    $rootScope.followingKeyword = item.keyword;
-                    $rootScope.titleNews = data.titleNews;
-                    $rootScope.moreDataFollowing = data.moreData;
-                    $rootScope.currentNewsfeedState = 'Following';
-                });
-            }
-        };
-
-        $scope.closeSetting = function() {
-            $scope.modal.hide();
-        };
-
-        $scope.save = function() {
-            $scope.onFavorite = false;
-            for (i in $rootScope.keywords)
-                $rootScope.keywords[i].star = false;
-            $ionicSideMenuDelegate.toggleLeft();
-            $scope.modal.hide();
-
-            apiServices.updateList($rootScope.keywords, function(data) {
-                $rootScope.news = data.news;
-                $rootScope.currentNewsState = $rootScope.news[0];
-                $rootScope.currentNewsfeedState = 'News';
-                $rootScope.moreData = data.moreData;
-            });
-            $state.go('tabs.news');
-        };
-
-        $scope.toggleList = function() {
-            $scope.showList = !$scope.showList;
-        };
     });
+
+    $ionicModal.fromTemplateUrl('templates/home-settings.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+
+    $scope.openSetting = function(e) {
+        e.preventDefault(); 
+        e.stopPropagation();
+        $scope.modal.show();
+
+        $scope.unfollow = function(item) {
+            var confirmPopup = $ionicPopup.confirm({
+                title: 'Are you sure you want to unfollow everything relating to "' 
+                + item.keyword + '"?',
+                scope: $scope,
+                okText: 'Unfollow'
+            });
+
+            confirmPopup.then(function(res) {
+                if (res) {
+                    apiServices.unfollow(item.keyword, function(data) {
+                        $rootScope.keywords = data.keywords;        
+                        $rootScope.listCount = data.keywords.length;
+                        $rootScope.news = data.news;
+                    })
+                }
+            });
+        };
+
+        $scope.deleteItem = function(item) {
+            for (i = 0; i < $rootScope.keywords.length; i++)
+                if ($rootScope.keywords[i].keyword === item.keyword) {
+                    $rootScope.keywords.splice(i, 1);
+                    break;
+                }
+        };
+
+        $scope.toggleCheckbox = function() {
+            $scope.allListChecked = !$scope.allListChecked;
+            for (i = 0; i < $rootScope.keywords.length; i++)
+                $rootScope.keywords[i].isChecked = $scope.allListChecked;
+        };
+    };
+
+    $scope.chooseItem = function(item) {
+        $scope.onFavorite = false;
+        $ionicScrollDelegate.scrollTop();
+        for (i in $rootScope.keywords)
+                $rootScope.keywords[i].star = false;
+        if (item === 'Newsfeed') {
+            apiServices.getFeed(0, function(data) {
+                $rootScope.news = data.news; // newsfeed
+                $rootScope.currentNewsState = $rootScope.news[0];
+                $rootScope.moreData = data.moreData;
+                $rootScope.currentNewsfeedState = 'News';
+            });
+        }
+        else if (item === 'Favorites') {
+            $scope.onFavorite = true;
+            apiServices.getFavorite(0, function(data) {
+                $rootScope.favoriteNews = data.favoriteNews;
+                $rootScope.currentNewsState = $rootScope.favoriteNews[0];
+                $rootScope.moreDataFavorite = data.moreData;
+                $rootScope.currentNewsfeedState = 'Favorites';
+            });
+        }
+        else if (item === 'Logout') {
+            AuthService.logout();
+            $ionicViewSwitcher.nextDirection('swap');
+            $state.go('login');
+        }
+        else {
+            $rootScope.keywords[$rootScope.keywords.indexOf(item)].star = true;
+            apiServices.getFeedByKeyword(item.keyword, 0, function(data) {
+                $rootScope.followingNews = data.news;
+                $rootScope.currentNewsState = $rootScope.followingNews[0];
+                $rootScope.followingKeyword = item.keyword;
+                $rootScope.titleNews = data.titleNews;
+                $rootScope.moreDataFollowing = data.moreData;
+                $rootScope.currentNewsfeedState = 'Following';
+            });
+        }
+    };
+
+    $scope.closeSetting = function() {
+        $scope.modal.hide();
+    };
+
+    $scope.save = function() {
+        $scope.onFavorite = false;
+        for (i in $rootScope.keywords)
+            $rootScope.keywords[i].star = false;
+        $ionicSideMenuDelegate.toggleLeft();
+        $scope.modal.hide();
+
+        apiServices.updateList($rootScope.keywords, function(data) {
+            $rootScope.news = data.news;
+            $rootScope.currentNewsState = $rootScope.news[0];
+            $rootScope.currentNewsfeedState = 'News';
+            $rootScope.moreData = data.moreData;
+        });
+        $state.go('tabs.news');
+    };
+
+    $scope.toggleList = function() {
+        $scope.showList = !$scope.showList;
+    };
 });

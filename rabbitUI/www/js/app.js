@@ -1,6 +1,14 @@
 // Rabbit App
 angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
 
+.constant('AUTH_EVENTS', {
+    notAuthenticated: 'auth-not-authenticated'
+})
+
+.constant('API_ENDPOINT', {
+    url: 'http://localhost:8080/auth'
+})
+
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -17,6 +25,18 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
       StatusBar.styleDefault();
     }
   });
+})
+
+.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+        if (!AuthService.isAuthenticated()) {
+            // console.log(next.name);
+            if (next.name !== 'login' && next.name !== 'register') {
+                event.preventDefault();
+                $state.go('login');
+            }
+        }
+    });
 })
 
 .directive('focus', function($timeout) {
@@ -36,21 +56,22 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
     }
 })  
 
-.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpProvider) {
     $ionicConfigProvider.tabs.position('bottom');
     $ionicConfigProvider.navBar.alignTitle('center');
+
+    $httpProvider.interceptors.push('AuthInterceptor');
+
     $stateProvider
-    .state('suggest', {
-        cache: false,
-        url: '/suggest',
-        templateUrl: 'templates/suggestion.html',
-        controller: 'SuggestController'
+    .state('login', {
+        url: '/login',
+        templateUrl: 'templates/login.html',
+        controller: 'LoginController'
     })
-    .state('search', {
-        cache: false,
-        url: '/search',
-        templateUrl: 'templates/search.html',
-        controller: 'SearchController'
+    .state('register', {
+        url: '/register',
+        templateUrl: 'templates/register.html',
+        controller: 'RegisterController'
     })
     .state('tabs', {
         url: '/tabs',
@@ -63,6 +84,22 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             'newsContent': {
                 templateUrl: 'templates/news.html',
                 controller: 'NewsController'
+            }
+        }
+    })
+    .state('suggest', {
+        cache: false,
+        url: '/suggest',
+        templateUrl: 'templates/suggestion.html',
+        controller: 'SuggestController'
+    })
+    .state('tabs.search', {
+        cache: false,
+        url: '/search',
+        views: {
+            'newsContent': {
+                templateUrl: 'templates/search.html',
+                controller: 'SearchController'
             }
         }
     })
@@ -79,7 +116,7 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
         url: '/favorites',
         views: {
             'newsContent': {
-                templateUrl: 'templates/highlight.html',
+                templateUrl: 'templates/favorites.html',
                 controller: 'FavoritesController'
             }
         }
@@ -101,5 +138,6 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             }
         }
     });
-    $urlRouterProvider.otherwise('/tabs/news');
+
+    $urlRouterProvider.otherwise('/login');
 });

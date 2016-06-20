@@ -1,4 +1,78 @@
 angular.module('starter.services', [])
+ 
+.service('AuthService', function($q, $http, API_ENDPOINT) {
+	var LOCAL_TOKEN_KEY = 'yourTokenKey';
+	var isAuthenticated = false;
+	var authToken;
+
+	function loadUserCredentials() {
+		var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
+		if (token)
+			useCredentials(token);
+	}
+
+	function storeUserCredentials(token) {
+		window.localStorage.setItem(LOCAL_TOKEN_KEY, token);
+		useCredentials(token);
+	}
+
+	function useCredentials(token) {
+		isAuthenticated = true;
+		authToken = token;
+
+		// Set the token as header for your requests!
+		$http.defaults.headers.common.Authorization = authToken;
+	}
+
+	function destroyUserCredentials() {
+		authToken = undefined;
+		isAuthenticated = false;
+		$http.defaults.headers.common.Authorization = undefined;
+		window.localStorage.removeItem(LOCAL_TOKEN_KEY);
+	}
+
+	loadUserCredentials();
+
+	return {
+		login: function(user) {
+			return $q(function(resolve, reject) {
+				$http.post(API_ENDPOINT.url + '/login', user).then(function(result) {
+					if (result.data.success) {
+						storeUserCredentials(result.data.token);
+						resolve(result.data.message);
+					}
+					else reject(result.data.message);
+				});
+			});
+		},
+		register: function(user) {
+			return $q(function(resolve, reject) {
+				$http.post(API_ENDPOINT.url + '/register', user).then(function(result) {
+					if (result.data.success)
+						resolve(result.data.message);
+					else reject(result.data.message);
+				});
+			});
+		},
+		logout: function() {
+			destroyUserCredentials();
+		},
+		isAuthenticated: function() {
+			return isAuthenticated;
+		}
+	};
+})
+ 
+.factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
+	return {
+		responseError: function (response) {
+			$rootScope.$broadcast({
+		    	401: AUTH_EVENTS.notAuthenticated,
+		  	}[response.status], response);
+		  	return $q.reject(response);
+		}
+	};
+})
 
 .factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout) {
 	var domain = 'http://localhost:8080/clientapi';
@@ -24,7 +98,7 @@ angular.module('starter.services', [])
 	return {
 		getFeed: function(value, callback) {
 			$ionicLoading.show({
-				templateUrl: 'templates/loadingspinner.html',
+				templateUrl: 'templates/spinner/loadingspinner.html',
 				noBackdrop: true
 			});
 			$timeout(function() {
@@ -41,7 +115,7 @@ angular.module('starter.services', [])
 		},
 		getFeedByKeyword: function(value, size, callback) {
 			$ionicLoading.show({
-				templateUrl: 'templates/loadingspinner.html',
+				templateUrl: 'templates/spinner/loadingspinner.html',
 				noBackdrop: true
 			});
 			$timeout(function() {
@@ -71,7 +145,7 @@ angular.module('starter.services', [])
 		},
 		search: function(value, size, callback) {
 			$ionicLoading.show({
-				templateUrl: 'templates/loadingspinner.html',
+				templateUrl: 'templates/spinner/loadingspinner.html',
 				noBackdrop: true
 			});
 			$timeout(function() {
@@ -89,7 +163,7 @@ angular.module('starter.services', [])
 		},
 		follow: function(value, keyword, callback) {
 			$ionicLoading.show({
-				templateUrl: 'templates/unfollowspinner.html'
+				templateUrl: 'templates/spinner/unfollowspinner.html'
 			});
 			$http.post(followAPI, {
                 q: value
@@ -107,7 +181,7 @@ angular.module('starter.services', [])
 		},
 		unfollow: function(value, callback) {
 			$ionicLoading.show({
-				templateUrl: 'templates/unfollowspinner.html'
+				templateUrl: 'templates/spinner/unfollowspinner.html'
 			});
 			$http.post(unfollowAPI, {
                 keyword: value

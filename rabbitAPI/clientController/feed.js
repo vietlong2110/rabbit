@@ -256,7 +256,7 @@ var updateFavorite = function(userId, articleId, callback) {
 		}
 
 		var tmp = [];
-		for (i in user.stars)
+		for (i = 0; i < user.stars.length; i++)
 			tmp.push(user.stars[i]);
 
 		var index = user.articles.indexOf(articleId);

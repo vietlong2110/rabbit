@@ -12,7 +12,7 @@ var getList = function(userId, callback) {
 		var followingList = [];
 		var Filter = require('../libs/filter.js');
 
-		for (i in wordList) {
+		for (i = 0; i < wordList.length; i++) {
 			var niceKeyword = Filter.niceTitle(wordList[i]); //render a nice keyword
 
 			followingList.push({
@@ -38,7 +38,7 @@ var getFeed = function(userId, querySize, callback) {
 
 		for (i in articleResult) { //add keyword to a list of hashtag for an article
 			var hashtag = '', hashtagLine = hashtagResult[i];
-			for (j in hashtagLine)
+			for (j = 0; j < hashtagLine.length; j++)
 				hashtag = hashtag + ' ' + Filter.keywordToHashtag(hashtagLine[j]);
 			articleResult[i].hashtag = hashtag;
 			articleResult[i].star = starResult[i];
@@ -59,15 +59,16 @@ var getFeed = function(userId, querySize, callback) {
 		var offset = (articleResult.length < 8) ? articleResult.length : 8;
 		var size = 5;
 		var n = 0, moreData = true;
+		
 		if (querySize === 0)
 			n = offset;
 		else if (querySize + size <= articleResult.length)
 			n = querySize + size;
-		else {
-			n = articleResult.length;
-			moreData = false;
-		}
+		else n = articleResult.length;
 
+		if (n === articleResult.length)
+			moreData = false;
+		
 		for (i = 0; i < n; i++) {
 			feed.push({
 				// eval: articleResult[i].evalScore,

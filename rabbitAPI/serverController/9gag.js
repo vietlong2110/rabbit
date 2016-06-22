@@ -1,11 +1,7 @@
-/************************************************************************
-*		This controller include all functions relating to rss reader	*
-************************************************************************/
-
 var request = require('request');
 var async = require('async');
 
-var feedParse = function(url, callback) { //rss reader
+var feedParse = function(url, callback) {
 	var google_api_url = "https://ajax.googleapis.com/ajax/services/feed/load?v=2.0&q=" + url + "&num=30";
 	request(google_api_url, function(err, res, body) {
 		if (!err && res.statusCode === 200) {
@@ -16,11 +12,11 @@ var feedParse = function(url, callback) { //rss reader
 				async.each(entries, function(entry, cb) {
 					var Extract = require('./extract.js');
 
-					Extract.extractImage(entry.link, function(thumbnail) {
+					Extract.extractImageFromContent(entry.content, function(image) {
 						articles.push({
-							url: entry.link, 
+							url: entry.link,
 							title: entry.title,
-							thumbnail: thumbnail,
+							image: image,
 							publishedDate: entry.publishedDate
 						});
 						cb();
@@ -28,9 +24,9 @@ var feedParse = function(url, callback) { //rss reader
 				}, function(err) {
 					if (err)
 						callback(err);
-					
+
 					var Save = require('./save.js');
-					Save.saveArticle(articles, function() {
+					Save.saveMediaArticle(articles, function() {
 						callback(articles);
 					});
 				});

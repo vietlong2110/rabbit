@@ -1,6 +1,6 @@
 {
   "name": "rabbitapi",
-  "version": "0.6.1",
+  "version": "0.11.1",
   "description": "making API call for rabbit app",
   "main": "app.js",
   "scripts": {
@@ -28,7 +28,6 @@
     "passport-jwt": "^2.0.0",
     "porter-stemmer": "^0.9.1",
     "request": "^2.72.0",
-    "uid2": "0.0.3",
     "urlencode": "^1.1.0"
   }
 }

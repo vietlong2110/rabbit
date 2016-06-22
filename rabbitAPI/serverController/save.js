@@ -3,7 +3,6 @@
 ********************************************************************************************/
 
 var async = require('async');
-
 var mongoose = require('mongoose');
 
 //For calculating inverted document frequency
@@ -73,3 +72,49 @@ var saveArticle = function(articles, callback) {
 	});
 };
 module.exports.saveArticle = saveArticle;
+
+var saveMediaArticle = function(articles, callback) {
+	var mediaArticle = require('../models/mediaArticles.js');
+
+	async.each(articles, function(article, cb) {
+
+		mediaArticle.findOne({url: article.url})
+		.exec(function(err, item) {
+			if (err) //process error case later
+				res.json({Error: err});
+			else if (item === null) {
+				var Extract = require('./extract.js');
+
+				//if (article.content === null)
+				Extract.extractKeyword(article.title, function(keywordSet, tf) {
+					var a = new mediaArticle({
+						url: article.url,
+						title: article.title,
+						thumbnail: article.thumbnail,
+						publishedDate: article.publishedDate,
+						keywords: keywordSet,
+						tf: tf
+					});
+
+					a.save(function(err) {
+						if (err) { //process error case later
+							console.log(err);
+							cb();
+						}
+						saveKeyword(keywordSet);		
+						cb();
+					});
+				});
+			}
+			else cb();
+		});
+	}, function(err) {
+		if (err) { //process error case later
+			console.log(err);
+			callback();
+		}
+		
+		callback();
+	});
+};
+module.exports.saveMediaArticle = saveMediaArticle;

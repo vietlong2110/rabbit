@@ -18,12 +18,20 @@ router.post('/rss', function(req, res) { //test rss reader
 	});
 });
 
+router.post('/9gag', function(req, res) {
+	var url = req.body.url;
+	var nineGag = require('../serverController/9gag.js');
+	nineGag.feedParse(urlencode(url), function(data) {
+		res.json(data);
+	});
+});
+
 router.post('/extract/content', function(req, res) { //test the extracting content function
-	var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
+	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
 	var url = req.body.url;
 	var Extract = require('../serverController/extract.js');
- 	Extract.extractContent(url, function(keywordSet, tf) {
- 		res.json({KeywordSet: keywordSet});
+ 	Extract.extractContent(url, function(content) {
+ 		res.json({Content: content});
  	});
 });
 

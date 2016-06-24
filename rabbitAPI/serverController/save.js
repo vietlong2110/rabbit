@@ -6,7 +6,7 @@ var async = require('async');
 var mongoose = require('mongoose');
 
 //For calculating inverted document frequency
-var saveKeyword = function(keywordSet) {
+var saveKeyword = function(keywordSet, originKeywordSet) {
 	var Keyword = require('../models/keywords.js');
 
 	async.each(keywordSet, function(keyword, callback) {
@@ -40,14 +40,16 @@ var saveArticle = function(articles, callback) {
 			else if (item === null) {
 				var Extract = require('./extract.js');
 
-				Extract.extractContent(article.url, function(keywordSet, tf) {
+				Extract.extractContent(article.url, function(originKeywordSet, keywordSet, tf) {
 					var a = new Article({
 						url: article.url,
 						title: article.title,
 						thumbnail: article.thumbnail,
 						publishedDate: article.publishedDate,
+						originKeywords: originKeywordSet,
 						keywords: keywordSet,
-						tf: tf
+						tf: tf,
+						media: false
 					});
 
 					a.save(function(err) {
@@ -55,7 +57,7 @@ var saveArticle = function(articles, callback) {
 							console.log(err);
 							cb();
 						}
-						saveKeyword(keywordSet);		
+						saveKeyword(keywordSet, originKeywordSet);		
 						cb();
 					});
 				});
@@ -67,18 +69,18 @@ var saveArticle = function(articles, callback) {
 			console.log(err);
 			callback();
 		}
-		
+		console.log('In here!');
 		callback();
 	});
 };
 module.exports.saveArticle = saveArticle;
 
 var saveMediaArticle = function(articles, callback) {
-	var mediaArticle = require('../models/mediaArticles.js');
+	var Article = require('../models/articles.js');
 
 	async.each(articles, function(article, cb) {
 
-		mediaArticle.findOne({url: article.url})
+		Article.findOne({url: article.url})
 		.exec(function(err, item) {
 			if (err) //process error case later
 				res.json({Error: err});
@@ -86,14 +88,16 @@ var saveMediaArticle = function(articles, callback) {
 				var Extract = require('./extract.js');
 
 				//if (article.content === null)
-				Extract.extractKeyword(article.title, function(keywordSet, tf) {
-					var a = new mediaArticle({
+				Extract.extractKeyword(article.title, function(originKeywordSet, keywordSet, tf) {
+					var a = new Article({
 						url: article.url,
 						title: article.title,
 						thumbnail: article.thumbnail,
 						publishedDate: article.publishedDate,
+						originKeywords: originKeywordSet,
 						keywords: keywordSet,
-						tf: tf
+						tf: tf,
+						media: true
 					});
 
 					a.save(function(err) {
@@ -101,7 +105,7 @@ var saveMediaArticle = function(articles, callback) {
 							console.log(err);
 							cb();
 						}
-						saveKeyword(keywordSet);		
+						saveKeyword(keywordSet, originKeywordSet);		
 						cb();
 					});
 				});

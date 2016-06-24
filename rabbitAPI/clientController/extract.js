@@ -27,13 +27,13 @@ var getList = function(userId, callback) {
 module.exports.getList = getList;
 
 //get current newsfeed controller
-var getFeed = function(userId, querySize, callback) {
+var getFeed = function(userId, querySizeNews, querySizeMedia, callback) {
 	var Feed = require('./feed.js');
 
 	// get all feeds with their keywords list corresponding to 
 	// the settings from following list
 	Feed.getFeed(userId, function(articleResult, hashtagResult, starResult) {
-		var feed = [];
+		var newsfeed = [], mediafeed = [];
 		var Filter = require('../libs/filter.js');
 
 		for (i in articleResult) { //add keyword to a list of hashtag for an article
@@ -56,24 +56,17 @@ var getFeed = function(userId, querySize, callback) {
 			else return bToday - aToday; //otherwise sort by day first
 		});
 
-		var offset = (articleResult.length < 8) ? articleResult.length : 8;
-		var size = 5;
-		var n = 0, moreData = true;
-		
-		if (querySize === 0)
-			n = offset;
-		else if (querySize + size <= articleResult.length)
-			n = querySize + size;
-		else n = articleResult.length;
-
-		if (n === articleResult.length)
-			moreData = false;
-		
-		for (i = 0; i < n; i++) {
-			feed.push({
-				// eval: articleResult[i].evalScore,
-				// today: articleResult[i].today,
-				// date: articleResult[i].publishedDate,
+		for (i in articleResult)
+			if (articleResult[i].media)
+				mediafeed.push({
+					id: articleResult[i].id,
+					url: articleResult[i].url,
+					title: articleResult[i].title,
+					thumbnail: articleResult[i].thumbnail,
+					hashtag: articleResult[i].hashtag,
+					star: articleResult[i].star
+				});
+			else newsfeed.push({
 				id: articleResult[i].id,
 				url: articleResult[i].url,
 				title: articleResult[i].title,
@@ -81,9 +74,32 @@ var getFeed = function(userId, querySize, callback) {
 				hashtag: articleResult[i].hashtag,
 				star: articleResult[i].star
 			});
+
+		var offset = (newsfeed.length < 8) ? newsfeed.length : 8;
+		var size = 5, moreDataNews = true;
+
+		if (querySizeNews === 0) {
+			if (newsfeed.length === offset)
+				moreDataNews = false;
+			newsfeed = newsfeed.slice(0, offset);
 		}
+		else if (querySizeNews + size < newsfeed.length)
+			newsfeed = newsfeed.slice(0, querySizeNews + size);
+		else moreDataNews = false;
+
+		offset = (mediafeed.length < 8) ? mediafeed.length : 8;
+		var moreDataMedia = true;
+
+		if (querySizeMedia === 0) {
+			if (mediafeed.length === offset)
+				moreDataMedia = false;
+			mediafeed = mediafeed.slice(0, offset);
+		}
+		else if (querySizeMedia + size < mediafeed.length)
+			mediafeed = mediafeed.slice(0, querySizeMedia + size);
+		else moreDataMedia = false;
 		
-		callback(feed, moreData);
+		callback(newsfeed, mediafeed, moreDataNews, moreDataMedia);
 	});
 };
 module.exports.getFeed = getFeed;

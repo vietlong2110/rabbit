@@ -70,8 +70,11 @@ var contentToKeywords = function(content, callback) {
 	content = preProcess(content);
 	content = wordTokenize(content);
 	removeStopWords(content, function(keywords) {
+		var originKeywords = [];
+		for (i = 0; i < keywords.length; i++)
+			originKeywords.push(keywords[i]);
 		keywords = stemArr(keywords);
-		callback(keywords);
+		callback(keywords, originKeywords);
 	});
 };
 module.exports.contentToKeywords = contentToKeywords;

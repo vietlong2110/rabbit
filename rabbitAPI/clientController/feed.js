@@ -49,7 +49,8 @@ var searchFeed = function(q, callback) {
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,
-							publishedDate: article.publishedDate
+							publishedDate: article.publishedDate,
+							media: article.media
 						});
 					}
 					cb();
@@ -157,7 +158,8 @@ var getFeedUser = function(keyword, articleIds, callback) {
 							url: article.url,
 							title: article.title,
 							thumbnail: article.thumbnail,
-							publishedDate: article.publishedDate
+							publishedDate: article.publishedDate,
+							media: article.media
 						});
 						Ids.push(articleId); //article's ID
 
@@ -289,7 +291,7 @@ var getFavorite = function(userId, callback) {
 			callback([]);
 		}
 
-		var favoriteList = [];
+		var favoriteNewsList = [], favoriteMediaList = [];
 		var Article = require('../models/articles.js');
 
 		async.forEachOfSeries(user.stars, function(star, i, cb) {
@@ -300,7 +302,15 @@ var getFavorite = function(userId, callback) {
 						cb();
 					}
 
-					favoriteList.push({ //article's properties
+					if (article.media)
+						favoriteMediaList.push({ //article's properties
+							id: article._id,
+							url: article.url,
+							title: article.title,
+							thumbnail: article.thumbnail,
+							publishedDate: article.publishedDate
+						});
+					else favoriteNewsList.push({
 						id: article._id,
 						url: article.url,
 						title: article.title,
@@ -316,7 +326,7 @@ var getFavorite = function(userId, callback) {
 				callback([]);
 			}
 
-			callback(favoriteList);
+			callback(favoriteNewsList, favoriteMediaList);
 		});
 	});
 };

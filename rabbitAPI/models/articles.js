@@ -13,8 +13,10 @@ var Article = new Schema({
 		type: Date, 
 		default: Date.now()
 	},
+	originKeywords: [String],
 	keywords: [String],
-	tf: [Number] //term frequency corresponding to keyword
+	tf: [Number], //term frequency corresponding to keyword
+	media: Boolean
 });
 
 module.exports = mongoose.model('articles', Article);

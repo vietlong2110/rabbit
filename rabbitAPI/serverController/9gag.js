@@ -13,10 +13,12 @@ var feedParse = function(url, callback) {
 					var Extract = require('./extract.js');
 
 					Extract.extractImageFromContent(entry.content, function(image) {
+						if (image.substr(image.length-4, 4) === ".gif")
+							image = image.replace("a.gif", ".jpg");
 						articles.push({
 							url: entry.link,
 							title: entry.title,
-							image: image,
+							thumbnail: image,
 							publishedDate: entry.publishedDate
 						});
 						cb();

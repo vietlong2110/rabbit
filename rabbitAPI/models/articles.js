@@ -9,11 +9,12 @@ var Article = new Schema({
 	url: String,
 	title: String,
 	thumbnail: String,
+	avatar: String,
+	source: String,
 	publishedDate: {
 		type: Date, 
 		default: Date.now()
 	},
-	originKeywords: [String],
 	keywords: [String],
 	tf: [Number], //term frequency corresponding to keyword
 	media: Boolean

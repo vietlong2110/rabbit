@@ -98,3 +98,8 @@ Input keywords and hashtags, follow news and social media
 * Create social media tab view
 
 ## Next minor(v0.13)
+* Recreate structure of keywords model for search suggestion
+* Create search suggestion controller
+* Create search suggestion view
+* Authorize by oauth facebook
+* Redesign authentication view and create connect to facebook view

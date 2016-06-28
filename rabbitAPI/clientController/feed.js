@@ -48,6 +48,8 @@ var searchFeed = function(q, callback) {
 							id: article._id,
 							url: article.url,
 							title: article.title,
+							source: article.source,
+							avatar: article.avatar,
 							thumbnail: article.thumbnail,
 							publishedDate: article.publishedDate,
 							media: article.media
@@ -157,6 +159,8 @@ var getFeedUser = function(keyword, articleIds, callback) {
 							id: article._id,
 							url: article.url,
 							title: article.title,
+							source: article.source,
+							avatar: article.avatar,
 							thumbnail: article.thumbnail,
 							publishedDate: article.publishedDate,
 							media: article.media
@@ -307,15 +311,20 @@ var getFavorite = function(userId, callback) {
 							id: article._id,
 							url: article.url,
 							title: article.title,
+							source: article.source,
+							avatar: article.avatar,
 							thumbnail: article.thumbnail,
-							publishedDate: article.publishedDate
+							publishedDate: article.publishedDate,
+							star: true
 						});
 					else favoriteNewsList.push({
 						id: article._id,
 						url: article.url,
 						title: article.title,
+						source: article.source,
 						thumbnail: article.thumbnail,
-						publishedDate: article.publishedDate
+						publishedDate: article.publishedDate,
+						star: true
 					});
 					cb();
 				});

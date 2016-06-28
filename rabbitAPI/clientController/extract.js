@@ -62,6 +62,8 @@ var getFeed = function(userId, querySizeNews, querySizeMedia, callback) {
 					id: articleResult[i].id,
 					url: articleResult[i].url,
 					title: articleResult[i].title,
+					source: articleResult[i].source,
+					avatar: articleResult[i].avatar,
 					thumbnail: articleResult[i].thumbnail,
 					hashtag: articleResult[i].hashtag,
 					star: articleResult[i].star
@@ -75,31 +77,13 @@ var getFeed = function(userId, querySizeNews, querySizeMedia, callback) {
 				star: articleResult[i].star
 			});
 
-		var offset = (newsfeed.length < 8) ? newsfeed.length : 8;
-		var size = 5, moreDataNews = true;
-
-		if (querySizeNews === 0) {
-			if (newsfeed.length === offset)
-				moreDataNews = false;
-			newsfeed = newsfeed.slice(0, offset);
-		}
-		else if (querySizeNews + size < newsfeed.length)
-			newsfeed = newsfeed.slice(0, querySizeNews + size);
-		else moreDataNews = false;
-
-		offset = (mediafeed.length < 8) ? mediafeed.length : 8;
-		var moreDataMedia = true;
-
-		if (querySizeMedia === 0) {
-			if (mediafeed.length === offset)
-				moreDataMedia = false;
-			mediafeed = mediafeed.slice(0, offset);
-		}
-		else if (querySizeMedia + size < mediafeed.length)
-			mediafeed = mediafeed.slice(0, querySizeMedia + size);
-		else moreDataMedia = false;
+		var Pagination = require('../libs/pagination.js');
 		
-		callback(newsfeed, mediafeed, moreDataNews, moreDataMedia);
+		Pagination.paginate(newsfeed, querySizeNews, function(newsfeed, moreDataNews) {
+			Pagination.paginate(mediafeed, querySizeMedia, function(mediafeed, moreDataMedia) {
+				callback(newsfeed, mediafeed, moreDataNews, moreDataMedia);
+			});
+		});
 	});
 };
 module.exports.getFeed = getFeed;

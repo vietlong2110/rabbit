@@ -10,6 +10,7 @@ var async = require('async');
 
 var Extract = require('../clientController/extract.js');
 var UserController = require('../clientController/user.js');
+var Pagination = require('../libs/pagination.js');
 
 module.exports = function(passport) {
 	//API router for searching a keyword/hashtag
@@ -34,6 +35,8 @@ module.exports = function(passport) {
 						id: searchResult[i].id,
 						url: searchResult[i].url,
 						title: searchResult[i].title,
+						source: searchResult[i].source,
+						avatar: searchResult[i].avatar,
 						thumbnail: searchResult[i].thumbnail,
 						hashtag: hashtag
 					});
@@ -41,45 +44,26 @@ module.exports = function(passport) {
 					id: searchResult[i].id,
 					url: searchResult[i].url,
 					title: searchResult[i].title,
+					source: searchResult[i].source,
 					thumbnail: searchResult[i].thumbnail,
 					hashtag: hashtag
 				});
 
-			var offset = (newsFeedResult.length < 8) ? newsFeedResult.length : 8;
-			var size = 5, moreDataNews = true;
-			var querySize = parseInt(req.query.sizenews);
+			Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+			function(newsFeedResult, moreDataNews) {
+				Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+				function(mediaFeedResult, moreDataMedia) {
+					var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
 
-			if (querySize === 0) {
-				if (newsFeedResult.length === offset)
-					moreDataNews = false;
-				newsFeedResult = newsFeedResult.slice(0, offset);
-			}
-			else if (querySize + size < newsFeedResult.length)
-				newsFeedResult = newsFeedResult.slice(0, querySize + size);
-			else moreDataNews = false;
-
-			offset = (mediaFeedResult.length < 8) ? mediaFeedResult.length : 8;
-			var moreDataMedia = true;
-			querySize = parseInt(req.query.sizemedia);
-
-			if (querySize === 0) {
-				if (mediaFeedResult.length === offset)
-					moreDataMedia = false;
-				mediaFeedResult = mediaFeedResult.slice(0, offset);
-			}
-			else if (querySize + size < mediaFeedResult.length)
-				mediaFeedResult = mediaFeedResult.slice(0, querySize + size);
-			else moreDataMedia = false;
-
-			var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
-
-			res.json({
-				newsFeedResult: newsFeedResult, //search results
-				mediaFeedResult: mediaFeedResult,
-				keywordSearch: req.query.q, //return whatever users typed in to compare with their following list
-				queryTitle: queryTitle, //title for search view
-				moreDataNews: moreDataNews,
-				moreDataMedia: moreDataMedia
+					res.json({
+						newsFeedResult: newsFeedResult, //search results
+						mediaFeedResult: mediaFeedResult,
+						keywordSearch: req.query.q, //return whatever users typed in to compare with their following list
+						queryTitle: queryTitle, //title for search view
+						moreDataNews: moreDataNews,
+						moreDataMedia: moreDataMedia
+					});
+				});
 			});
 		});
 	});
@@ -259,6 +243,8 @@ module.exports = function(passport) {
 									id: result.id,
 									url: result.url,
 									title: result.title,
+									source: result.source,
+									avatar: result.avatar,
 									thumbnail: result.thumbnail,
 									hashtag: hashtag,
 									star: star
@@ -267,6 +253,8 @@ module.exports = function(passport) {
 								id: result.id,
 								url: result.url,
 								title: result.title,
+								source: result.source,
+								avatar: result.avatar,
 								thumbnail: result.thumbnail,
 								hashtag: hashtag,
 								star: star
@@ -279,40 +267,20 @@ module.exports = function(passport) {
 							res.json({});
 						}
 
-						var offset = (newsFeedResult.length < 8) ? newsFeedResult.length : 8;
-						var size = 5, moreDataNews = true;
-						var querySize = parseInt(req.query.size);
+						Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+						function(newsFeedResult, moreDataNews) {
+							Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+							function(mediaFeedResult, moreDataMedia) {
+								var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
 
-						if (querySize === 0) {
-							if (newsFeedResult.length === offset)
-								moreDataNews = false;
-							newsFeedResult = newsFeedResult.slice(0, offset);
-						}
-						else if (querySize + size < newsFeedResult.length)
-							newsFeedResult = newsFeedResult.slice(0, querySize + size);
-						else moreDataNews = false;
-
-						offset = (mediaFeedResult.length < 8) ? mediaFeedResult.length : 8;
-						var moreDataMedia = true;
-						querySize = parseInt(req.query.size);
-
-						if (querySize === 0) {
-							if (mediaFeedResult.length === offset)
-								moreDataMedia = false;
-							mediaFeedResult = mediaFeedResult.slice(0, offset);
-						}
-						else if (querySize + size < mediaFeedResult.length)
-							mediaFeedResult = mediaFeedResult.slice(0, querySize + size);
-						else moreDataMedia = false;
-
-						var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
-
-						res.json({
-							news: newsFeedResult, //search results
-							media: mediaFeedResult,
-							titleNews: queryTitle, //title for search view
-							moreDataNews: moreDataNews,
-							moreDataMedia: moreDataMedia
+								res.json({
+									news: newsFeedResult, //search results
+									media: mediaFeedResult,
+									titleNews: queryTitle, //title for search view
+									moreDataNews: moreDataNews,
+									moreDataMedia: moreDataMedia
+								});	
+							});
 						});
 					});
 				});
@@ -348,37 +316,17 @@ module.exports = function(passport) {
 				var Feed = require('../clientController/feed.js');
 
 				Feed.getFavorite(userId, function(favoriteNewsList, favoriteMediaList) {
-					var offset = (favoriteNewsList.length < 8) ? favoriteNewsList.length : 8;
-					var size = 5, moreDataNews = true;
-					var querySize = parseInt(req.query.sizenews);
-
-					if (querySize === 0) {
-						if (favoriteNewsList.length === offset)
-							moreDataNews = false;
-						favoriteNewsList = favoriteNewsList.slice(0, offset);
-					}
-					else if (querySize + size < favoriteNewsList.length)
-						favoriteNewsList = favoriteNewsList.slice(0, querySize + size);
-					else moreDataNews = false;
-
-					offset = (favoriteMediaList.length < 8) ? favoriteMediaList.length : 8;
-					var moreDataMedia = true;
-					querySize = parseInt(req.query.sizemedia);
-
-					if (querySize === 0) {
-						if (favoriteMediaList.length === offset)
-							moreDataMedia = false;
-						favoriteMediaList = favoriteMediaList.slice(0, offset);
-					}
-					else if (querySize + size < favoriteMediaList.length)
-						favoriteMediaList = favoriteMediaList.slice(0, querySize + size);
-					else moreDataMedia = false;
-
-					res.json({
-						favoriteNews: favoriteNewsList,
-						favoriteMedia: favoriteMediaList,
-						moreDataNews: moreDataNews,
-						moreDataMedia: moreDataMedia
+					Pagination.paginate(favoriteNewsList, parseInt(req.query.sizenews),
+					function(favoriteNewsList, moreDataNews) {
+						Pagination.paginate(favoriteMediaList, parseInt(req.query.sizemedia),
+						function(favoriteMediaList, moreDataMedia) {
+							res.json({
+								favoriteNews: favoriteNewsList,
+								favoriteMedia: favoriteMediaList,
+								moreDataNews: moreDataNews,
+								moreDataMedia: moreDataMedia
+							});
+						});
 					});
 				});
 			}

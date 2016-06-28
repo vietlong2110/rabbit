@@ -151,3 +151,21 @@ right: 5%; /* Adjust position */
 #title {
 	padding-top: 5px;
 }
+
+.media-image {
+	height: 250px;
+	overflow: hidden;
+}
+
+.media-title {
+	font-weight: bold;
+	font-size: 140%;
+}
+
+#media-star {
+	padding-top: 20px;
+}
+
+.background {
+	background-color: #ececec;
+}

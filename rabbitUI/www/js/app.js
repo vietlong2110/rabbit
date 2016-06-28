@@ -1,5 +1,9 @@
 // Rabbit App
-angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
+angular.module('starter', ['ionic','starter.services', 'app.controller', 'login.controller',
+'register.controller', 'news.controller', 'socialmedia.controller', 'suggest.controller',
+'search.controller', 'socialsearch.controller', 'reading.controller', 'socialreading.controller',
+'favorites.controller', 'socialfavorites.controller', 'followinglist.controller',
+'socialfollowinglist.controller'])
 
 .constant('AUTH_EVENTS', {
     notAuthenticated: 'auth-not-authenticated'
@@ -8,6 +12,8 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
 .constant('API_ENDPOINT', {
     url: 'http://localhost:8080/auth'
 })
+
+.constant('LOAD_SIZE', 5)
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -87,6 +93,15 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             }
         }
     })
+    .state('tabs.social', {
+        url: '/social',
+        views: {
+            'socialmediaContent': {
+                templateUrl: 'templates/socialmedia.html',
+                controller: 'SocialMediaController'
+            }
+        }
+    })
     .state('suggest', {
         cache: false,
         url: '/suggest',
@@ -103,12 +118,31 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             }
         }
     })
+    .state('tabs.socialsearch', {
+        cache: false,
+        url: '/socialsearch',
+        views: {
+            'socialmediaContent': {
+                templateUrl: 'templates/social-search.html',
+                controller: 'SocialSearchController'
+            }
+        }
+    })
     .state('tabs.followinglist', {
-        url: '/followinglist/:followinglistId',
+        url: '/followinglist',
         views: {
             'newsContent': {
                 templateUrl: 'templates/followinglist.html',
                 controller: 'FollowingListController'
+            }
+        }
+    })
+    .state('tabs.socialfollowinglist', {
+        url: '/socialfollowinglist',
+        views: {
+            'socialmediaContent': {
+                templateUrl: 'templates/social-followinglist.html',
+                controller: 'SocialFollowingListController'
             }
         }
     })
@@ -121,21 +155,31 @@ angular.module('starter', ['ionic', 'starter.controller', 'starter.services'])
             }
         }
     })
+    .state('tabs.socialfavorites', {
+        url: '/socialfavorites',
+        views: {
+            'socialmediaContent': {
+                templateUrl: 'templates/social-favorites.html',
+                controller: 'SocialFavoritesController'
+            }
+        }
+    })
     .state('tabs.reading', {
-        url: '/news/:newsId',
+        url: '/reading',
         views: {
             'newsContent': {
                 templateUrl: 'templates/reading.html',
                 controller: 'ReadingController'
-            }
+            },
         }
     })
-    .state('tabs.social', {
-        url: '/social',
+    .state('tabs.socialreading', {
+        url: '/socialreading',
         views: {
             'socialmediaContent': {
-                templateUrl: 'templates/socialmedia.html'
-            }
+                templateUrl: 'templates/social-reading.html',
+                controller: 'SocialReadingController'
+            },
         }
     });
 

@@ -16,11 +16,11 @@
     	</ion-nav-buttons>
 	</ion-nav-bar>
 
-	<ion-content>
+	<ion-content class="background">
 		<ion-list id="newsfeed">
 			<ion-item collection-repeat="item in searchResult" class="item-thumbnail-left item-text-wrap">
 			    <img src="{{item.thumbnail}}" alt="thumbnail">
-			    <a ng-click="assignCurrentNews(item)" href="#/tabs/news/{{item.id}}">
+			    <a ng-click="assignCurrentReading(item)" href="#/tabs/reading">
 		      		<h2>{{item.title}}</h2>
 		      		<p>{{item.hashtag}}</p>
 			    </a>

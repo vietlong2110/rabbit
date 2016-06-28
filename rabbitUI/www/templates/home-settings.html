@@ -30,7 +30,7 @@
         </div>
 
         <ion-scroll style="height:529px">
-            <div id="list" collection-repeat="item in keywords | filter:query" 
+            <div id="list" ng-repeat="item in keywords | filter:query" 
             class="item item-icon-right item-icon-left item-checkbox">
                 <label class="checkbox checkbox-calm">
                     <input type="checkbox" ng-model="item.isChecked">

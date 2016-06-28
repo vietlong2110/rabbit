@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
  
-.service('AuthService', function($q, $http, API_ENDPOINT) {
+.service('AuthService', function($q, $http, $rootScope, API_ENDPOINT) {
 	var LOCAL_TOKEN_KEY = 'yourTokenKey';
 	var isAuthenticated = false;
 	var authToken;
@@ -28,6 +28,10 @@ angular.module('starter.services', [])
 		authToken = undefined;
 		isAuthenticated = false;
 		$http.defaults.headers.common.Authorization = undefined;
+
+		$rootScope.news = undefined;
+		$rootScope.keywords = undefined;
+
 		window.localStorage.removeItem(LOCAL_TOKEN_KEY);
 	}
 
@@ -74,7 +78,7 @@ angular.module('starter.services', [])
 	};
 })
 
-.factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout) {
+.factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout, $rootScope) {
 	var domain = 'http://localhost:8080/clientapi';
 
 	var getFeedAPI = domain + '/getfeed';
@@ -96,7 +100,7 @@ angular.module('starter.services', [])
 	var getFavoriteAPI = domain + '/getfavorite';
 
 	return {
-		getFeed: function(value, callback) {
+		getFeed: function(sizenews, sizemedia, callback) {
 			$ionicLoading.show({
 				templateUrl: 'templates/spinner/loadingspinner.html',
 				noBackdrop: true
@@ -104,16 +108,25 @@ angular.module('starter.services', [])
 			$timeout(function() {
 				$ionicLoading.hide();
 			}, 5000);
+
 			$http.get(getFeedAPI, {
 				params: {
-					size: value
+					sizenews: sizenews,
+					sizemedia: sizemedia
 				}
 			}).success(function(data) {
 				$ionicLoading.hide();
-				callback(data);
+
+				$rootScope.news = data.news; // newsfeed
+                $rootScope.moreDataNews = data.moreDataNews;
+
+                $rootScope.media = data.media;
+                $rootScope.moreDataMedia = data.moreDataMedia;
+
+                callback();
 			});
 		},
-		getFeedByKeyword: function(value, size, callback) {
+		getFeedByKeyword: function(value, sizenews, sizemedia, callback) {
 			$ionicLoading.show({
 				templateUrl: 'templates/spinner/loadingspinner.html',
 				noBackdrop: true
@@ -121,29 +134,47 @@ angular.module('starter.services', [])
 			$timeout(function() {
 				$ionicLoading.hide();
 			}, 5000);
+
 			$http.get(getFeedByKeywordAPI, {
 				params: {
 					q: value,
-					size: size
+					sizenews: sizenews,
+					sizemedia: sizemedia
 				}
 			}).success(function(data) {
 				$ionicLoading.hide();
-				callback(data);
+
+				$rootScope.titleNews = data.titleNews;
+
+				$rootScope.followingNews = data.news;
+                $rootScope.moreDataFollowing = data.moreDataNews;
+
+                $rootScope.followingMedia = data.media;
+                $rootScope.moreDataFollowingMedia = data.moreDataMedia;
+
+                callback();
 			});
 		},
-		getList: function(callback) {
+		getList: function() {
 			$http.get(getListAPI).success(function(data) {
-				callback(data);
+            	$rootScope.keywords = data.keywords;
+        		$rootScope.listCount = data.keywords.length;
 			});
 		},
 		updateList: function(value, callback) {
 			$http.post(updateListAPI, {
                 keywords: value
             }).success(function(data) {
-            	callback(data);
+            	$rootScope.news = data.news;
+	            $rootScope.moreDataNews = data.moreDataNews;
+
+	            $rootScope.media = data.media;
+                $rootScope.moreDataMedia = data.moreDataMedia;
+
+	            callback();
             });
 		},
-		search: function(value, size, callback) {
+		search: function(value, sizenews, sizemedia) {
 			$ionicLoading.show({
 				templateUrl: 'templates/spinner/loadingspinner.html',
 				noBackdrop: true
@@ -154,14 +185,22 @@ angular.module('starter.services', [])
 			$http.get(searchAPI, {
 	            params: {
 	                q: value,
-	                size: size
+	                sizenews: sizenews,
+	                sizemedia: sizemedia
 	            }
 	        }).success(function(data) {
 	        	$ionicLoading.hide();
-	        	callback(data);
+	        	$rootScope.keywordSearch = data.keywordSearch;
+	            $rootScope.queryTitle = data.queryTitle;
+
+	        	$rootScope.searchResult = data.newsFeedResult;
+	            $rootScope.moreDataSearch = data.moreDataNews;
+
+	            $rootScope.searchMediaResult = data.mediaFeedResult;
+	            $rootScope.moreDataMediaSearch = data.moreDataMedia;
 	        });
 		},
-		follow: function(value, keyword, callback) {
+		follow: function(value, keyword) {
 			$ionicLoading.show({
 				templateUrl: 'templates/spinner/unfollowspinner.html'
 			});
@@ -169,6 +208,7 @@ angular.module('starter.services', [])
                 q: value
             }).success(function(data) {
             	$ionicLoading.hide();
+
             	var popup = $ionicPopup.alert({
             		title: 'You have followed "' + keyword + '"',
             		buttons: []
@@ -176,10 +216,18 @@ angular.module('starter.services', [])
             	$timeout(function() {
             		popup.close();
             	}, 2000);
-            	callback(data);
+
+                $rootScope.keywords = data.keywords;        
+                $rootScope.listCount = data.keywords.length;
+
+                $rootScope.news = data.news;
+                $rootScope.moreDataNews = data.moreDataNews;
+
+                $rootScope.media = data.media;
+                $rootScope.moreDataMedia = data.moreDataMedia;
             });
 		},
-		unfollow: function(value, callback) {
+		unfollow: function(value) {
 			$ionicLoading.show({
 				templateUrl: 'templates/spinner/unfollowspinner.html'
 			});
@@ -187,7 +235,15 @@ angular.module('starter.services', [])
                 keyword: value
             }).success(function(data) {
             	$ionicLoading.hide();
-            	callback(data);
+
+            	$rootScope.keywords = data.keywords;        
+                $rootScope.listCount = data.keywords.length;
+
+                $rootScope.news = data.news;
+                $rootScope.moreDataNews = data.moreDataNews;
+
+                $rootScope.media = data.media;
+                $rootScope.moreDataMedia = data.moreDataMedia;
             });
 		},
 		updateFavorite: function(id, callback) {
@@ -198,14 +254,48 @@ angular.module('starter.services', [])
 					callback();
 			});
 		},
-		getFavorite: function(size, callback) {
+		getFavorite: function(sizenews, sizemedia, callback) {
 			$http.get(getFavoriteAPI, {
 				params: {
-					size: size
+					sizenews: sizenews,
+					sizemedia: sizemedia
 				}
 			}).success(function(data) {
-				callback(data);
+				$rootScope.favoriteNews = data.favoriteNews;
+                $rootScope.moreDataFavorite = data.moreDataNews;
+
+                $rootScope.favoriteMedia = data.favoriteMedia;
+                $rootScope.moreDataMediaFavorite = data.moreDataMedia;
+
+                callback();		
 			})
+		}
+	};
+})
+
+.factory('navServices', function($rootScope, $state) {
+	return {
+		nav: function() {
+			if ($rootScope.currentNewsfeedState === 'Newsfeed') {
+	            if ($rootScope.currentTab === 'News')
+	                $state.go('tabs.news');
+	            else $state.go('tabs.social');
+	        }
+	        else if ($rootScope.currentNewsfeedState === 'Favorites') {
+	            if ($rootScope.currentTab === 'News')
+	                $state.go('tabs.favorites');
+	            else $state.go('tabs.socialfavorites');
+	        }
+	        else if ($rootScope.currentNewsfeedState === 'Following') {
+	            if ($rootScope.currentTab === 'News')
+	                $state.go('tabs.followinglist');
+	            else $state.go('tabs.socialfollowinglist');
+	        }
+	        else { 
+	            if ($rootScope.currentTab === 'News')
+	                $state.go('tabs.news');
+	            else $state.go('tabs.social');
+	        }
 		}
 	};
 });

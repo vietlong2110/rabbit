@@ -1,4 +1,4 @@
-# Rabbit Version 0.11.3
+# Rabbit Version 0.12
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -88,11 +88,13 @@ Input keywords and hashtags, follow news and social media
 * Reorganize some frontend views
 * Fix loadmore offset bug
 
-### v0.11.3
+### v0.12
 * Fix extraction bug from google api redirection
 * Extract 9gag to social media database
 * Rewrite all api to response with both news and media feed
+* Rewrite pagination for api
+* Convert entities to normal character
+* Add more features to model articles
+* Create social media tab view
 
-## Next minor(v0.12)
-* Create social media view
-* Redesign reading UI to swipe reading each article in each list
+## Next minor(v0.13)

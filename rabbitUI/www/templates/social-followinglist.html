@@ -1,7 +1,7 @@
 <ion-view>
     <ion-nav-title>
         <button id="title" on-double-tap="scrollTop()" class="button button-clear">
-            Social Media
+            {{titleNews}}
         </button>
     </ion-nav-title>
     <ion-nav-buttons side="secondary">
@@ -19,27 +19,27 @@
         <ion-refresher pulling-icon="" on-refresh="doRefresh()">
         </ion-refresher>
 
-        <div class="list card" ng-repeat="item in media">
+        <div class="list card" ng-repeat="item in followingMedia">
             <ion-item ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-                <div class="item-avatar item-icon-right" ng-class="{'star': item.star}">
+                <div class="item item-avatar item-icon-right" ng-class="{'star': item.star}">
                     <img src="{{item.avatar}}" alt="avatar">
                     <h2 class="padding-top">{{item.source}}</h2>
-                    <i id="media-star" class="button button-clear icon ion-star"
+                    <i id="media-star" class="button button-clear icon ion-star" 
                     ng-click="toggleStar($event, item)" ng-class="{'button-energized': item.star}"></i>
                 </div>
 
-                <div class="item-image media-image">
+                <div class="item item-image media-image">
                     <img src="{{item.thumbnail}}" alt="thumbnail">
                 </div>
 
-                <div class="item-body">
+                <div class="item item-body">
                     <h2>{{item.title}}</h2>
                     <p>{{item.hashtag}}</p>
                 </div>
             </ion-item>
         </div>
 
-        <ion-infinite-scroll ng-if="moreDataMedia" on-infinite="loadMore()" distance="1%">
+        <ion-infinite-scroll ng-if="moreDataFollowingMedia" on-infinite="loadMore()" distance="1%">
         </ion-infinite-scroll>
     </ion-content>
 </ion-view>

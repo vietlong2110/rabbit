@@ -1,0 +1,18 @@
+<ion-view view-title="Reading">
+	<ion-nav-bar class="bar bar-calm">
+		<ion-nav-back-button>
+			Back
+		</ion-nav-back-button>
+		<ion-nav-buttons side="right">
+			<button ng-click="toggleStar()" ng-class="{'button-energized': favorite}"
+			class="button button-clear icon ion-star"></button>
+		</ion-nav-buttons>
+	</ion-nav-bar>
+
+	<ion-content>
+		<h4 class="padding-top padding-left media-title">{{title}}</h4>
+		<div class="item-image padding-left padding-right">
+			<img src="{{image}}">
+		</div>
+	</ion-content>
+</ion-view>

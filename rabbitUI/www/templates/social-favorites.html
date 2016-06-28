@@ -1,13 +1,12 @@
 <ion-view>
     <ion-nav-title>
         <button id="title" on-double-tap="scrollTop()" class="button button-clear">
-            Social Media
+            Favorites
         </button>
     </ion-nav-title>
     <ion-nav-buttons side="secondary">
-        <a href="#/tabs/socialreading"> 
-            <i class="icon ion-ios-book-outline button button-icon"></i>
-        </a>
+        <a href="#/tabs/socialreading" 
+        class="icon ion-ios-book-outline button button-icon"></a>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
         <button ng-click="onSearch()" 
@@ -16,30 +15,27 @@
     </ion-nav-buttons>
 
     <ion-content class="background">
-        <ion-refresher pulling-icon="" on-refresh="doRefresh()">
-        </ion-refresher>
-
-        <div class="list card" ng-repeat="item in media">
+        <div class="list card" ng-repeat="item in favoriteMedia">
             <ion-item ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-                <div class="item-avatar item-icon-right" ng-class="{'star': item.star}">
+                <div class="item item-avatar item-icon-right" ng-class="{'star': item.star}">
                     <img src="{{item.avatar}}" alt="avatar">
                     <h2 class="padding-top">{{item.source}}</h2>
-                    <i id="media-star" class="button button-clear icon ion-star"
-                    ng-click="toggleStar($event, item)" ng-class="{'button-energized': item.star}"></i>
+                    <i id="media-star" class="button button-clear button-energized icon ion-star" 
+                    ng-click="deleteItem($event, item)"></i>
                 </div>
 
-                <div class="item-image media-image">
+                <div class="item item-image media-image">
                     <img src="{{item.thumbnail}}" alt="thumbnail">
                 </div>
 
-                <div class="item-body">
+                <div class="item item-body">
                     <h2>{{item.title}}</h2>
                     <p>{{item.hashtag}}</p>
                 </div>
             </ion-item>
         </div>
 
-        <ion-infinite-scroll ng-if="moreDataMedia" on-infinite="loadMore()" distance="1%">
+        <ion-infinite-scroll ng-if="moreDataMediaFavorite" on-infinite="loadMore()" distance="1%">
         </ion-infinite-scroll>
     </ion-content>
 </ion-view>

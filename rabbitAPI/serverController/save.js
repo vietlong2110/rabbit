@@ -46,7 +46,6 @@ var saveArticle = function(articles, callback) {
 						title: article.title,
 						thumbnail: article.thumbnail,
 						publishedDate: article.publishedDate,
-						originKeywords: originKeywordSet,
 						keywords: keywordSet,
 						tf: tf,
 						media: false
@@ -69,7 +68,6 @@ var saveArticle = function(articles, callback) {
 			console.log(err);
 			callback();
 		}
-		console.log('In here!');
 		callback();
 	});
 };
@@ -92,9 +90,10 @@ var saveMediaArticle = function(articles, callback) {
 					var a = new Article({
 						url: article.url,
 						title: article.title,
+						source: article.source,
+						avatar: article.avatar,
 						thumbnail: article.thumbnail,
 						publishedDate: article.publishedDate,
-						originKeywords: originKeywordSet,
 						keywords: keywordSet,
 						tf: tf,
 						media: true

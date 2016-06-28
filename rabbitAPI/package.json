@@ -20,6 +20,7 @@
     "boilerpipe": "0.0.7",
     "cookie-parser": "^1.4.3",
     "express": "^4.13.4",
+    "html-entities": "^1.2.0",
     "jwt-simple": "^0.5.0",
     "mongoose": "^4.5.1",
     "natural": "^0.4.0",

@@ -13,6 +13,14 @@ var UserController = require('../clientController/user.js');
 var Pagination = require('../libs/pagination.js');
 
 module.exports = function(passport) {
+	router.get('/suggest', function(req, res) {
+		var Suggest = require('../clientController/suggest.js');
+
+		Suggest.searchSuggestion(req.query.q, function(suggestResults) {
+			res.json({suggestList: suggestResults});
+		});
+	});
+
 	//API router for searching a keyword/hashtag
 	router.get('/search', function(req, res) { 
 		var Feed = require('../clientController/feed.js');

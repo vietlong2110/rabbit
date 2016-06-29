@@ -26,30 +26,11 @@ router.post('/9gag', function(req, res) {
 	});
 });
 
-router.post('/extract/content', function(req, res) { //test the extracting content function
-	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
-	var url = req.body.url;
-	var Extract = require('../serverController/extract.js');
- 	Extract.extractContent(url, function(content) {
- 		res.json({Content: content});
- 	});
-});
-
-router.post('/extract/keywords', function(req, res) { //test the extracting keyword function
-	var content = req.body.content;
-	var Extract = require('../serverController/extract.js');
-	Extract.extractKeyword(content, function(keywords) {
-		res.json({Keywords: keywords});
-	});
-});
-
-router.post('/extract/image', function(req, res){ //test the extracting thumbnail function
-	// var url = 'http://feedproxy.google.com/~r/techcrunch/fundings-exits/~3/EZwKNEY9vEE/';
-	var url = req.body.url;
-	var Extract = require('../serverController/extract.js');
- 	Extract.extractImage(url, function(image) {
- 		res.json({imageURL: image});
- 	});
+router.get('/compute', function(req, res) {
+	var Compute = require('../serverController/compute.js');
+	Compute.computeKeywordsWeight(function() {
+		res.json({updated: true});
+	})
 });
 
 module.exports = router;

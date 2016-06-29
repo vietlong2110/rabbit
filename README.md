@@ -1,4 +1,4 @@
-# Rabbit Version 0.12
+# Rabbit Version 0.12.2
 Input keywords and hashtags, follow news and social media
 
 ## What's in rabbit
@@ -97,9 +97,11 @@ Input keywords and hashtags, follow news and social media
 * Add more features to model articles
 * Create social media tab view
 
-## Next minor(v0.13)
+### v0.12.2
 * Recreate structure of keywords model for search suggestion
-* Create search suggestion controller
+* Create search suggestion controller and suggestion api
+
+## Next minor(v0.13)
 * Create search suggestion view
 * Authorize by oauth facebook
 * Redesign authentication view and create connect to facebook view

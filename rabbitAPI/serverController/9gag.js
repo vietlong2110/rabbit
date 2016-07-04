@@ -34,10 +34,10 @@ var feedParse = function(url, callback) {
 					if (err)
 						callback(err);
 
-					var Save = require('./save.js');
-					Save.saveMediaArticle(articles, function() {
+					// var Save = require('./save.js');
+					// Save.saveMediaArticle(articles, function() {
 						callback(articles);
-					});
+					// });
 				});
 			}
 		}

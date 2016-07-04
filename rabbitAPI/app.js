@@ -25,8 +25,8 @@ app.use(function(req, res, next) { //prevent CORS
 	next();
 });
 
-var serverapi = require('./serverAPI/api.js');
-app.use('/serverapi', serverapi);
+var test = require('./serverAPI/test.js');
+app.use('/test', test);
 
 var clientauth = require('./clientAPI/auth.js');
 app.use('/auth', clientauth);

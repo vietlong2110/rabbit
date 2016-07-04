@@ -4,8 +4,6 @@
 
 var request = require('request');
 var async = require('async');
-var Entities = require('html-entities').AllHtmlEntities;
-var entities = new Entities();
 
 var feedParse = function(url, callback) { //rss reader
 	var google_api_url = "https://ajax.googleapis.com/ajax/services/feed/load?v=2.0&q=" + url + "&num=30";
@@ -13,30 +11,7 @@ var feedParse = function(url, callback) { //rss reader
 		if (!err && res.statusCode === 200) {
 			if (JSON.parse(body).responseData !== null && JSON.parse(body).responseData.feed !== null) {
 				var entries = JSON.parse(body).responseData.feed.entries;
-				var articles = [];
-
-				async.each(entries, function(entry, cb) {
-					var Extract = require('./extract.js');
-
-					Extract.extractImage(entry.link, function(thumbnail) {
-						articles.push({
-							url: entry.link,
-							title: entities.decode(entry.title),
-							thumbnail: thumbnail,
-							publishedDate: entry.publishedDate
-						});
-						cb();
-					});
-				}, function(err) {
-					if (err)
-						callback(err);
-					
-					var Save = require('./save.js');
-					Save.saveArticle(articles, function() {
-						// console.log('In Here!');
-						callback(articles);
-					});
-				});
+				callback(entries);
 			}
 		}
 		else callback(err);

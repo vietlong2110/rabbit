@@ -10,31 +10,32 @@ var computeKeywordsWeight = function(callback) {
 			console.log(err);
 			callback();
 		}
+		else {
+			async.each(originkeywords, function(originkeyword, cb) {
+				var keyword = originkeyword.word;
 
-		async.each(originkeywords, function(originkeyword, cb) {
-			var keyword = originkeyword.word;
+				Rank.keyword_weight(keyword, function(weight) {
+					// if (keyword === 'knowledge')
+						// console.log(weight);
+					var query = {word: keyword};
+					var update = {
+						$set: {weight: weight}
+					};
 
-			Rank.keyword_weight(keyword, function(weight) {
-				// console.log(keyword, weight);
-				var query = {word: keyword};
-				var update = {
-					$set: {weight: weight}
-				};
-				var options = {upsert: true};
-
-				OriginKeyword.findOneAndUpdate(query, update, options, function(err, item) {
-					if (err) 
-						console.log(err);
-					
-					cb();
+					OriginKeyword.findOneAndUpdate(query, update, function(err, item) {
+						if (err) 
+							console.log(err);
+						
+						cb();
+					});
 				});
-			});
-		}, function(err) {
-			if (err)
-				console.log(err);
+			}, function(err) {
+				if (err)
+					console.log(err);
 
-			callback();
-		});
+				callback();
+			});
+		}
 	})
 };
 module.exports.computeKeywordsWeight = computeKeywordsWeight;

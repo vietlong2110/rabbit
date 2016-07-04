@@ -19,7 +19,6 @@ var searchSuggestion = function(query, callback) {
 				if (notFound)
 					callback(suggestResults);
 				else {
-					// return callback(keywords.slice(lowerBound, upperBound+1));
 					var queryArr = [{
 						start: lowerBound,
 						end: upperBound
@@ -32,6 +31,8 @@ var searchSuggestion = function(query, callback) {
 					function(cb1) {
 						var j = 0;
 						var tmpMaxIndex, maxWeight = -1;
+						// console.log(maxIndex);
+						// console.log(queryArr);
 
 						async.whilst(function() { return j < queryArr.length; },
 						function(cb2) {
@@ -44,7 +45,7 @@ var searchSuggestion = function(query, callback) {
 								cb2();
 							});
 						}, function(err) {
-							// console.log(keywords[tmpMaxIndex].weight);
+							// console.log(tmpMaxIndex);
 							suggestResults.push(keywords[tmpMaxIndex].word);
 							maxIndex.push(tmpMaxIndex);
 							maxIndex.sort(function(a, b) {

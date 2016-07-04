@@ -5,7 +5,7 @@ var binarySearchRange = function (keyword, keywordsArr, callback) {
 	while (l <= r) {
 		var m = l + ((r - l) >> 1);
 
-		if (keywordsArr[m].word > keyword)
+		if (keywordsArr[m].word >= keyword)
 			r = m - 1;
 		else l = m + 1;
 	}
@@ -16,7 +16,7 @@ var binarySearchRange = function (keyword, keywordsArr, callback) {
 		while (l <= r) {
 			var m = l + Math.floor((r - l) / 2);
 
-			if (keywordsArr[m].word < keyword || (keyword.length <= keywordsArr[m].word.length && 
+			if (keywordsArr[m].word <= keyword || (keyword.length <= keywordsArr[m].word.length && 
 			keyword === keywordsArr[m].word.substring(0, keyword.length)))
 				l = m + 1;
 			else r = m - 1;
@@ -67,7 +67,6 @@ var segmentTreeQuery = function(segmentTree, keywords, lowerBound, upperBound, c
 		var m = (l + r) >> 1;
 		var left = queryMax(indexTree * 2, l, m);
 		var right = queryMax(indexTree * 2 + 1, m + 1, r);
-		// console.log(segmentTree[indexTree], left, right);
 
 		if (left.weight > right.weight)
 			return left;

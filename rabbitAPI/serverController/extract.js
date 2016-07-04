@@ -59,19 +59,17 @@ var extractImage = function(url, callback) { //extract thumbnail of an article u
 			boilerpipe.getImages(function(err, images) {
 				if (images.length > 0)
 					callback(images[0].src);
-				else extractImageFromContent(html, function(image) {
-					callback(image);
-				});
+				else callback(extractImageFromContent(html));
 			});
 		}
 	});
 };
 module.exports.extractImage = extractImage;
 
-var extractImageFromContent = function(content, callback) {
+var extractImageFromContent = function(content) {
 	// console.log(content);
 	var regex = /<img[^>]+src\s*=\s*['"]([^'"]+)['"][^>]*>/g;
 	var image = regex.exec(content)[1];
-	callback(image);
+	return image;
 };
 module.exports.extractImageFromContent = extractImageFromContent;

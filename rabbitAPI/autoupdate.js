@@ -4,7 +4,6 @@ var async = require('async');
 var urlencode = require('urlencode');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
-
 var serverAPI = require('./serverAPI/api.js');
 var feed_link = require('./seed/feed_link.js');
 var feedList = feed_link.rss;
@@ -12,7 +11,8 @@ var feedList = feed_link.rss;
 var RSS = require('./serverController/rss.js');
 var j = 0, cache = [];
 
-async.forever(function(callback) {
+async.forever(function callback() {
+//function updateFeed() {
 	var articles = [];
 	
 	async.each(feedList, function(feed, cb) {
@@ -28,7 +28,7 @@ async.forever(function(callback) {
 			callback(cache);
 		}
 		console.log(cache.length);
-		var maxComingArticle = cache.length;
+		var maxComingArticle = 20;
 		var i = 0;
 
 		async.whilst(function() { return i < maxComingArticle; },
@@ -53,9 +53,11 @@ async.forever(function(callback) {
 
 			// Save.saveArticle(articles, function() {
 			// 	console.log('All news articles are saved!');
-				j++;
+		//		j++;
 				callback();
 			// });
 		});
 	});
 });
+
+//updateFeed();

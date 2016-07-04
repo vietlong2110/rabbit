@@ -29,7 +29,7 @@ async.forever(function(callback) {
 				callback(cache);
 			}
 			console.log(cache.length);
-			var maxComingArticle = 20;
+			var maxComingArticle = Math.min(cache.length, 20);
 			var i = 0;
 
 			async.whilst(function() { return i < maxComingArticle; },
@@ -61,7 +61,7 @@ async.forever(function(callback) {
 		});
 	}
 	else {
-		var maxComingArticle = cache.length;
+		var maxComingArticle = Math.min(cache.length, 20);
 		var i = 0;
 
 		async.whilst(function() { return i < maxComingArticle; },

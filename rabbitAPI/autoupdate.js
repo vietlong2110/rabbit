@@ -50,13 +50,12 @@ async.forever(function(callback) {
 				});
 			}, function() {
 				console.log(cache.length);
-				// var Save = require('../serverController/save.js');
+				var Save = require('../serverController/save.js');
 
-				// Save.saveArticle(articles, function() {
-				// 	console.log('All news articles are saved!');
-					// j++;
+				Save.saveArticle(articles, function() {
+					console.log('All news articles are saved!');
 					callback();
-				// });
+				});
 			});
 		});
 	}
@@ -82,15 +81,12 @@ async.forever(function(callback) {
 			});
 		}, function() {
 			console.log(cache.length);
-			// var Save = require('../serverController/save.js');
+			var Save = require('../serverController/save.js');
 
-			// Save.saveArticle(articles, function() {
-			// 	console.log('All news articles are saved!');
-		//		j++;
+			Save.saveArticle(articles, function() {
+				console.log('All news articles are saved!');
 				callback();
-			// });
+			});
 		});
 	}
 });
-
-//updateFeed();

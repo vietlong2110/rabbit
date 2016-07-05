@@ -10,7 +10,7 @@ angular.module('starter', ['ionic','starter.services', 'app.controller', 'login.
 })
 
 .constant('API_ENDPOINT', {
-    url: 'http://localhost:8080/auth'
+    url: 'http://52.221.228.17:8080/auth'
 })
 
 .constant('LOAD_SIZE', 5)

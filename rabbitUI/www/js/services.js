@@ -79,11 +79,13 @@ angular.module('starter.services', [])
 })
 
 .factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout, $rootScope) {
-	var domain = 'http://localhost:8080/clientapi';
+	var domain = 'http://52.221.228.17:8080/clientapi';
 
 	var getFeedAPI = domain + '/getfeed';
 
 	var searchAPI = domain + '/search';
+
+	var suggestAPI = domain + '/suggest';
 
 	var followAPI = domain + '/follow';
 
@@ -199,6 +201,15 @@ angular.module('starter.services', [])
 	            $rootScope.searchMediaResult = data.mediaFeedResult;
 	            $rootScope.moreDataMediaSearch = data.moreDataMedia;
 	        });
+		},
+		suggest: function(value) {
+			$http.get(suggestAPI, {
+				params: {
+					q: value
+				}
+			}).success(function(data) {
+				$rootScope.suggestList = data.suggestList;
+			})
 		},
 		follow: function(value, keyword) {
 			$ionicLoading.show({

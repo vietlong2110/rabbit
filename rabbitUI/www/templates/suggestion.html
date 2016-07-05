@@ -11,14 +11,19 @@
 	        <label id="search" class="item-input item-input-wrapper">
 	            <i class="icon icon-left ion-ios-search placeholder-icon"></i>
 	            <form ng-submit="search(value)">
-	                <input id="searchBar" type="search" ng-model="value" placeholder="Search" 
-	                focus="{{showSearchBar}}">
+	                <input id="searchBar" type="search" ng-model="value" ng-change="suggest(value)"
+	                placeholder="Search" focus="{{showSearchBar}}">
 	            </form>
 	        </label>
 	    </ion-nav-buttons>
     </ion-nav-bar>
 
     <ion-content>
-
+        <ion-list ng-repeat="item in suggestList" ng-show="empty">
+        	<ion-item class="item-icon-left" ng-click="search('{{item}}')">
+	            <i class="icon icon-left ion-ios-search placeholder-icon"></i>
+	            {{item}}
+            </ion-item>
+        </ion-list>
     </ion-content>
 </ion-view>

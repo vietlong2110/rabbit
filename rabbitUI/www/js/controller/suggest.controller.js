@@ -4,6 +4,14 @@ angular.module('suggest.controller', [])
 function($rootScope, $scope, apiServices, $state, $ionicViewSwitcher, navServices) {
     $rootScope.showSearchBar = true;
 
+    $scope.suggest = function(value) {
+        if (value !== '') {
+            apiServices.suggest(value);
+            $scope.empty = true;
+        }
+        else $scope.empty = false;
+    };
+
     $scope.search = function(value) { // search a keyword/hashtag
         $rootScope.value = value; //save the value in order to show when is navigated back
         apiServices.search(value, 0, 0);

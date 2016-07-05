@@ -6,7 +6,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Article = new Schema({
-	url: String,
+	url: {
+		type: String,
+		unique: true
+	},
 	title: String,
 	thumbnail: String,
 	avatar: String,

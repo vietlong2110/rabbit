@@ -1,10 +1,10 @@
 console.log('Autoupdate is running!');
 
 var async = require('async');
+var database = require('./database.js');
 var urlencode = require('urlencode');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
-var serverAPI = require('./serverAPI/api.js');
 var feed_link = require('./seed/feed_link.js');
 var feedList = feed_link.rss;
 
@@ -12,7 +12,6 @@ var RSS = require('./serverController/rss.js');
 var j = 0, cache = [];
 
 async.forever(function(callback) {
-//function updateFeed() {
 	var articles = [];
 
 	if (cache.length === 0) {
@@ -50,7 +49,7 @@ async.forever(function(callback) {
 				});
 			}, function() {
 				console.log(cache.length);
-				var Save = require('../serverController/save.js');
+				var Save = require('./serverController/save.js');
 
 				Save.saveArticle(articles, function() {
 					console.log('All news articles are saved!');
@@ -81,7 +80,7 @@ async.forever(function(callback) {
 			});
 		}, function() {
 			console.log(cache.length);
-			var Save = require('../serverController/save.js');
+			var Save = require('./serverController/save.js');
 
 			Save.saveArticle(articles, function() {
 				console.log('All news articles are saved!');

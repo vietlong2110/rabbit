@@ -17,20 +17,10 @@ var extractContent = function(url, callback) { //extract content of an article u
 		 	boilerpipe.getText(function(err, content) {
 		 		if (err)
 		 			callback(err);
-
-		 		bcrypt.genSalt(10, function(err, salt) {
-					if (err)
-						return callback(err);
-
-					bcrypt.hash(content, salt, function (err, hash) {
-						if (err)
-							return callback(err);
-
-						extractKeyword(content, function(originKeywordSet, keywordSet, tf) {
-				 			callback(hash, originKeywordSet, keywordSet, tf);
-				 		});
-					});
-				});
+		 		
+				extractKeyword(content, function(originKeywordSet, keywordSet, tf) {
+		 			callback(originKeywordSet, keywordSet, tf);
+		 		});
 		 	});
 		}
 	});

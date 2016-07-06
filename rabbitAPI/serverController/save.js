@@ -68,13 +68,12 @@ var saveArticle = function(articles, callback) {
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractContent(article.url, function(content, originKeywordSet, keywordSet, tf) {
+		Extract.extractContent(article.url, function(originKeywordSet, keywordSet, tf) {
 			var query = {url: article.url};
 			var update = {
 				$set: {
 					title: article.title,
 					thumbnail: article.thumbnail,
-					content: content,
 					publishedDate: article.publishedDate,
 					keywords: keywordSet,
 					tf: tf,
@@ -89,8 +88,8 @@ var saveArticle = function(articles, callback) {
 				
 				cb();
 			});
-			keywords.concat(keywordSet);
-			originkeywords.concat(originKeywordSet);
+			keywords = keywords.concat(keywordSet);
+			originkeywords = originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {
 		if (err) //process error case later
@@ -108,7 +107,7 @@ var saveMediaArticle = function(articles, callback) {
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractKeyword(article.title, function(content, originKeywordSet, keywordSet, tf) {
+		Extract.extractKeyword(article.title, function(originKeywordSet, keywordSet, tf) {
 			var query = {url: article.url};
 			var update = {
 				$set: {
@@ -130,8 +129,8 @@ var saveMediaArticle = function(articles, callback) {
 				
 				cb();
 			});
-			keywords.concat(keywordSet);
-			originkeywords.concat(originKeywordSet);
+			keywords = keywords.concat(keywordSet);
+			originkeywords = originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {
 		if (err) //process error case later

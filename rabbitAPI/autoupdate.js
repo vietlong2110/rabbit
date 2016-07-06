@@ -51,9 +51,11 @@ async.forever(function(callback) {
 				console.log(cache.length);
 				var Save = require('./serverController/save.js');
 
-				Save.saveArticle(articles, function() {
-					console.log('All news articles are saved!');
-					callback();
+				Save.saveArticle(articles, function(keywordSet, originKeywordSet) {
+					Save.saveKeyword(keywordSet, originKeywordSet, function() {
+						console.log('All news articles are saved!');
+						callback();
+					});
 				});
 			});
 		});
@@ -83,8 +85,10 @@ async.forever(function(callback) {
 			var Save = require('./serverController/save.js');
 
 			Save.saveArticle(articles, function() {
-				console.log('All news articles are saved!');
-				callback();
+				Save.saveKeyword(keywordSet, originKeywordSet, function() {
+					console.log('All news articles are saved!');
+					callback();
+				});
 			});
 		});
 	}

@@ -14,6 +14,10 @@ var Article = new Schema({
 	thumbnail: String,
 	avatar: String,
 	source: String,
+	content: {
+		type: String,
+		unique: true
+	},
 	publishedDate: {
 		type: Date, 
 		default: Date.now()

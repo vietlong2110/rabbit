@@ -16,8 +16,8 @@ var extractContent = function(url, callback) { //extract content of an article u
 		 	boilerpipe.getText(function(err, content) {
 		 		if (err)
 		 			callback(err);
-		 		extractKeyword(content, function(originKeywordSet, keywordSet, tf) {
-		 			callback(originKeywordSet, keywordSet, tf);
+		 		extractKeyword(content, function(content, originKeywordSet, keywordSet, tf) {
+		 			callback(content, originKeywordSet, keywordSet, tf);
 		 		});
 		 	});
 		}
@@ -44,7 +44,7 @@ var extractKeyword = function(content, callback) { //extract keyword from a cont
 		for (i in originKeywords)
 			if (originKeywordSet.indexOf(originKeywords) === -1)
 				originKeywordSet.push(originKeywords[i]);
-		callback(originKeywordSet, keywordSet, tf);
+		callback(content, originKeywordSet, keywordSet, tf);
 	});
 };
 module.exports.extractKeyword = extractKeyword;

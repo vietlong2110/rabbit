@@ -5,7 +5,7 @@
 var async = require('async');
 var mongoose = require('mongoose');
 
-var saveKeyword = function(keywordSet, originKeywordSet) {
+var saveKeyword = function(keywordSet, originKeywordSet, callback) {
 	async.parallel([
 		function(cb) {
 			//For calculating inverted document frequency
@@ -54,23 +54,27 @@ var saveKeyword = function(keywordSet, originKeywordSet) {
 				cb();
 			});
 		}
-	], function() {});
+	], function() {
+		callback();
+	});
 };
 module.exports.saveKeyword = saveKeyword;
 
 //Save information of an article to database
 var saveArticle = function(articles, callback) {
 	var Article = require('../models/articles.js');
+	var keywords = [], originkeywords = [];
 
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractContent(article.url, function(originKeywordSet, keywordSet, tf) {
+		Extract.extractContent(article.url, function(content, originKeywordSet, keywordSet, tf) {
 			var query = {url: article.url};
 			var update = {
 				$set: {
 					title: article.title,
 					thumbnail: article.thumbnail,
+					content: content,
 					publishedDate: article.publishedDate,
 					keywords: keywordSet,
 					tf: tf,
@@ -85,13 +89,15 @@ var saveArticle = function(articles, callback) {
 				
 				cb();
 			});
-			saveKeyword(keywordSet, originKeywordSet);
+			// saveKeyword(keywordSet, originKeywordSet);
+			keywords.concat(keywordSet);
+			originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {
 		if (err) //process error case later
 			console.log(err);
 			
-		callback();
+		callback(keywords, originkeywords);
 	});
 };
 module.exports.saveArticle = saveArticle;

@@ -68,7 +68,7 @@ var saveArticle = function(articles, callback) {
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractContent(article.url,
+		Extract.extractContent(article.title, article.url,
 		function(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
 			var query = {url: article.url};
 			var update = {

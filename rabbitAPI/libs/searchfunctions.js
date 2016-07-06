@@ -27,13 +27,13 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 						if (n > 0)
 							idf = 1 + Math.log(n / idf);
 
-						var tf = 0; //tf weight
+						var tf = 0, tfTitle = 0; //tf weight
 						if (article.titleKeywords.indexOf(word) !== -1) {
-							var tfTitle = article.tfTitle[article.titleKeywords.indexOf(word)];
+							tfTitle = article.tfTitle[article.titleKeywords.indexOf(word)];
 							tfTitle = (1 + Math.log(tfTitle)) * 2;
 						}
 						if (article.keywords.indexOf(word) !== -1) {
-							var tf = article.tf[article.keywords.indexOf(word)];
+							tf = article.tf[article.keywords.indexOf(word)];
 							tf = 1 + Math.log(tf);
 						}
 						vector.push((tf + tfTitle)*idf); //tf-idf score

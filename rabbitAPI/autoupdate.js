@@ -9,6 +9,9 @@ var feed_link = require('./seed/feed_link.js');
 var feedList = feed_link.rss;
 
 var RSS = require('./serverController/rss.js');
+var Article = require('./models/articles.js');
+var Extract = require('./serverController/extract.js');
+var Save = require('./serverController/save.js');
 var j = 0, cache = [];
 
 async.forever(function(callback) {
@@ -33,24 +36,31 @@ async.forever(function(callback) {
 
 			async.whilst(function() { return i < maxComingArticle; },
 			function(cb) {
-				var Extract = require('./serverController/extract.js');
-				console.log('Start extracting ' + cache[0].link);
-				Extract.extractImage(cache[0].link, function(thumbnail) {
-					console.log('End extracting ' + cache[0].link);
-					articles.push({
-						url: cache[0].link,
-						title: entities.decode(cache[0].title),
-						thumbnail: thumbnail,
-						publishedDate: cache[0].publishedDate
-					});
-					cache.shift();
-					i++;
-					cb();
+				Article.findOne({url: cache[0].link}).exec(function(err, article) {
+					if (article === null) {
+						console.log('Start extracting ' + cache[0].link);
+						Extract.extractImage(cache[0].link, function(thumbnail) {
+							console.log('End extracting ' + cache[0].link);
+							articles.push({
+								url: cache[0].link,
+								title: entities.decode(cache[0].title),
+								thumbnail: thumbnail,
+								publishedDate: cache[0].publishedDate
+							});
+							cache.shift();
+							i++;
+							cb();
+						});
+					}
+					else {
+						console.log('This article was saved');
+						cache.shift();
+						i++;
+						cb();
+					}
 				});
 			}, function() {
 				console.log(cache.length);
-				var Save = require('./serverController/save.js');
-
 				Save.saveArticle(articles, function(keywordSet, originKeywordSet) {
 					Save.saveKeyword(keywordSet, originKeywordSet, function() {
 						console.log('All news articles are saved!');
@@ -66,28 +76,43 @@ async.forever(function(callback) {
 
 		async.whilst(function() { return i < maxComingArticle; },
 		function(cb) {
-			var Extract = require('./serverController/extract.js');
-			console.log('Start extracting ' + cache[0].link);
-			Extract.extractImage(cache[0].link, function(thumbnail) {
-				console.log('End extracting ' + cache[0].link);
-				articles.push({
-					url: cache[0].link,
-					title: entities.decode(cache[0].title),
-					thumbnail: thumbnail,
-					publishedDate: cache[0].publishedDate
-				});
-				cache.shift();
-				i++;
-				cb();
+			Article.findOne({url: cache[0].link}).exec(function(err, article) {
+				if (article === null) {
+					console.log('Start extracting ' + cache[0].link);
+					Extract.extractImage(cache[0].link, function(thumbnail) {
+						console.log('End extracting ' + cache[0].link);
+						articles.push({
+							url: cache[0].link,
+							title: entities.decode(cache[0].title),
+							thumbnail: thumbnail,
+							publishedDate: cache[0].publishedDate
+						});
+						cache.shift();
+						i++;
+						cb();
+					});
+				}
+				else {
+					console.log('This article was saved');
+					cache.shift();
+					i++;
+					cb();
+				}
 			});
 		}, function() {
 			console.log(cache.length);
-			var Save = require('./serverController/save.js');
-
 			Save.saveArticle(articles, function(keywordSet, originKeywordSet) {
 				Save.saveKeyword(keywordSet, originKeywordSet, function() {
 					console.log('All news articles are saved!');
-					callback();
+					if (cache.length === 0) {
+						var Compute = require('./serverController/compute.js');
+						
+						Compute.computeKeywordsWeight(function() {
+							console.log('Evaluated weight of all new articles!');
+							callback();
+						});
+					}
+					else callback();
 				});
 			});
 		});

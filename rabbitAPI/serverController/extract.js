@@ -6,7 +6,7 @@ var Boilerpipe = require('boilerpipe');
 var request = require('request');
 var bcrypt = require('bcrypt');
 
-var extractContent = function(url, callback) { //extract content of an article url
+var extractContent = function(title, url, callback) { //extract content of an article url
 	request(url, function(err, res, html) {
 		if (!err && res.statusCode === 200) {
 			var boilerpipe = new Boilerpipe({
@@ -18,8 +18,9 @@ var extractContent = function(url, callback) { //extract content of an article u
 		 		if (err)
 		 			callback(err);
 		 		
-				extractKeyword(content, function(originKeywordSet, keywordSet, tf) {
-		 			callback(originKeywordSet, keywordSet, tf);
+				extractKeyword(title, content,
+				function(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
+		 			callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
 		 		});
 		 	});
 		}
@@ -27,26 +28,37 @@ var extractContent = function(url, callback) { //extract content of an article u
 };
 module.exports.extractContent = extractContent;
 
-var extractKeyword = function(content, callback) { //extract keyword from a content
+var extractKeyword = function(title, content, callback) { //extract keyword from a content
 	var stringFuncs = require('../libs/stringfunctions.js');
+	var keywordSet = [], originKeywordSet = [], titleKeywordSet = [];
+	var tf = [], tfTitle = [];
 
-	//convert content to a list of keyword
-	stringFuncs.contentToKeywords(content, function(keywords, originKeywords) {
-		var keywordSet = []; //filter repeating keyword list to a set of keyword(non-repeat)
-		var originKeywordSet = [];
-		var tf = [];
-
-		for (i in keywords)
-			if (keywordSet.indexOf(keywords[i]) === -1) {
-				keywordSet.push(keywords[i]);
-				tf.push(1);
+	stringFuncs.contentToKeywords(title, function(titleKeywords, originKeywords) {
+		for (i in titleKeywords)
+			if (titleKeywordSet.indexOf(titleKeywords[i]) === -1) {
+				titleKeywordSet.push(titleKeywords[i]);
+				tfTitle.push(1);
 			}
-			else tf[keywordSet.indexOf(keywords[i])]++;
+			else tfTitle[titleKeywordSet.indexOf(titleKeywords[i])]++;
 
 		for (i in originKeywords)
-			if (originKeywordSet.indexOf(originKeywords) === -1)
-				originKeywordSet.push(originKeywords[i]);
-		callback(originKeywordSet, keywordSet, tf);
+				if (originKeywordSet.indexOf(originKeywords) === -1)
+					originKeywordSet.push(originKeywords[i]);
+
+		//convert content to a list of keyword
+		stringFuncs.contentToKeywords(content, function(keywords, originKeywords) {
+			for (i in keywords)
+				if (keywordSet.indexOf(keywords[i]) === -1) {
+					keywordSet.push(keywords[i]);
+					tf.push(1);
+				}
+				else tf[keywordSet.indexOf(keywords[i])]++;
+
+			for (i in originKeywords)
+				if (originKeywordSet.indexOf(originKeywords) === -1)
+					originKeywordSet.push(originKeywords[i]);
+			callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
+		});
 	});
 };
 module.exports.extractKeyword = extractKeyword;

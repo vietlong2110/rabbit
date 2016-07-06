@@ -21,6 +21,8 @@ var Article = new Schema({
 		type: Date, 
 		default: Date.now()
 	},
+	titleKeywords: [String],
+	tfTitle: [Number],
 	keywords: [String],
 	tf: [Number], //term frequency corresponding to keyword
 	media: Boolean

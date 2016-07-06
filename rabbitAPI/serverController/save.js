@@ -68,13 +68,16 @@ var saveArticle = function(articles, callback) {
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractContent(article.url, function(originKeywordSet, keywordSet, tf) {
+		Extract.extractContent(article.url,
+		function(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
 			var query = {url: article.url};
 			var update = {
 				$set: {
 					title: article.title,
 					thumbnail: article.thumbnail,
 					publishedDate: article.publishedDate,
+					titleKeywords: titleKeywordSet,
+					tfTitle: tfTitle,
 					keywords: keywordSet,
 					tf: tf,
 					media: false
@@ -83,11 +86,12 @@ var saveArticle = function(articles, callback) {
 			var options = {upsert: true};
 
 			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
-				if (err) //process error case later
+				if (err && err.code !== 11000) //process error case later
 					console.log(err);
 				
 				cb();
 			});
+			keywords = keywords.concat(titleKeywordSet);
 			keywords = keywords.concat(keywordSet);
 			originkeywords = originkeywords.concat(originKeywordSet);
 		});
@@ -107,7 +111,7 @@ var saveMediaArticle = function(articles, callback) {
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractKeyword(article.title, function(originKeywordSet, keywordSet, tf) {
+		Extract.extractKeyword(null, article.title, function(originKeywordSet, keywordSet, tf) {
 			var query = {url: article.url};
 			var update = {
 				$set: {

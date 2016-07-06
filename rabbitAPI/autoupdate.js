@@ -108,7 +108,7 @@ async.forever(function(callback) {
 						var Compute = require('./serverController/compute.js');
 						
 						Compute.computeKeywordsWeight(function() {
-							console.log('Evaluated weight of all new articles!');
+							console.log('Evaluated weight of all keywords!');
 							callback();
 						});
 					}

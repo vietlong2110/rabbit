@@ -89,7 +89,6 @@ var saveArticle = function(articles, callback) {
 				
 				cb();
 			});
-			// saveKeyword(keywordSet, originKeywordSet);
 			keywords.concat(keywordSet);
 			originkeywords.concat(originKeywordSet);
 		});
@@ -104,11 +103,12 @@ module.exports.saveArticle = saveArticle;
 
 var saveMediaArticle = function(articles, callback) {
 	var Article = require('../models/articles.js');
+	var keywords = [], originkeywords = [];
 
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
 
-		Extract.extractKeyword(article.title, function(originKeywordSet, keywordSet, tf) {
+		Extract.extractKeyword(article.title, function(content, originKeywordSet, keywordSet, tf) {
 			var query = {url: article.url};
 			var update = {
 				$set: {
@@ -130,7 +130,8 @@ var saveMediaArticle = function(articles, callback) {
 				
 				cb();
 			});
-			saveKeyword(keywordSet, originKeywordSet);
+			keywords.concat(keywordSet);
+			originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {
 		if (err) //process error case later

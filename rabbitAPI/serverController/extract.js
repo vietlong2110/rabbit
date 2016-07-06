@@ -4,6 +4,7 @@
 
 var Boilerpipe = require('boilerpipe');
 var request = require('request');
+var bcrypt = require('bcrypt');
 
 var extractContent = function(url, callback) { //extract content of an article url
 	request(url, function(err, res, html) {
@@ -16,9 +17,21 @@ var extractContent = function(url, callback) { //extract content of an article u
 		 	boilerpipe.getText(function(err, content) {
 		 		if (err)
 		 			callback(err);
-		 		extractKeyword(content, function(content, originKeywordSet, keywordSet, tf) {
-		 			callback(content, originKeywordSet, keywordSet, tf);
-		 		});
+
+		 		bcrypt.genSalt(10, function(err, salt) {
+					if (err)
+						return callback(err);
+
+					bcrypt.hash(content, salt, function (err, hash) {
+						if (err)
+							return callback(err);
+
+						content = hash;
+						extractKeyword(content, function(originKeywordSet, keywordSet, tf) {
+				 			callback(content, originKeywordSet, keywordSet, tf);
+				 		});
+					});
+				});
 		 	});
 		}
 	});
@@ -44,7 +57,7 @@ var extractKeyword = function(content, callback) { //extract keyword from a cont
 		for (i in originKeywords)
 			if (originKeywordSet.indexOf(originKeywords) === -1)
 				originKeywordSet.push(originKeywords[i]);
-		callback(content, originKeywordSet, keywordSet, tf);
+		callback(originKeywordSet, keywordSet, tf);
 	});
 };
 module.exports.extractKeyword = extractKeyword;

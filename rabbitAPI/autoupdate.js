@@ -84,7 +84,7 @@ async.forever(function(callback) {
 			console.log(cache.length);
 			var Save = require('./serverController/save.js');
 
-			Save.saveArticle(articles, function() {
+			Save.saveArticle(articles, function(keywordSet, originKeywordSet) {
 				Save.saveKeyword(keywordSet, originKeywordSet, function() {
 					console.log('All news articles are saved!');
 					callback();

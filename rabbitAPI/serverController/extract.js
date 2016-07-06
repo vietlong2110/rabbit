@@ -26,9 +26,8 @@ var extractContent = function(url, callback) { //extract content of an article u
 						if (err)
 							return callback(err);
 
-						content = hash;
 						extractKeyword(content, function(originKeywordSet, keywordSet, tf) {
-				 			callback(content, originKeywordSet, keywordSet, tf);
+				 			callback(hash, originKeywordSet, keywordSet, tf);
 				 		});
 					});
 				});

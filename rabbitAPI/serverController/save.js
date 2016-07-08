@@ -19,7 +19,7 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 					}
 					else if (keyword === null) {
 						var newKeyword = new Keyword({
-							word: keyword,
+							word: word,
 							df: 1,
 							articleIDs: articleIDs[i]
 						});
@@ -31,11 +31,9 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 							cb1();
 						});
 					}
-					else {
+					else if (keyword.articleIDs.indexOf(articleIDs[i]) === -1) {
+						keyword.articleIDs.push(articleIDs[i]);
 						keyword.df = keyword.df + 1;
-						if (keyword.articleIDs.indexOf(articleIDs[i]) === -1)
-							keyword.articleIDs.push(articleIDs[i]);
-
 						keyword.save(function(err) {
 							if (err)
 								console.log(err);
@@ -113,16 +111,18 @@ var saveArticle = function(articles, callback) {
 			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
 				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
 					console.log(err);
-
-				for (i in titleKeywordSet) {
-					keywords.push(titleKeywordSet[i]);
-					articleIDs.push(item._id);
-				}
-				for (i in keywordSet)
-					if (keywords.indexOf(keywordSet[i]) === -1) {
-						keywords.push(keywordSet[i]);
+				
+				if (item) {
+					for (i in titleKeywordSet) {
+						keywords.push(titleKeywordSet[i]);
 						articleIDs.push(item._id);
 					}
+					for (i in keywordSet)
+						if (keywords.indexOf(keywordSet[i]) === -1) {
+							keywords.push(keywordSet[i]);
+							articleIDs.push(item._id);
+						}
+				}
 				cb();
 			});
 			originkeywords = originkeywords.concat(originKeywordSet);

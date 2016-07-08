@@ -5,43 +5,42 @@
 var async = require('async');
 var mongoose = require('mongoose');
 
-var saveKeyword = function(keywordSet, originKeywordSet, callback) {
+var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 	async.parallel([
 		function(cb) {
 			//For calculating inverted document frequency
 			var Keyword = require('../models/keywords.js');
 
-			async.each(keywordSet, function(word, cb1) {
-				Keyword.findOne({word: word.keyword}).exec(function(err, keyword) {
+			async.forEachOfSeries(keywordSet, function(word, i, cb1) {
+				Keyword.findOne({word: word}).exec(function(err, keyword) {
 					if (err) {
 						console.log(err);
 						cb();
 					}
 					else if (keyword === null) {
 						var newKeyword = new Keyword({
-							word: word.keyword,
+							word: keyword,
 							df: 1,
-							articleIDs: word.articles
+							articleIDs: articleIDs[i]
 						});
 
 						newKeyword.save(function(err) {
 							if (err) 
 								console.log(err);
 
-							cb();
+							cb1();
 						});
 					}
 					else {
 						keyword.df = keyword.df + 1;
-						for (i in word.articles)
-							if (keyword.articleIDs.indexOf(word.articles[i]) === -1)
-								keyword.articleIDs.push(word.articles[i]);
+						if (keyword.articleIDs.indexOf(articleIDs[i]) === -1)
+							keyword.articleIDs.push(articleIDs[i]);
 
 						keyword.save(function(err) {
 							if (err)
 								console.log(err);
 
-							cb();
+							cb1();
 						});
 					}
 				});
@@ -114,27 +113,25 @@ var saveArticle = function(articles, callback) {
 			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
 				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
 					console.log(err);
-				
-				articleIDs.push(item._id);
+
+				for (i in titleKeywordSet) {
+					keywords.push(titleKeywordSet[i]);
+					articleIDs.push(item._id);
+				}
+				for (i in keywordSet)
+					if (keywords.indexOf(keywordSet[i]) === -1) {
+						keywords.push(keywordSet[i]);
+						articleIDs.push(item._id);
+					}
 				cb();
 			});
-			for (i in titleKeywordSet)
-				keywords.push({
-					keyword: titleKeywordSet[i],
-					articles: articleIDs
-				});
-			for (i in keywordSet)
-				keywords.push({
-					keyword: keywordSet[i],
-					articles: articleIDs
-				});
 			originkeywords = originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {
 		if (err) //process error case later
 			console.log(err);
 			
-		callback(keywords, originkeywords);
+		callback(keywords, articleIDs, originkeywords);
 	});
 };
 module.exports.saveArticle = saveArticle;

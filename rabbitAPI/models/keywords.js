@@ -7,7 +7,8 @@ var Schema = mongoose.Schema;
 
 var Keyword = new Schema({
 	word: String,
-	df: Number //document frequency of corresponding word
+	df: Number, //document frequency of corresponding word
+	articleIDs: [Schema.Types.ObjectId]
 });
 
 module.exports = mongoose.model('keywords', Keyword);

@@ -11,16 +11,39 @@ var saveKeyword = function(keywordSet, originKeywordSet, callback) {
 			//For calculating inverted document frequency
 			var Keyword = require('../models/keywords.js');
 
-			async.each(keywordSet, function(keyword, cb1) {
-				var query = {word: keyword};
-				var update = {$inc: {df: 1}}; //increase document frequency to one
-				var options = {upsert: true};
-
-				Keyword.findOneAndUpdate(query, update, options, function(err, item) {
-					if (err) //process error case later
+			async.each(keywordSet, function(word, cb1) {
+				Keyword.findOne({word: word.keyword}).exec(function(err, keyword) {
+					if (err) {
 						console.log(err);
-				
-					cb1();
+						cb();
+					}
+					else if (keyword === null) {
+						var newKeyword = new Keyword({
+							word: word.keyword,
+							df: 1,
+							articleIDs: word.articles
+						});
+
+						newKeyword.save(function(err) {
+							if (err) 
+								console.log(err);
+
+							cb();
+						});
+					}
+					else {
+						keyword.df = keyword.df + 1;
+						for (i in word.articles)
+							if (keyword.articleIDs.indexOf(word.articles[i]) === -1)
+								keyword.articleIDs.push(word.articles[i]);
+
+						keyword.save(function(err) {
+							if (err)
+								console.log(err);
+
+							cb();
+						});
+					}
 				});
 			}, function(err) {
 				if (err) //process error case later
@@ -63,7 +86,7 @@ module.exports.saveKeyword = saveKeyword;
 //Save information of an article to database
 var saveArticle = function(articles, callback) {
 	var Article = require('../models/articles.js');
-	var keywords = [], originkeywords = [];
+	var keywords = [], originkeywords = [], articleIDs = [];
 
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
@@ -83,16 +106,28 @@ var saveArticle = function(articles, callback) {
 					media: false
 				}
 			};
-			var options = {upsert: true};
+			var options = {
+				upsert: true,
+				new: true
+			};
 
 			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
-				if (err && err.code !== 11000) //process error case later
+				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
 					console.log(err);
 				
+				articleIDs.push(item._id);
 				cb();
 			});
-			keywords = keywords.concat(titleKeywordSet);
-			keywords = keywords.concat(keywordSet);
+			for (i in titleKeywordSet)
+				keywords.push({
+					keyword: titleKeywordSet[i],
+					articles: articleIDs
+				});
+			for (i in keywordSet)
+				keywords.push({
+					keyword: keywordSet[i],
+					articles: articleIDs
+				});
 			originkeywords = originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {

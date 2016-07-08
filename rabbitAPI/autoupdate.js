@@ -2,7 +2,6 @@ console.log('Autoupdate is running!');
 
 var async = require('async');
 var database = require('./database.js');
-var urlencode = require('urlencode');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 var feed_link = require('./seed/feed_link.js');
@@ -36,8 +35,8 @@ async.forever(function(callback) {
 
 			async.whilst(function() { return i < maxComingArticle; },
 			function(cb) {
-				Article.findOne({url: cache[0].link}).exec(function(err, article) {
-					if (article === null) {
+				// Article.findOne({url: cache[0].link}).exec(function(err, article) {
+				// 	if (article === null) {
 						console.log('Start extracting ' + cache[0].link);
 						Extract.extractImage(cache[0].link, function(thumbnail) {
 							console.log('End extracting ' + cache[0].link);
@@ -51,14 +50,14 @@ async.forever(function(callback) {
 							i++;
 							cb();
 						});
-					}
-					else {
-						console.log('This article was saved');
-						cache.shift();
-						i++;
-						cb();
-					}
-				});
+					// }
+				// 	else {
+				// 		console.log('This article was saved');
+				// 		cache.shift();
+				// 		i++;
+				// 		cb();
+				// 	}
+				// });
 			}, function() {
 				console.log(cache.length);
 				Save.saveArticle(articles, function(keywordSet, originKeywordSet) {

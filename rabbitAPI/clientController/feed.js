@@ -14,57 +14,74 @@ var searchFeed = function(q, callback) {
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	var Article = require('../models/articles.js');
+	var Keyword = require('../models/keywords.js');
 	var searchResult = [];
+	var articles = [];
 
-	Article.find({}).exec(function(err, articles) { //find feeds in Article database
-		if (err) { //process error case later
-			console.log(err);
-			callback();
-		}
-
-		var searchFuncs = require('../libs/searchfunctions');
-
-		async.each(articles, function(article, cb) { //with each article
-
-			//calculate its vector score
-			searchFuncs.docVector(query, article._id, function(vector1) {
-				var Filter = require('../libs/filter.js');
-				var queryArr = Filter.queryArr(query);
-
-				//calculate query vector score
-				searchFuncs.queryVector(queryArr, function(vector2) {
-					var evalScore = searchFuncs.cosEval(vector1, vector2);
-
-					if (evalScore > 0) { //add only relating article
-						var todayArr = [];
-						todayArr.push(article.publishedDate.getDate());
-						todayArr.push(article.publishedDate.getMonth());
-						todayArr.push(article.publishedDate.getFullYear());
-						
-						searchResult.push({
-							evalScore: evalScore,
-							today: todayArr,
-							id: article._id,
-							url: article.url,
-							title: article.title,
-							source: article.source,
-							avatar: article.avatar,
-							thumbnail: article.thumbnail,
-							publishedDate: article.publishedDate,
-							media: article.media
-						});
-					}
-					cb();
-				});
-			});
-		}, function(err) {
+	async.each(query, function(queryWord, cb) {
+		Keyword.find({word: query}).exec(function(err, word) {
 			if (err) { //process error case later
 				console.log(err);
 				callback();
 			}
-			callback(searchResult);
+			else {
+				for (i in word.articleIds)
+					if (articles.indexOf(word.articleIds[i]) === -1)
+						articles.push(word.articleIds[i]);
+				cb();
+			}
 		});
+	}, function(err) {
+		if (err) {
+			console.log(err);
+			callback();
+		}
+		else {
+			async.each(articles, function(articleID, cb) { //with each article
+				var searchFuncs = require('../libs/searchfunctions');
+				//calculate its vector score
+				searchFuncs.docVector(query, articleID, function(vector1) {
+					var Filter = require('../libs/filter.js');
+					var queryArr = Filter.queryArr(query);
+
+					//calculate query vector score
+					searchFuncs.queryVector(queryArr, function(vector2) {
+						var evalScore = searchFuncs.cosEval(vector1, vector2);
+
+						if (evalScore > 0) { //add only relating article
+							var Article = require('../models/articles.js');
+
+							Article.findById(articleID).exec(function(err, article) {
+								var todayArr = [];
+								todayArr.push(article.publishedDate.getDate());
+								todayArr.push(article.publishedDate.getMonth());
+								todayArr.push(article.publishedDate.getFullYear());
+								
+								searchResult.push({
+									evalScore: evalScore,
+									today: todayArr,
+									id: articleID,
+									url: article.url,
+									title: article.title,
+									source: article.source,
+									avatar: article.avatar,
+									thumbnail: article.thumbnail,
+									publishedDate: article.publishedDate,
+									media: article.media
+								});
+							});
+						}
+						cb();
+					});
+				});
+			}, function(err) {
+				if (err) { //process error case later
+					console.log(err);
+					callback();
+				}
+				callback(searchResult);
+			});
+		}
 	});
 };
 module.exports.searchFeed = searchFeed;

@@ -35,7 +35,7 @@ async.forever(function(callback) {
 
 			async.whilst(function() { return i < maxComingArticle; },
 			function(cb) {
-				Article.findOne({url: cache[0].link}).exec(function(err, article) {
+				Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 					if (article === null) {
 						console.log('Start extracting ' + cache[0].link);
 						Extract.extractImage(cache[0].link, function(thumbnail) {
@@ -75,7 +75,7 @@ async.forever(function(callback) {
 
 		async.whilst(function() { return i < maxComingArticle; },
 		function(cb) {
-			Article.findOne({url: cache[0].link}).exec(function(err, article) {
+			Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 				if (article === null) {
 					console.log('Start extracting ' + cache[0].link);
 					Extract.extractImage(cache[0].link, function(thumbnail) {

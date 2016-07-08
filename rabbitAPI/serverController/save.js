@@ -111,8 +111,7 @@ var saveArticle = function(articles, callback) {
 			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
 				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
 					console.log(err);
-				
-				if (item) {
+				else if (item) {
 					for (i in titleKeywordSet) {
 						keywords.push(titleKeywordSet[i]);
 						articleIDs.push(item._id);

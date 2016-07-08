@@ -19,12 +19,15 @@ var searchFeed = function(q, callback) {
 	var articles = [];
 
 	async.each(query, function(queryWord, cb) {
-		Keyword.find({word: query}).exec(function(err, word) {
+		console.log(queryWord);
+		Keyword.find({word: queryWord}).exec(function(err, word) {
+			console.log(word);
 			if (err) { //process error case later
 				console.log(err);
 				callback();
 			}
 			else {
+				console.log(word.articleIds);
 				for (i in word.articleIds)
 					if (articles.indexOf(word.articleIds[i]) === -1)
 						articles.push(word.articleIds[i]);

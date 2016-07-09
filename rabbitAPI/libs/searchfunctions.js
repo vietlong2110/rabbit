@@ -6,6 +6,7 @@ var async = require('async')
 
 //Calculate vector tf-idf score of a document
 var docVector = function(query, articleID, callback) { //calculate document weight vector
+	console.log(articleID);
 	var Article = require('../models/articles.js');
 	var vector = [];
 

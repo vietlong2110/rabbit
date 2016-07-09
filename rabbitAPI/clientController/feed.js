@@ -19,18 +19,15 @@ var searchFeed = function(q, callback) {
 	var articles = [];
 
 	async.each(query, function(queryWord, cb) {
-		console.log(queryWord);
-		Keyword.find({word: queryWord}).exec(function(err, word) {
-			console.log(word);
+		Keyword.findOne({word: queryWord}).exec(function(err, word) {
 			if (err) { //process error case later
 				console.log(err);
 				callback();
 			}
 			else {
-				console.log(word.articleIds);
-				for (i in word.articleIds)
-					if (articles.indexOf(word.articleIds[i]) === -1)
-						articles.push(word.articleIds[i]);
+				for (i in word.articleIDs)
+					if (articles.indexOf(word.articleIDs[i]) === -1)
+						articles.push(word.articleIDs[i]);
 				cb();
 			}
 		});

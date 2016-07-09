@@ -25,7 +25,7 @@ var searchFeed = function(q, callback) {
 				callback();
 			}
 			else {
-				for (i in word.articleIDs)
+				for (i = 0; i < word.articleIDs.length; i++)
 					if (articles.indexOf(word.articleIDs[i]) === -1)
 						articles.push(word.articleIDs[i]);
 				cb();
@@ -69,9 +69,10 @@ var searchFeed = function(q, callback) {
 									publishedDate: article.publishedDate,
 									media: article.media
 								});
+								cb();
 							});
 						}
-						cb();
+						else cb();
 					});
 				});
 			}, function(err) {

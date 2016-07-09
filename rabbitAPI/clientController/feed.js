@@ -96,39 +96,30 @@ var getFeedId = function(keyword, callback) {
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	var Article = require('../models/articles.js');
+	var Keyword = require('../models/keywords.js');
 	var searchResult = [];
-	Article.find({}).exec(function(err, articles) { //find feeds in Article database
-		if (err) { //process error case later
-			console.log(err);
-			callback();
-		}
+	var articles = [];
 
-		var searchFuncs = require('../libs/searchfunctions');
-
-		async.each(articles, function(article, cb) { //with each article
-
-			//calculate its vector score
-			searchFuncs.docVector(query, article._id, function(vector1) {
-				var Filter = require('../libs/filter.js');
-				var queryArr = Filter.queryArr(query);
-
-				//calculate query vector score
-				searchFuncs.queryVector(queryArr, function(vector2) {
-					var evalScore = searchFuncs.cosEval(vector1, vector2);
-
-					if (evalScore > 0) //add only relating article id
-						searchResult.push(article._id);
-					cb();
-				});
-			});
-		}, function(err) {
+	async.each(query, function(queryWord, cb) {
+		Keyword.findOne({word: queryWord}).exec(function(err, word) {
 			if (err) { //process error case later
 				console.log(err);
 				callback();
 			}
-			callback(searchResult);
+			else {
+				for (i = 0; i < word.articleIDs.length; i++)
+					if (articles.indexOf(word.articleIDs[i]) === -1)
+						articles.push(word.articleIDs[i]);
+				cb();
+			}
 		});
+	}, function(err) {
+		if (err) {
+			console.log(err);
+			callback();
+		}
+		
+		callback(articles);
 	});
 };
 module.exports.getFeedId = getFeedId;

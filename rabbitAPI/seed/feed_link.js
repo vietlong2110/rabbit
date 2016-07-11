@@ -9,7 +9,7 @@ module.exports = {
 		"http://feeds.feedburner.com/TechCrunchIT",
 		"http://feeds.feedburner.com/TechCrunch/greentech"
 	],
-	"9gag": [
+	"ninegag": [
 		"http://9gag-rss.com/api/rss/get?code=9GAG",
 		"http://9gag-rss.com/api/rss/get?code=9GAGHot&format=2",
 		"http://9gag-rss.com/api/rss/get?code=9GAGFresh&format=2",

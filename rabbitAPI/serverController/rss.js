@@ -1,7 +1,3 @@
-/************************************************************************
-*		This controller include all functions relating to rss reader	*
-************************************************************************/
-
 var request = require('request');
 
 var feedParse = function(url, callback) { //rss reader

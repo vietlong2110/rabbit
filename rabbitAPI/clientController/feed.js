@@ -38,12 +38,12 @@ var searchFeed = function(q, callback) {
 		}
 		else {
 			var Filter = require('../libs/filter.js');
+			var searchFuncs = require('../libs/searchfunctions');
 			var queryArr = Filter.queryArr(query);
 
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector2) {
 				async.each(articles, function(articleID, cb) { //with each article
-					var searchFuncs = require('../libs/searchfunctions');
 					//calculate its vector score
 					searchFuncs.docVector(query, articleID, function(vector1) {
 						var evalScore = searchFuncs.cosEval(vector1, vector2);

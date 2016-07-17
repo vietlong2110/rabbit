@@ -15,7 +15,6 @@ var j = 0, cache = [];
 
 async.forever(function(callback) {
 	var articles = [];
-	var updated = false;
 
 	if (cache.length === 0) {
 		async.each(feedList, function(feed, cb) {
@@ -38,7 +37,6 @@ async.forever(function(callback) {
 			function(cb) {
 				Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 					if (article === null) {
-						updated = true;
 						console.log('Start extracting ' + cache[0].link);
 						Extract.extractImage(cache[0].link, function(thumbnail) {
 							console.log('End extracting ' + cache[0].link);
@@ -79,7 +77,6 @@ async.forever(function(callback) {
 		function(cb) {
 			Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 				if (article === null) {
-					updated = true;
 					console.log('Start extracting ' + cache[0].link);
 					Extract.extractImage(cache[0].link, function(thumbnail) {
 						console.log('End extracting ' + cache[0].link);
@@ -106,7 +103,11 @@ async.forever(function(callback) {
 			Save.saveArticle(articles, function(keywordSet, articleIDs, originKeywordSet) {
 				Save.saveKeyword(keywordSet, articleIDs, originKeywordSet, function() {
 					console.log('All news articles are saved!');
-					callback();
+					if (cache.length === 0)
+						setTimeout(function() {
+							callback();
+						}, 1000 * 60);
+					else callback();
 				});
 			});
 		});

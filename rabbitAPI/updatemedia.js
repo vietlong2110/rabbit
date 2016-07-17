@@ -132,7 +132,11 @@ async.forever(function(next) {
 			Save.saveMediaArticle(media, function(keywordSet, articleIDs, originKeywordSet) {
 				Save.saveKeyword(keywordSet, articleIDs, originKeywordSet, function() {
 					console.log('All news articles are saved!');
-					next();
+					if (cache.length === 0)
+						setTimeout(function() {
+							next();
+						}, 1000 * 60);
+					else next();
 				});
 			});
 		});

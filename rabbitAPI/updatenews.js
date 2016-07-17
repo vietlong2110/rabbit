@@ -106,15 +106,7 @@ async.forever(function(callback) {
 			Save.saveArticle(articles, function(keywordSet, articleIDs, originKeywordSet) {
 				Save.saveKeyword(keywordSet, articleIDs, originKeywordSet, function() {
 					console.log('All news articles are saved!');
-					if (cache.length === 0 && updated) {
-						var Compute = require('./serverController/compute.js');
-						
-						Compute.computeKeywordsWeight(function() {
-							console.log('Evaluated weight of all keywords!');
-							callback();
-						});
-					}
-					else callback();
+					callback();
 				});
 			});
 		});

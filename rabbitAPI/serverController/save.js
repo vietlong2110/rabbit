@@ -31,9 +31,10 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 							cb1();
 						});
 					}
-					else if (keyword.articleIDs.indexOf(articleIDs[i]) === -1) {
+					else {
 						keyword.articleIDs.push(articleIDs[i]);
 						keyword.df = keyword.df + 1;
+
 						keyword.save(function(err) {
 							if (err)
 								console.log(err);
@@ -51,27 +52,81 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 		},
 		function(cb) {
 			//For produce search suggestions
-			var OriginKeyword = require('../models/originkeywords.js');
+			var stringFuncs = require('../libs/stringfunctions.js');
 
-			async.each(originKeywordSet, function(keyword, cb2) {
-				var query = {word: keyword};
-				var update = {
-					$inc: {df: 1},
-					$currentDate: {recentlyUpdated: true}
-				}; //increase document frequency to one
-				var options = {upsert: true};
+			stringFuncs.lemma(originKeywordSet, function(lemmaKeywordSet) {
+				var OriginKeyword = require('../models/originkeywords.js');
 
-				OriginKeyword.findOneAndUpdate(query, update, options, function(err, item) {
+				async.each(lemmaKeywordSet, function(word, cb2) {
+					OriginKeyword.findOne({word: word}).exec(function(err, keyword) {
+						var today = new Date();
+
+						if (err) { //process error case later
+							console.log(err);
+							cb();
+						}
+						else if (keyword === null) {
+							var dfDaily = [];
+							dfDaily[0] = {
+								df: 1,
+								daily: today
+							};
+
+							var newKeyword = new OriginKeyword({
+								word: word,
+								df: 1,
+								dfDaily: dfDaily
+							});
+
+							newKeyword.save(function(err) {
+								if (err && err.code !== 11000 && err.code !== 11001) 
+									console.log(err);
+
+								cb2();
+							});
+						}
+						else {
+							keyword.df = keyword.df + 1;
+							if (today.getDate() === keyword.dfDaily[0].daily.getDate())
+								keyword.dfDaily[0].df = keyword.dfDaily[0].df + 1;
+							else {
+								var days = 30;
+								var newDfDaily = [];
+								var diff = today.getTime() - keyword.dfDaily[0].daily.getTime();
+								diff = diff / 1000 / 3600 / 24;
+
+								for (i = days; i >= diff; i--)
+									newDfDaily[i] = {
+										df: keyword.dfDaily[i-diff].df,
+										daily: keyword.dfDaily[i-diff].daily
+									};
+								for (i = 1; i < diff; i++)
+									newDfDaily[i] = {
+										df: 0,
+										daily: today
+									};
+								newDfDaily[0] = {
+									df: 1,
+									daily: today
+								};
+
+								keyword.dfDaily = newDfDaily;
+							}
+
+							keyword.save(function(err) {
+								if (err)
+									console.log(err);
+
+								cb2();
+							});
+						}
+					});
+				}, function(err) {
 					if (err) //process error case later
 						console.log(err);
-				
-					cb2();
-				});
-			}, function(err) {
-				if (err) //process error case later
-					console.log(err);
 
-				cb();
+					cb();
+				});
 			});
 		}
 	], function() {
@@ -108,18 +163,18 @@ var saveArticle = function(articles, callback) {
 				new: true
 			};
 
-			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
+			Article.findOneAndUpdate(query, update, options).exec(function(err, doc) {
 				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
 					console.log(err);
-				else if (item) {
+				else if (doc) {
 					for (i in titleKeywordSet) {
 						keywords.push(titleKeywordSet[i]);
-						articleIDs.push(item._id);
+						articleIDs.push(doc._id);
 					}
 					for (i in keywordSet)
 						if (keywords.indexOf(keywordSet[i]) === -1) {
 							keywords.push(keywordSet[i]);
-							articleIDs.push(item._id);
+							articleIDs.push(doc._id);
 						}
 				}
 				cb();
@@ -137,7 +192,7 @@ module.exports.saveArticle = saveArticle;
 
 var saveMediaArticle = function(articles, callback) {
 	var Article = require('../models/articles.js');
-	var keywords = [], originkeywords = [];
+	var keywords = [], originkeywords = [], articleIDs = [];
 
 	async.each(articles, function(article, cb) {
 		var Extract = require('./extract.js');
@@ -156,22 +211,30 @@ var saveMediaArticle = function(articles, callback) {
 					media: true
 				}
 			};
-			var options = {upsert: true};
+			var options = {
+				upsert: true,
+				new: true
+			};
 
-			Article.findOneAndUpdate(query, update, options).exec(function(err, item) {
-				if (err) //process error case later
+			Article.findOneAndUpdate(query, update, options).exec(function(err, doc) {
+				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
 					console.log(err);
-				
+				else if (doc) {
+					for (i in keywordSet)
+						if (keywords.indexOf(keywordSet[i]) === -1) {
+							keywords.push(keywordSet[i]);
+							articleIDs.push(doc._id);
+						}
+				}
 				cb();
 			});
-			keywords = keywords.concat(keywordSet);
 			originkeywords = originkeywords.concat(originKeywordSet);
 		});
 	}, function(err) {
 		if (err) //process error case later
 			console.log(err);
 		
-		callback();
+		callback(keywords, articleIDs, originkeywords);
 	});
 };
 module.exports.saveMediaArticle = saveMediaArticle;

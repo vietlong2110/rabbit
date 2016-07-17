@@ -6,7 +6,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var Keyword = new Schema({
-	word: String,
+	word: {
+		type: String,
+		unique: true
+	},
 	df: Number, //document frequency of corresponding word
 	articleIDs: [Schema.Types.ObjectId]
 });

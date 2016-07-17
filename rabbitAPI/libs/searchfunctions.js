@@ -25,16 +25,16 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 					if (keyword !== null) {
 						var idf = keyword.df; //idf weight
 						if (n > 0)
-							idf = 1 + Math.log(n / idf);
+							idf = Math.log((n + 1) / idf);
 
 						var tf = 0, tfTitle = 0; //tf weight
 						if (article.titleKeywords.indexOf(word) !== -1) {
 							tfTitle = article.tfTitle[article.titleKeywords.indexOf(word)];
-							tfTitle = (1 + Math.log(tfTitle)) * 2;
+							tfTitle = (Math.log(1 + tfTitle)) * 2;
 						}
 						if (article.keywords.indexOf(word) !== -1) {
 							tf = article.tf[article.keywords.indexOf(word)];
-							tf = 1 + Math.log(tf);
+							tf = Math.log(1 + tf);
 						}
 						vector.push((tf + tfTitle)*idf); //tf-idf score
 					}
@@ -54,36 +54,16 @@ module.exports.docVector = docVector;
 
 //Calculate vector tf-idf score of a query
 var queryVector = function(query, callback) {
-	var Article = require('../models/articles.js');
 	var vector = [];
-	Article.count({}, function(err, n) {
 
-		async.each(query, function(q, cb) {
-			var Keyword = require('../models/keywords.js');
+	async.each(query, function(q, cb) {
+		vector.push(q.num); //tf-idf score
+		cb();
+	}, function(err) {
+		if (err) //process error case later
+			console.log(err);
 
-			Keyword.findOne({word: q.word}).exec(function(err, keyword) {
-				if (err) { //process error case later
-					console.log(err);
-					cb();
-				}
-
-				if (keyword !== null) {
-					var idf = keyword.df //idf weight
-					if (n > 0)
-						idf = 1 + Math.log(n / idf);
-
-					var tf = 1 + Math.log(q.num); //tf weight
-					vector.push(tf*idf); //tf-idf score
-				}
-				else vector.push(0);
-				cb();
-			});
-		}, function(err) {
-			if (err) //process error case later
-				console.log(err);
-
-			callback(vector);
-		});
+		callback(vector);
 	});
 };
 module.exports.queryVector = queryVector;

@@ -5,7 +5,7 @@ var computeKeywordsWeight = function(callback) {
 	var Rank = require('../libs/ranking.js');
 	var OriginKeyword = require('../models/originkeywords.js');
 
-	OriginKeyword.find({}).exec(function(err, originkeywords) {
+	OriginKeyword.find({}, null, {sort: {word: 1}}).exec(function(err, originkeywords) {
 		if (err) {
 			console.log(err);
 			callback();
@@ -33,7 +33,7 @@ var computeKeywordsWeight = function(callback) {
 				if (err)
 					console.log(err);
 
-				callback();
+				callback(originkeywords);
 			});
 		}
 	})

@@ -1,6 +1,9 @@
 /********************************************************************************
 *		This library include all functions relating to string processing		*
 *********************************************************************************/
+var stemmer = require('porter-stemmer').stemmer;
+var natural = require('natural');
+var Lemmer = require('lemmer');
 
 //Delete all redundant characters from content
 var preProcess = function(content) {
@@ -20,7 +23,6 @@ module.exports.preProcess = preProcess;
 
 //Tokenize words from content
 var wordTokenize = function(content) {
-    var natural = require('natural');
     var tokenizer = new natural.WordTokenizer();
     var wordList = tokenizer.tokenize(content);
 
@@ -52,7 +54,6 @@ module.exports.removeStopWords = removeStopWords;
 
 //stem the word
 var stem = function(word) {
-    var stemmer = require('porter-stemmer').stemmer;
     return stemmer(word);
 };
 module.exports.stem = stem;
@@ -64,6 +65,13 @@ var stemArr = function(keywords) {
     return keywords;
 };
 module.exports.stemArr = stemArr;
+
+var lemma = function(word, callback) {
+	Lemmer.lemmatize(word, function(err, result) {
+		callback(result);
+	});	
+};
+module.exports.lemma = lemma;
 
 //convert content to keyword that is usable
 var contentToKeywords = function(content, callback) {

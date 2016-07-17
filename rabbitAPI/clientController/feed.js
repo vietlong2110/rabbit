@@ -37,15 +37,15 @@ var searchFeed = function(q, callback) {
 			callback();
 		}
 		else {
-			async.each(articles, function(articleID, cb) { //with each article
-				var searchFuncs = require('../libs/searchfunctions');
-				//calculate its vector score
-				searchFuncs.docVector(query, articleID, function(vector1) {
-					var Filter = require('../libs/filter.js');
-					var queryArr = Filter.queryArr(query);
+			var Filter = require('../libs/filter.js');
+			var queryArr = Filter.queryArr(query);
 
-					//calculate query vector score
-					searchFuncs.queryVector(queryArr, function(vector2) {
+			//calculate query vector score
+			searchFuncs.queryVector(queryArr, function(vector2) {
+				async.each(articles, function(articleID, cb) { //with each article
+					var searchFuncs = require('../libs/searchfunctions');
+					//calculate its vector score
+					searchFuncs.docVector(query, articleID, function(vector1) {
 						var evalScore = searchFuncs.cosEval(vector1, vector2);
 
 						if (evalScore > 0) { //add only relating article
@@ -74,13 +74,13 @@ var searchFeed = function(q, callback) {
 						}
 						else cb();
 					});
+				}, function(err) {
+					if (err) { //process error case later
+						console.log(err);
+						callback();
+					}
+					callback(searchResult);
 				});
-			}, function(err) {
-				if (err) { //process error case later
-					console.log(err);
-					callback();
-				}
-				callback(searchResult);
 			});
 		}
 	});
@@ -137,15 +137,15 @@ var getFeedUser = function(keyword, articleIds, callback) {
 	var searchResult = [];
 	var Ids = [];
 
-	async.each(articleIds, function(articleId, cb) { //with each article's ID
+	var Filter = require('../libs/filter.js');
+	var queryArr = Filter.queryArr(query);
 
-		//calculate its vector score
-		searchFuncs.docVector(query, articleId, function(vector1) {
-			var Filter = require('../libs/filter.js');
-			var queryArr = Filter.queryArr(query);
+	//calculate query vector score
+	searchFuncs.queryVector(queryArr, function(vector2) {
+		async.each(articleIds, function(articleId, cb) { //with each article's ID
 
-			//calculate query vector score
-			searchFuncs.queryVector(queryArr, function(vector2) {
+			//calculate its vector score
+			searchFuncs.docVector(query, articleId, function(vector1) {
 				var evalScore = searchFuncs.cosEval(vector1, vector2);
 
 				if (evalScore > 0) { //consider only relating articles
@@ -181,13 +181,13 @@ var getFeedUser = function(keyword, articleIds, callback) {
 				}
 				else cb();
 			});
+		}, function(err) {
+			if (err) { //process error case later
+				console.log(err);
+				callback();
+			}
+			callback(searchResult, Ids);
 		});
-	}, function(err) {
-		if (err) { //process error case later
-			console.log(err);
-			callback();
-		}
-		callback(searchResult, Ids);
 	});
 };
 module.exports.getFeedUser = getFeedUser;

@@ -8,6 +8,13 @@ var router = express.Router();
 var urlencode = require('urlencode');
 
 var mongoose = require('mongoose');
+var async = require('async');
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
+var RSS = require('../serverController/rss.js');
+var Article = require('../models/articles.js');
+var Extract = require('../serverController/extract.js');
+var Save = require('../serverController/save.js');
 
 router.post('/rss', function(req, res) { //test rss reader
 	// var url = 'http://feeds.feedburner.com/TechCrunch/fundings-exits';
@@ -15,6 +22,16 @@ router.post('/rss', function(req, res) { //test rss reader
 	var RSS = require('../serverController/rss.js');
 	RSS.feedParse(urlencode(url), function(data) {
 		res.json(data);
+	});
+});
+
+router.get('/searchimagesinsta', function(req, res) {
+	var Insta = require('../serverController/instagram.js');
+	Insta.searchUser(req.query.q, function(data) {
+		Insta.searchMediaTags(req.query.q, function(images) {
+			images = images.concat(data);
+			res.json({images: images});
+		});
 	});
 });
 
@@ -54,6 +71,14 @@ router.get('/anyzero', function(req, res) {
 				res.json({haveZero: true});
 		res.json({haveZero: false});
 	});
+});
+
+router.get('/lemma', function(req, res) {
+	var stringFuncs = require('../libs/stringfunctions.js');
+
+	stringFuncs.lemma(req.query.q, function(results) {
+		res.json({lemma: results});
+	})
 });
 
 module.exports = router;

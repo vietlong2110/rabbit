@@ -4,17 +4,19 @@ var async = require('async');
 var searchSuggestion = function(query, callback) {
 	var suggestResults = [];
 	var kTop = 10;
-	var Keyword = require('../models/originkeywords.js');
+	var myCache = require('../models/caches.js');
 
-	Keyword.find({}, null, {sort: {word: 1}}, function(err, keywords) {
-		if (err) {
-			console.log(err);
-			callback();
-		}
-		else {
+	myCache.findOne({key: 'keywordArray'}).exec(function(err, words) {
+		var keywords = words.value;
+		if (err)
+			throw err;
+
+		myCache.findOne({key: 'keywordTree'}).exec(function(err, tree) {
+			if (err)
+				throw err;
+
+			var segmentTree = tree.value;
 			var Algo = require('../libs/classic-algorithm.js');
-			var segmentTree = Algo.initializeSegmentTree(keywords);
-
 			Algo.binarySearchRange(query, keywords, function(notFound, lowerBound, upperBound) {
 				if (notFound)
 					callback(suggestResults);
@@ -31,8 +33,6 @@ var searchSuggestion = function(query, callback) {
 					function(cb1) {
 						var j = 0;
 						var tmpMaxIndex, maxWeight = -1;
-						// console.log(maxIndex);
-						// console.log(queryArr);
 
 						async.whilst(function() { return j < queryArr.length; },
 						function(cb2) {
@@ -45,7 +45,6 @@ var searchSuggestion = function(query, callback) {
 								cb2();
 							});
 						}, function(err) {
-							// console.log(tmpMaxIndex);
 							suggestResults.push(keywords[tmpMaxIndex].word);
 							maxIndex.push(tmpMaxIndex);
 							maxIndex.sort(function(a, b) {
@@ -76,7 +75,7 @@ var searchSuggestion = function(query, callback) {
 					});
 				}
 			});
-		}
+		});
 	});
 };
 module.exports.searchSuggestion = searchSuggestion;

@@ -33,32 +33,46 @@ var extractKeyword = function(title, content, callback) { //extract keyword from
 	var keywordSet = [], originKeywordSet = [], titleKeywordSet = [];
 	var tf = [], tfTitle = [];
 
-	stringFuncs.contentToKeywords(title, function(titleKeywords, originKeywords) {
-		for (i in titleKeywords)
-			if (titleKeywordSet.indexOf(titleKeywords[i]) === -1) {
-				titleKeywordSet.push(titleKeywords[i]);
-				tfTitle.push(1);
-			}
-			else tfTitle[titleKeywordSet.indexOf(titleKeywords[i])]++;
-
-		for (i in originKeywords)
-				if (originKeywordSet.indexOf(originKeywords) === -1)
-					originKeywordSet.push(originKeywords[i]);
-
-		//convert content to a list of keyword
-		stringFuncs.contentToKeywords(content, function(keywords, originKeywords) {
-			for (i in keywords)
-				if (keywordSet.indexOf(keywords[i]) === -1) {
-					keywordSet.push(keywords[i]);
-					tf.push(1);
+	if (title)
+		stringFuncs.contentToKeywords(title, function(titleKeywords, originKeywords) {
+			for (i in titleKeywords)
+				if (titleKeywordSet.indexOf(titleKeywords[i]) === -1) {
+					titleKeywordSet.push(titleKeywords[i]);
+					tfTitle.push(1);
 				}
-				else tf[keywordSet.indexOf(keywords[i])]++;
+				else tfTitle[titleKeywordSet.indexOf(titleKeywords[i])]++;
 
 			for (i in originKeywords)
-				if (originKeywordSet.indexOf(originKeywords) === -1)
-					originKeywordSet.push(originKeywords[i]);
-			callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
+					if (originKeywordSet.indexOf(originKeywords) === -1)
+						originKeywordSet.push(originKeywords[i]);
+
+			//convert content to a list of keyword
+			stringFuncs.contentToKeywords(content, function(keywords, originKeywords) {
+				for (i in keywords)
+					if (keywordSet.indexOf(keywords[i]) === -1) {
+						keywordSet.push(keywords[i]);
+						tf.push(1);
+					}
+					else tf[keywordSet.indexOf(keywords[i])]++;
+
+				for (i in originKeywords)
+					if (originKeywordSet.indexOf(originKeywords) === -1)
+						originKeywordSet.push(originKeywords[i]);
+				callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
+			});
 		});
+	else stringFuncs.contentToKeywords(content, function(keywords, originKeywords) {
+		for (i in keywords)
+			if (keywordSet.indexOf(keywords[i]) === -1) {
+				keywordSet.push(keywords[i]);
+				tf.push(1);
+			}
+			else tf[keywordSet.indexOf(keywords[i])]++;
+
+		for (i in originKeywords)
+			if (originKeywordSet.indexOf(originKeywords) === -1)
+				originKeywordSet.push(originKeywords[i]);
+		callback(originKeywordSet, keywordSet, tf);
 	});
 };
 module.exports.extractKeyword = extractKeyword;

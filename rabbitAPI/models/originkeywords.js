@@ -10,10 +10,10 @@ var OriginKeyword = new Schema({
 	df: Number, //document frequency of corresponding word
 	followers: [Schema.Types.ObjectId],
 	searchers: [Schema.Types.ObjectId],
-	recentlyUpdated: {
-		type: Date,
-		default: Date.now()
-	},
+	dfDaily: [{
+		df: Number,
+		daily: Date
+	}],
 	weight: {
 		type: Number,
 		default: 0

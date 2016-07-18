@@ -60,6 +60,7 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 				async.each(lemmaKeywordSet, function(word, cb2) {
 					OriginKeyword.findOne({word: word}).exec(function(err, keyword) {
 						var today = new Date();
+						var days = 30;
 
 						if (err) { //process error case later
 							console.log(err);
@@ -67,10 +68,16 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 						}
 						else if (keyword === null) {
 							var dfDaily = [];
-							dfDaily[0] = {
+							dfDaily.push({
 								df: 1,
 								daily: today
-							};
+							});
+
+							for (i = 1; i <= days; i++)
+								dfDaily.push({
+									df: 0,
+									daily: today
+								});
 
 							var newKeyword = new OriginKeyword({
 								word: word,
@@ -90,16 +97,12 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 							if (today.getDate() === keyword.dfDaily[0].daily.getDate())
 								keyword.dfDaily[0].df = keyword.dfDaily[0].df + 1;
 							else {
-								var days = 30;
 								var newDfDaily = [];
 								var diff = today.getTime() - keyword.dfDaily[0].daily.getTime();
-								diff = diff / 1000 / 3600 / 24;
+								diff = Math.min(diff / 1000 / 3600 / 24, days);
 
 								for (i = days; i >= diff; i--)
-									newDfDaily[i] = {
-										df: keyword.dfDaily[i-diff].df,
-										daily: keyword.dfDaily[i-diff].daily
-									};
+									newDfDaily[i] = keyword.dfDaily[i-diff];
 								for (i = 1; i < diff; i++)
 									newDfDaily[i] = {
 										df: 0,

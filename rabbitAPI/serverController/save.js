@@ -98,6 +98,11 @@ var saveKeyword = function(keywordSet, articleIDs, originKeywordSet, callback) {
 								keyword.dfDaily[0].df = keyword.dfDaily[0].df + 1;
 							else {
 								var newDfDaily = [];
+								for (i = 0; i <= days; i++)
+									newDfDaily.push({
+										df: 0,
+										daily: today
+									});
 								var diff = today.getTime() - keyword.dfDaily[0].daily.getTime();
 								diff = Math.min(diff / 1000 / 3600 / 24, days);
 

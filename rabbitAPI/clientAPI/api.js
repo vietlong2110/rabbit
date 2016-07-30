@@ -46,6 +46,7 @@ module.exports = function(passport) {
 						source: searchResult[i].source,
 						avatar: searchResult[i].avatar,
 						thumbnail: searchResult[i].thumbnail,
+						publishedDate: searchResult[i].publishedDate,
 						hashtag: hashtag
 					});
 				else newsFeedResult.push({
@@ -54,24 +55,58 @@ module.exports = function(passport) {
 					title: searchResult[i].title,
 					source: searchResult[i].source,
 					thumbnail: searchResult[i].thumbnail,
+					publishedDate: searchResult[i].publishedDate,
 					hashtag: hashtag
 				});
 
-			Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
-			function(newsFeedResult, moreDataNews) {
-				Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
-				function(mediaFeedResult, moreDataMedia) {
-					var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
+			var FollowKeyword = require('../models/followkeywords.js');
 
-					res.json({
-						newsFeedResult: newsFeedResult, //search results
-						mediaFeedResult: mediaFeedResult,
-						keywordSearch: req.query.q, //return whatever users typed in to compare with their following list
-						queryTitle: queryTitle, //title for search view
-						moreDataNews: moreDataNews,
-						moreDataMedia: moreDataMedia
+			FollowKeyword.findOne({query: req.query.q}).exec(function(err, keyword) {
+				if (err)
+					console.log(err);
+				else if (keyword === null) {
+					//will replace by searchMediaFeed later...
+					Feed.searchInstaFeed(req.query.q, function(media) {
+						var Algo = require('../libs/classic-algorithm.js');
+
+						mediaFeedResult = Algo.mergeArray(media, mediaFeedResult);
+						
+						Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+						function(newsFeedResult, moreDataNews) {
+							Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+							function(mediaFeedResult, moreDataMedia) {
+								var queryTitle = Filter.niceTitle(query); 
+
+								res.json({
+									newsFeedResult: newsFeedResult, //search results
+									mediaFeedResult: mediaFeedResult,
+									keywordSearch: req.query.q, 
+									queryTitle: queryTitle, //title for search view
+									moreDataNews: moreDataNews,
+									moreDataMedia: moreDataMedia
+								});
+							});
+						});
 					});
-				});
+				}
+				else {
+					Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+					function(newsFeedResult, moreDataNews) {
+						Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+						function(mediaFeedResult, moreDataMedia) {
+							var queryTitle = Filter.niceTitle(query); 
+
+							res.json({
+								newsFeedResult: newsFeedResult, //search results
+								mediaFeedResult: mediaFeedResult,
+								keywordSearch: req.query.q, 
+								queryTitle: queryTitle, //title for search view
+								moreDataNews: moreDataNews,
+								moreDataMedia: moreDataMedia
+							});
+						});
+					});
+				}
 			});
 		});
 	});
@@ -86,7 +121,6 @@ module.exports = function(passport) {
 
 				Follow.addList(query, userId, function(addlist) { //add keyword/hashtag to following list
 					if (addlist) //added keyword/hashtag successfully to database
-						//add article to their newsfeed corresponding to whatever keyword/hashtag they followed
 						Follow.addArticle(query, userId, function(addarticle) {
 							if (addarticle) //added article successfully to database
 								Extract.getFeed(userId, 0, 0,
@@ -121,8 +155,6 @@ module.exports = function(passport) {
 
 				Follow.deleteList(req.body.keyword, userId, function(deletedList) {
 					if (deletedList) //deleted keyword/hashtag successfully from database
-
-						//delete article from their newsfeed corresponding to whatever keyword/hashtag they followed
 						Follow.deleteArticle(req.body.keyword, userId, function(deletedArticle) {
 							if (deletedArticle) //deleted article successfully from database
 								Extract.getFeed(userId, 0, 0,
@@ -254,6 +286,7 @@ module.exports = function(passport) {
 									source: result.source,
 									avatar: result.avatar,
 									thumbnail: result.thumbnail,
+									publishedDate: result.publishedDate,
 									hashtag: hashtag,
 									star: star
 								});
@@ -264,6 +297,7 @@ module.exports = function(passport) {
 								source: result.source,
 								avatar: result.avatar,
 								thumbnail: result.thumbnail,
+								publishedDate: result.publishedDate,
 								hashtag: hashtag,
 								star: star
 							});

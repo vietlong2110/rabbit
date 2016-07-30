@@ -79,7 +79,8 @@ angular.module('starter.services', [])
 })
 
 .factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout, $rootScope) {
-	var domain = 'http://52.221.228.17:8080/clientapi';
+	// var domain = 'http://52.221.228.17:8080/clientapi';
+	var domain = 'http://localhost:8080/clientapi';
 
 	var getFeedAPI = domain + '/getfeed';
 

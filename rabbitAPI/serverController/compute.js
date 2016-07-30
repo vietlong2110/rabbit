@@ -15,8 +15,6 @@ var computeKeywordsWeight = function(callback) {
 				var keyword = originkeyword.word;
 
 				Rank.keyword_weight(keyword, function(weight) {
-					// if (keyword === 'knowledge')
-						// console.log(weight);
 					var query = {word: keyword};
 					var update = {
 						$set: {weight: weight}
@@ -24,7 +22,7 @@ var computeKeywordsWeight = function(callback) {
 
 					OriginKeyword.findOneAndUpdate(query, update, function(err, item) {
 						if (err) 
-							console.log(err);
+							console.log(weight);
 						
 						cb();
 					});

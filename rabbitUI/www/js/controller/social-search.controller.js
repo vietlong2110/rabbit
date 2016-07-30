@@ -37,8 +37,9 @@ $ionicViewSwitcher, $ionicScrollDelegate, navServices, LOAD_SIZE) {
                 keyword: $rootScope.keywordSearch,
                 isChecked: true
             });
-            $rootScope.listCount++;
             apiServices.follow($rootScope.keywordSearch, $rootScope.queryTitle);
+            $rootScope.followed = true;
+            $rootScope.listCount++;
         }
     };
 

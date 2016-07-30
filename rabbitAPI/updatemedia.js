@@ -1,4 +1,4 @@
-console.log('Update News is running!');
+console.log('Update Media is running!');
 
 var async = require('async');
 var database = require('./database.js');
@@ -8,7 +8,7 @@ var entities = new Entities();
 var Article = require('./models/articles.js');
 var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
-var j = 0, cache = [];
+var j = 0, cache = [], instaCache = [];
 
 async.forever(function(next) {
 	var media = [];
@@ -16,7 +16,7 @@ async.forever(function(next) {
 
 	if (cache.length === 0) {
 		async.parallel({
-			ninegag: function(callback) {
+			/*ninegag: function(callback) {
 				var feed_link = require('./seed/feed_link.js');
 				var feedList = feed_link.ninegag;
 				var RSS = require('./serverController/rss.js');
@@ -34,10 +34,59 @@ async.forever(function(next) {
 
 					callback();
 				});
-			}/*,
+			},*/
+
 			instagram: function(callback) {
-				callback();
-			}*/
+				var FollowKeyword = require('./models/followkeywords.js');
+
+				if (instaCache.length === 0) {
+					FollowKeyword.find({}).exec(function(err, queries) {
+						if (err) {
+							console.log(err);
+							callback();
+						}
+						else {
+							instaCache = queries;
+							var limitQueries = Math.min(instaCache.length, 8);
+							var queryList = instaCache.slice(0, limitQueries);
+
+							async.each(queryList, function(keyword, cb) {
+								var Feed = require('./clientController/feed.js');
+
+								Feed.searchInstaFeed(keyword.query, function(mediaResult) {
+									media = media.concat(mediaResult);
+									instaCache.shift();
+									cb();
+								});
+							}, function(err) {
+								if (err)
+									console.log(err);
+
+								callback();
+							});
+						}
+					});
+				}
+				else {
+					var limitQueries = Math.min(instaCache.length, 8);
+					var queryList = instaCache.slice(0, limitQueries);
+
+					async.each(queryList, function(keyword, cb) {
+						var Feed = require('./clientController/feed.js');
+
+						Feed.searchInstaFeed(keyword.query, function(mediaResult) {
+							media = media.concat(mediaResult);
+							instaCache.shift();
+							cb();
+						});
+					}, function(err) {
+						if (err)
+							console.log(err);
+
+						callback();
+					});
+				}
+			}
 		},function() {
 			var maxComingArticle = Math.min(cache.length, 20);
 			var i = 0;

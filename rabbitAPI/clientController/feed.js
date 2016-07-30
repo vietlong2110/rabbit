@@ -24,12 +24,13 @@ var searchFeed = function(q, callback) {
 				console.log(err);
 				callback();
 			}
-			else {
+			else if (word !== null) {
 				for (i = 0; i < word.articleIDs.length; i++)
 					if (articles.indexOf(word.articleIDs[i]) === -1)
 						articles.push(word.articleIDs[i]);
 				cb();
 			}
+			else cb();
 		});
 	}, function(err) {
 		if (err) {
@@ -106,12 +107,13 @@ var getFeedId = function(keyword, callback) {
 				console.log(err);
 				callback();
 			}
-			else {
+			else if (word !== null) {
 				for (i = 0; i < word.articleIDs.length; i++)
 					if (articles.indexOf(word.articleIDs[i]) === -1)
 						articles.push(word.articleIDs[i]);
 				cb();
 			}
+			else cb();
 		});
 	}, function(err) {
 		if (err) {
@@ -349,3 +351,15 @@ var getFavorite = function(userId, callback) {
 	});
 };
 module.exports.getFavorite = getFavorite;
+
+var searchInstaFeed = function(q, callback) {
+	var Insta = require('../serverController/instagram.js');
+
+	// Insta.searchUser(q, function(data) {
+		Insta.searchMediaTags(q, function(images) {
+			// images = images.concat(data);
+			callback(images);
+		});
+	// });
+};
+module.exports.searchInstaFeed = searchInstaFeed;

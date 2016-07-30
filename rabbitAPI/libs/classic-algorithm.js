@@ -77,3 +77,24 @@ var segmentTreeQuery = function(segmentTree, keywords, lowerBound, upperBound, c
 	callback(maxNode.index);
 };
 module.exports.segmentTreeQuery = segmentTreeQuery;
+
+var mergeArray = function(a, b) {
+	var i = 0, j = 0;
+	var result = [];
+
+	while (i < a.length && j < b.length) {
+		if (a[i].publishedDate < b[j].publishedDate) {
+			result.push(a[i]);
+			i++;
+		}
+		else {
+			result.push(b[j]);
+			j++;
+		}
+	}
+	if (i === a.length)
+		result = result.concat(b.slice(j, b.length));
+	else result = result.concat(a.slice(i, a.length));
+	return result;
+};
+module.exports.mergeArray = mergeArray;

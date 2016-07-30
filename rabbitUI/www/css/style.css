@@ -167,5 +167,6 @@ right: 5%; /* Adjust position */
 }
 
 .background {
-	background-color: #ececec;
+	/*background-color: #ececec;*/
+	background-color: #e3f2fd;
 }

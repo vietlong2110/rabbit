@@ -8,8 +8,14 @@ var OriginKeyword = new Schema({
 		unique: true
 	},
 	df: Number, //document frequency of corresponding word
-	followers: [Schema.Types.ObjectId],
-	searchers: [Schema.Types.ObjectId],
+	followers:  {
+		type: Number,
+		default: 0
+	},
+	searchers: {
+		type: Number,
+		default: 0
+	},
 	dfDaily: [{
 		df: Number,
 		daily: Date

@@ -16,8 +16,8 @@ var keyword_weight = function(keyword, callback) {
 		OriginKeyword.findOne({word: keyword}).exec(function(err, originKeyword) {
 			if (originKeyword === null)
 				callback(1);
-			else callback(weight + originKeyword.df + originKeyword.searchers.length * 1.5 
-			+ originKeyword.followers.length * 2);
+			else callback(weight + originKeyword.df + originKeyword.searchers * 1.5 
+			+ originKeyword.followers * 2);
 		});
 	});
 };

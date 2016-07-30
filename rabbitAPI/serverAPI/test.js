@@ -28,10 +28,10 @@ router.post('/rss', function(req, res) { //test rss reader
 router.get('/searchimagesinsta', function(req, res) {
 	var Insta = require('../serverController/instagram.js');
 	Insta.searchUser(req.query.q, function(data) {
-		Insta.searchMediaTags(req.query.q, function(images) {
-			images = images.concat(data);
-			res.json({images: images});
-		});
+		// Insta.searchMediaTags(req.query.q, function(images) {
+		// 	images = images.concat(data);
+			res.json({images: data});
+		// });
 	});
 });
 

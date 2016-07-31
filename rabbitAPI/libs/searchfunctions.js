@@ -2,7 +2,7 @@
 *		This library include all functions relating to search		*
 *********************************************************************/
 
-var async = require('async')
+var async = require('async');
 
 //Calculate vector tf-idf score of a document
 var docVector = function(query, articleID, callback) { //calculate document weight vector
@@ -57,7 +57,7 @@ var queryVector = function(query, callback) {
 	var vector = [];
 
 	async.each(query, function(q, cb) {
-		vector.push(q.num); //tf-idf score
+		vector.push(Math.log(1 + q.num)); //tf-idf score
 		cb();
 	}, function(err) {
 		if (err) //process error case later

@@ -43,7 +43,7 @@ var extractKeyword = function(title, content, callback) { //extract keyword from
 				else tfTitle[titleKeywordSet.indexOf(titleKeywords[i])]++;
 
 			for (i in originKeywords)
-					if (originKeywordSet.indexOf(originKeywords) === -1)
+					if (originKeywordSet.indexOf(originKeywords[i]) === -1)
 						originKeywordSet.push(originKeywords[i]);
 
 			//convert content to a list of keyword
@@ -56,7 +56,7 @@ var extractKeyword = function(title, content, callback) { //extract keyword from
 					else tf[keywordSet.indexOf(keywords[i])]++;
 
 				for (i in originKeywords)
-					if (originKeywordSet.indexOf(originKeywords) === -1)
+					if (originKeywordSet.indexOf(originKeywords[i]) === -1)
 						originKeywordSet.push(originKeywords[i]);
 				callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
 			});
@@ -70,7 +70,7 @@ var extractKeyword = function(title, content, callback) { //extract keyword from
 			else tf[keywordSet.indexOf(keywords[i])]++;
 
 		for (i in originKeywords)
-			if (originKeywordSet.indexOf(originKeywords) === -1)
+			if (originKeywordSet.indexOf(originKeywords[i]) === -1)
 				originKeywordSet.push(originKeywords[i]);
 		callback(originKeywordSet, keywordSet, tf);
 	});
@@ -96,7 +96,7 @@ module.exports.extractImage = extractImage;
 
 var extractImageFromContent = function(content) {
 	// console.log(content);
-	var regex = /<img[^>]+src\s*=\s*['"]([^'"]+)['"][^>]*>/g;
+	var regex = /<img[^>]+src\s*=\s*['"](http[^'"]+)['"][^>]*>/g;
 	var image = regex.exec(content)[1];
 	return image;
 };

@@ -1,7 +1,9 @@
-<ion-view title="Please sign in">
-	<ion-nav-bar class="bar-positive"></ion-nav-bar>
+<ion-view title="#News">
 	
 	<ion-content class="padding">
+		<button class="button button-positive button-clear button-full" ui-sref="register">
+			#News
+		</button>
 		<div class="list">
 			<label class="item item-input">
 				<input type="text" placeholder="Email" ng-model="user.email">
@@ -14,8 +16,11 @@
 		<button class="button button-full button-balanced" ng-click="login()">
 			Login
 		</button>
-		<button class="button button-positive button-clear button-full" ui-sref="register">
-			Register now!
+		<button class="button button-full button-positive" ng-click="fblogin()">
+			Connect to Facebook
 		</button>
+		<!-- <label class="item item-input">
+			<input type="text" ng-model="token">
+		</label> -->
 	</ion-content>
 </ion-view>

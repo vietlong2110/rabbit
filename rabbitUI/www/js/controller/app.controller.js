@@ -1,7 +1,7 @@
 angular.module('app.controller', [])
 
 //Menu side Controller
-.controller('AppController', function($rootScope, $scope, $ionicModal, $state, $ionicSideMenuDelegate, 
+.controller('AppController', function($rootScope, $scope, $ionicModal, $ionicBackdrop, $state, $ionicSideMenuDelegate, 
 $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices, navServices, AUTH_EVENTS) {
     $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
         AuthService.logout();
@@ -17,7 +17,9 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     $scope.allListChecked = true;
     $scope.showList = false;
 
-    if ($rootScope.currentNewsfeedState === 'Favorites')
+    if ($rootScope.currentNewsfeedState === 'Newsfeed')
+        $scope.onNewsfeed = true;
+    else if ($rootScope.currentNewsfeedState === 'Favorites')
         $scope.onFavorite = true;
 
     $ionicModal.fromTemplateUrl('templates/home-settings.html', {
@@ -25,6 +27,12 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
         animation: 'slide-in-up'
     }).then(function(modal) {
         $scope.modal = modal;
+    });
+
+    $scope.$watch(function() {
+        if ($ionicSideMenuDelegate.isOpen())
+            $scope.isOpen = true;
+        else $scope.isOpen = false;        
     });
 
     $scope.openSetting = function(e) {
@@ -74,10 +82,13 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
 
     $scope.chooseItem = function(item) {
         $scope.onFavorite = false;
+        $scope.onNewsfeed = false;
+        $scope.onFollowing = false;
         $ionicScrollDelegate.scrollTop();
         for (i in $rootScope.keywords)
                 $rootScope.keywords[i].star = false;
         if (item === 'Newsfeed') {
+            $scope.onNewsfeed = true;
             apiServices.getFeed(0, 0, function() {
                 $rootScope.currentReadingState = $rootScope.news[0];
                 $rootScope.currentSocialReadingState = $rootScope.media[0];
@@ -108,6 +119,7 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
             $state.go('login');
         }
         else {
+            $scope.onFollowing = true;
             $rootScope.keywords[$rootScope.keywords.indexOf(item)].star = true;
             $rootScope.followingKeyword = item.keyword;
 
@@ -129,7 +141,9 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     };
 
     $scope.save = function() {
+        $scope.onNewsfeed = false;
         $scope.onFavorite = false;
+        $scope.onFollowing = false;
         for (i in $rootScope.keywords)
             $rootScope.keywords[i].star = false;
         $ionicSideMenuDelegate.toggleLeft();
@@ -146,6 +160,9 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     };
 
     $scope.toggleList = function() {
+        $scope.onFavorite = false;
+        $scope.onNewsfeed = false;
+        $scope.onFollowing = false;
         $scope.showList = !$scope.showList;
     };
 });

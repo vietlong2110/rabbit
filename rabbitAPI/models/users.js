@@ -17,8 +17,14 @@ var User = new Schema({
 		type: String,
 		required: true
 	},
+	access_token: String,
 	name: String,
-	age: Number,
+	profile_picture: String,
+	cover: String,
+	age_range: {
+		max: Number,
+		min: Number
+	},
 	wordList: [String],
 	checkList: [Boolean],
 	articles: [Schema.Types.ObjectId], //id of all articles that relate to whatever user follow

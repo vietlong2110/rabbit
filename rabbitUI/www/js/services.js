@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
  
-.service('AuthService', function($q, $http, $rootScope, API_ENDPOINT) {
+.service('AuthService', function($q, $http, $rootScope, $cordovaOauth, API_ENDPOINT, FB) {
 	var LOCAL_TOKEN_KEY = 'yourTokenKey';
 	var isAuthenticated = false;
 	var authToken;
@@ -38,6 +38,19 @@ angular.module('starter.services', [])
 	loadUserCredentials();
 
 	return {
+		fblogin: function() {
+			return $q(function(resolve, reject) {
+				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile'], 
+				{redirect_uri: 'http://localhost/callback'}).then(function(result) {
+					console.log(result);
+					if (result.access_token)
+						resolve(result.access_token);
+					else reject('Facebook Login Error!');
+				}, function(err) {
+					console.log(err);
+				});
+			});
+		},
 		login: function(user) {
 			return $q(function(resolve, reject) {
 				$http.post(API_ENDPOINT.url + '/login', user).then(function(result) {

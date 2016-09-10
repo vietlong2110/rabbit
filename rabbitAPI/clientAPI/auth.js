@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var router = express.Router();
+var request = require('request');
 
 //API router for registering a new account
 router.post('/register', function(req, res) {
@@ -86,6 +87,64 @@ router.post('/login', function(req, res) {
 				});
 			});
 		}
+	});
+});
+
+router.post('/fblogin', function(req, res) {
+	// var accesstoken = req.body.token;
+	var accesstoken = 'EAAM98EFnHGMBACb1sHMFoeyZBmgTbpepQQ1oYIuKoJREtnQNiSZCTz6XIvUBbXcrTlHJ0APN7dP8sYpfcyGEZCxqH9rqySgKZBdZAuUuqMV18yPh2ZC09zModazCLUW4Tp4JtBckl0AZC58hvW6X2UVTHKxlMobhMcZD';
+	var FB = require('../clientController/fb.js');
+
+	FB.userInfo(accesstoken, function(data) {
+		var User = require('../models/users.js');
+
+    	User.findOne({email: data.email}).exec(function(err, user) {
+    		if (err)
+    			res.json({
+    				success: false,
+    				message: err
+    			});
+    		else if (!user) {
+    			var newUser = new User({
+    				email: data.email,
+    				name: data.name,
+    				cover: data.cover.source,
+    				picture: data.picture,
+    				age_range: data.age_range,
+    				password: require('generate-password').generate({
+                        length: 32,
+                        number: true
+                    }),
+                    access_token: accesstoken
+    			});
+
+    			newUser.save(function(err) {
+    				if (err)
+    					res.json({
+    						success: false,
+    						message: err
+    					});
+    				res.json({
+    					success: true,
+    					data: data
+    				});
+    			});
+    		}
+    		else {
+    			user.access_token = accesstoken;
+    			user.save(function(err) {
+    				if (err)
+    					res.json({
+    						success: false,
+    						message: err
+    					});
+    				res.json({
+    					success: true,
+    					data: data
+    				});
+    			});
+    		}
+    	});
 	});
 });
 

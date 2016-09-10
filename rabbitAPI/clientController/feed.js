@@ -25,9 +25,12 @@ var searchFeed = function(q, callback) {
 				callback();
 			}
 			else if (word !== null) {
+				var tmp = [];
 				for (i = 0; i < word.articleIDs.length; i++)
-					if (articles.indexOf(word.articleIDs[i]) === -1)
-						articles.push(word.articleIDs[i]);
+					tmp.push(word.articleIDs[i].toString());
+				for (i = 0; i < tmp.length; i++)
+					if (articles.indexOf(tmp[i]) === -1)
+						articles.push(tmp[i]);
 				cb();
 			}
 			else cb();
@@ -44,7 +47,7 @@ var searchFeed = function(q, callback) {
 
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector2) {
-				async.each(articles, function(articleID, cb) { //with each article
+				async.each(articles, function(articleID, cb2) { //with each article
 					//calculate its vector score
 					searchFuncs.docVector(query, articleID, function(vector1) {
 						var evalScore = searchFuncs.cosEval(vector1, vector2);
@@ -70,10 +73,10 @@ var searchFeed = function(q, callback) {
 									publishedDate: article.publishedDate,
 									media: article.media
 								});
-								cb();
+								cb2();
 							});
 						}
-						else cb();
+						else cb2();
 					});
 				}, function(err) {
 					if (err) { //process error case later
@@ -108,9 +111,12 @@ var getFeedId = function(keyword, callback) {
 				callback();
 			}
 			else if (word !== null) {
+				var tmp = [];
 				for (i = 0; i < word.articleIDs.length; i++)
-					if (articles.indexOf(word.articleIDs[i]) === -1)
-						articles.push(word.articleIDs[i]);
+					tmp.push(word.articleIDs[i].toString());
+				for (i = 0; i < tmp.length; i++)
+					if (articles.indexOf(tmp[i]) === -1)
+						articles.push(tmp[i]);
 				cb();
 			}
 			else cb();
@@ -214,20 +220,25 @@ var getFeed = function(userId, callback) {
 
 		async.forEachOfSeries(user.checkList, function(check, i, cb) { //with each checked keyword
 			if (check) {
+				var Follow = require('../clientController/follow.js');
 
-				//get a list of articles
-				getFeedUser(user.wordList[i], articleIds, function(results, Ids) {
-					for (j in results) {
-						feedResult.push(results[j]);
+				Follow.addArticle(user.wordList[i], userId, function(addarticle) {
+					if (addarticle) {
+						//get a list of articles
+						getFeedUser(user.wordList[i], articleIds, function(results, Ids) {
+							for (j in results) {
+								feedResult.push(results[j]);
 
-						//save results' ID for later purpose due to the effect of deleting items
-						//from user.articles
-						tmpIds.push(Ids[j]);
-						
-						//eliminate added result here
-						articleIds.splice(articleIds.indexOf(Ids[j]), 1);
+								//save results' ID for later purpose due to the effect of deleting items
+								//from user.articles
+								tmpIds.push(Ids[j]);
+								
+								//eliminate added result here
+								articleIds.splice(articleIds.indexOf(Ids[j]), 1);
+							}
+							cb();
+						});
 					}
-					cb();
 				});
 			}
 			else cb();

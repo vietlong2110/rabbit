@@ -16,6 +16,13 @@ var Article = require('../models/articles.js');
 var Extract = require('../serverController/extract.js');
 var Save = require('../serverController/save.js');
 
+router.post('/extractimg', function(req, res) {
+	var url = req.body.url;
+	Extract.extractImage(url, function(img) {
+		res.json({img: img});
+	});
+});
+
 router.post('/rss', function(req, res) { //test rss reader
 	// var url = 'http://feeds.feedburner.com/TechCrunch/fundings-exits';
 	var url = req.body.url;

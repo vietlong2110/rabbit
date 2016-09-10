@@ -31,7 +31,7 @@ var searchMediaTags = function(tagName, callback) {
 			}
 		}
 		else {
-			console.log(tagName);
+			// console.log(tagName);
 			callback(media);
 		}
 	});

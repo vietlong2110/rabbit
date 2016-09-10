@@ -1,9 +1,9 @@
 // Rabbit App
-angular.module('starter', ['ionic','starter.services', 'app.controller', 'login.controller',
-'register.controller', 'news.controller', 'socialmedia.controller', 'suggest.controller',
-'search.controller', 'socialsearch.controller', 'reading.controller', 'socialreading.controller',
-'favorites.controller', 'socialfavorites.controller', 'followinglist.controller',
-'socialfollowinglist.controller'])
+angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.controller', 
+'login.controller', 'register.controller', 'news.controller', 'socialmedia.controller',
+'suggest.controller', 'search.controller', 'socialsearch.controller', 'reading.controller',
+'socialreading.controller', 'favorites.controller', 'socialfavorites.controller',
+'followinglist.controller', 'socialfollowinglist.controller'])
 
 .constant('AUTH_EVENTS', {
     notAuthenticated: 'auth-not-authenticated'
@@ -12,6 +12,10 @@ angular.module('starter', ['ionic','starter.services', 'app.controller', 'login.
 .constant('API_ENDPOINT', {
     url: 'http://localhost:8080/auth'
     // url: 'http://52.221.228.17:8080/auth'
+})
+
+.constant('FB', {
+    AppID: '912527028853859'
 })
 
 .constant('LOAD_SIZE', 5)

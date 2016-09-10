@@ -24,10 +24,12 @@
             class="item-thumbnail-left item-text-wrap item-icon-right" ng-click="assignCurrentReading(item)" 
             href="#/tabs/reading">
                 <img src="{{item.thumbnail}}" alt="thumbnail">
-                <h2>{{item.title}}</h2>
-                <p>{{item.hashtag}}</p>
-                <i class="button button-clear icon ion-star padding-left" ng-click="toggleStar($event, item)"
-                ng-class="{'button-energized': item.star}"></i>
+                <h2>{{item.title | limitTo: 45}}{{item.title.length > 45 ? '&hellip;' : ''}}</h2>
+                <p id="hashtag">
+                    {{item.hashtag | limitTo: 25}}{{item.hashtag.length > 25 ? '&hellip;' : ''}}
+                </p>
+                <i id="newsfeed-star" class="button button-clear icon ion-star padding-left" 
+                ng-click="toggleStar($event, item)" ng-class="{'button-energized': item.star}"></i>
             </ion-item>
         </ion-list>
 

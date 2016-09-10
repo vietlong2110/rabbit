@@ -1,58 +1,65 @@
 /* Empty. Add your own CSS if you like */
 
 .star > .item-content {
-	background-color: #EEE8D6 !important;
+	background-color: #EEEEEE !important;
+}
+
+.menu-content .content-backdrop {
+	position: fixed;
+	z-index: 11;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 .custom {
-  background-color: #06647e !important; /* This sets the background color #06647e */
- }
- 
-/*Set the background to transparent for ion-item*/
-.custom .item {
-  background-color: transparent;
-  border:none;  
-  border-top: 1px solid;   
-  border-bottom:1px solid;   
-  border-color: #006583; 
-  color: white;   
-}
- 
-
-.custom .item:last-child {
-  border-bottom: 1px solid #006583;
-}
- 
-.custom .item-complex .item-content, .dark .item-radio .item-content {
-  background-color: transparent;
+	background-color: #FAFAFA;
 }
 
-.custom a {
-	color: white;
-	text-decoration: none;
+.custom .list .item {
+	height: 50px;
+	/*background-color: #FAFAFA;*/
+	border: none !important;
 }
 
 #newsfeed a {
 	text-decoration: none;
 }
 
-#header-menu {
-	background-color: #055166;
+#hashtag {
+	/*color: #01579B;*/
 }
 
 #keyword-list {
 	background-color: transparent;
 	border:none;
-	border-bottom: 1px solid;
-	border-color: #055166;
+}
+
+#keyword-text {
+	font-size: 100%;
 }
 
 #list-icon {
-	font-size: 150%;
+	font-size: 125%;
 }
 
 #list {
 	font-size: 125%;
+}
+
+.chosen {
+	background-color: #EEEEEE;
+	color: #1E88E5;
+}
+
+#showList {
+	border-top: 2px groove;
+	border-bottom: 2px ridge;
+}
+
+.item .chosen {
+	background-color: #EEEEEE !important;
+	color: #1E88E5;
 }
 
 #unfollow {
@@ -97,7 +104,7 @@
 }
 
 #starList {
-	font-size: 130%; padding-bottom: 4px;
+	font-size: 130%;
 }
 
 .full-width-tab {
@@ -152,7 +159,44 @@ right: 5%; /* Adjust position */
 	padding-top: 5px;
 }
 
-.media-image {
+.cover-image {
+	background-image: url("https://4kwallpapers.co/wp-content/uploads/2015/09/blue-material-design-ultra-hd-wallpapers.png");
+	height: 190px;
+	overflow: hidden;
+}
+
+.position-avatar {
+	position: absolute;
+	padding-left: 110px;
+	padding-top: 55px;
+}
+
+.avatar {
+	height: 55px;
+	width: 55px;
+	border-radius: 100%;
+}
+
+.info {
+	position: absolute;
+	padding-top: 130px;
+	padding-left: 65px;
+	text-align: center;
+}
+
+.name {
+	color: white;
+	font-size: 130%;
+	font-weight: bold;
+}
+
+.email {
+	color: white;
+	padding-top: 3px;
+	font-size: 100%;
+}
+
+.item-image {
 	height: 250px;
 	overflow: hidden;
 }
@@ -169,4 +213,8 @@ right: 5%; /* Adjust position */
 .background {
 	/*background-color: #ececec;*/
 	background-color: #e3f2fd;
+}
+
+#newsfeed-star {
+	padding-top: 45px;
 }

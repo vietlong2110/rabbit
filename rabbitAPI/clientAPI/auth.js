@@ -3,6 +3,10 @@ var app = express();
 var router = express.Router();
 var request = require('request');
 
+var User = require('../models/users.js');
+var config = require('../clientController/auth/config.js');
+var jwt = require('jwt-simple');
+
 //API router for registering a new account
 router.post('/register', function(req, res) {
 	if (!req.body.email)
@@ -49,10 +53,6 @@ router.post('/register', function(req, res) {
 });
 
 router.post('/login', function(req, res) {
-	var User = require('../models/users.js');
-	var config = require('../clientController/auth/config.js');
-	var jwt = require('jwt-simple');
-
 	User.findOne({email: req.body.email}).exec(function(err, user) {
 		if (err)
 			res.json({
@@ -92,7 +92,7 @@ router.post('/login', function(req, res) {
 
 router.post('/fblogin', function(req, res) {
 	// var accesstoken = req.body.token;
-	var accesstoken = 'EAAM98EFnHGMBACb1sHMFoeyZBmgTbpepQQ1oYIuKoJREtnQNiSZCTz6XIvUBbXcrTlHJ0APN7dP8sYpfcyGEZCxqH9rqySgKZBdZAuUuqMV18yPh2ZC09zModazCLUW4Tp4JtBckl0AZC58hvW6X2UVTHKxlMobhMcZD';
+	var accesstoken = 'EAAM98EFnHGMBAEu3LROACIzTEmdMp4XkCZBnrba7Q6rmXFYhLazgXlZCZBl93TUgu9hZCyHPi907bNcO7SP0hZBFH5mf5sO0hKNENghHKrNT97FcWneDZAWHAHjZArMiv3j3xm9u3EjJ5p56B1GxepvJD7dv3Vc8XPu6yI7OBaxygZDZD';
 	var FB = require('../clientController/fb.js');
 
 	FB.userInfo(accesstoken, function(data) {
@@ -108,7 +108,6 @@ router.post('/fblogin', function(req, res) {
     			var newUser = new User({
     				email: data.email,
     				name: data.name,
-    				cover: data.cover.source,
     				picture: data.picture,
     				age_range: data.age_range,
     				password: require('generate-password').generate({
@@ -124,10 +123,13 @@ router.post('/fblogin', function(req, res) {
     						success: false,
     						message: err
     					});
-    				res.json({
-    					success: true,
-    					data: data
-    				});
+    				var token = jwt.encode(user, config.secret);
+
+					res.json({
+						success: true,
+						token: 'JWT ' + token,
+						message: 'Logging in'
+					});
     			});
     		}
     		else {
@@ -138,10 +140,13 @@ router.post('/fblogin', function(req, res) {
     						success: false,
     						message: err
     					});
-    				res.json({
-    					success: true,
-    					data: data
-    				});
+    				var token = jwt.encode(user, config.secret);
+
+					res.json({
+						success: true,
+						token: 'JWT ' + token,
+						message: 'Logging in'
+					});
     			});
     		}
     	});

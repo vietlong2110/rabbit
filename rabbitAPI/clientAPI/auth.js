@@ -91,8 +91,8 @@ router.post('/login', function(req, res) {
 });
 
 router.post('/fblogin', function(req, res) {
-	// var accesstoken = req.body.token;
-	var accesstoken = 'EAAM98EFnHGMBAEu3LROACIzTEmdMp4XkCZBnrba7Q6rmXFYhLazgXlZCZBl93TUgu9hZCyHPi907bNcO7SP0hZBFH5mf5sO0hKNENghHKrNT97FcWneDZAWHAHjZArMiv3j3xm9u3EjJ5p56B1GxepvJD7dv3Vc8XPu6yI7OBaxygZDZD';
+	var accesstoken = req.body.token;
+	// var accesstoken = 'EAAM98EFnHGMBAEu3LROACIzTEmdMp4XkCZBnrba7Q6rmXFYhLazgXlZCZBl93TUgu9hZCyHPi907bNcO7SP0hZBFH5mf5sO0hKNENghHKrNT97FcWneDZAWHAHjZArMiv3j3xm9u3EjJ5p56B1GxepvJD7dv3Vc8XPu6yI7OBaxygZDZD';
 	var FB = require('../clientController/fb.js');
 
 	FB.userInfo(accesstoken, function(data) {

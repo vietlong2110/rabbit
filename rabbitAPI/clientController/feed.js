@@ -47,35 +47,36 @@ var searchFeed = function(q, callback) {
 				//calculate its vector score
 				searchFuncs.docVector(query, articleID, function(vector1) {
 					var evalScore = searchFuncs.cosEval(vector1, vector2);
-					console.log(evalScore);
+					// console.log(articles.length);
 
 					if (evalScore > 0) { //add only relating article
 						var Article = require('../models/articles.js');
 
 						Article.findById(articleID).exec(function(err, article) {
-							if (err) {
-								console.log(err);
+							console.log('In here!');
+							if (article === null)
 								return cb2();
+							else {
+								// console.log(article);
+								var todayArr = [];
+								todayArr.push(article.publishedDate.getDate());
+								todayArr.push(article.publishedDate.getMonth());
+								todayArr.push(article.publishedDate.getFullYear());
+								
+								searchResult.push({
+									evalScore: evalScore,
+									today: todayArr,
+									id: articleID,
+									url: article.url,
+									title: article.title,
+									source: article.source,
+									avatar: article.avatar,
+									thumbnail: article.thumbnail,
+									publishedDate: article.publishedDate,
+									media: article.media
+								});
+								cb2();
 							}
-							// console.log(article);
-							var todayArr = [];
-							todayArr.push(article.publishedDate.getDate());
-							todayArr.push(article.publishedDate.getMonth());
-							todayArr.push(article.publishedDate.getFullYear());
-							
-							searchResult.push({
-								evalScore: evalScore,
-								today: todayArr,
-								id: articleID,
-								url: article.url,
-								title: article.title,
-								source: article.source,
-								avatar: article.avatar,
-								thumbnail: article.thumbnail,
-								publishedDate: article.publishedDate,
-								media: article.media
-							});
-							cb2();
 						});
 					}
 					else cb2();

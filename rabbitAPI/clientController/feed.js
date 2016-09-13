@@ -53,6 +53,10 @@ var searchFeed = function(q, callback) {
 						var Article = require('../models/articles.js');
 
 						Article.findById(articleID).exec(function(err, article) {
+							if (err) {
+								console.log(err);
+								return cb2();
+							}
 							// console.log(article);
 							var todayArr = [];
 							todayArr.push(article.publishedDate.getDate());

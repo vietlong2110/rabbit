@@ -13,11 +13,11 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 
 		Article.findById(articleID).exec(function(err, article) {
 
-			async.each(query, function(word, cb) {
+			async.each(query, function(q, cb) {
 				// console.log(word);
 				var Keyword = require('../models/keywords.js');
 
-				Keyword.findOne({word: word}).exec(function(err, keyword) {
+				Keyword.findOne({word: q.word}).exec(function(err, keyword) {
 					if (err) { //process error case later
 						console.log(err);
 						return cb();
@@ -29,12 +29,12 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 							idf = Math.log((n + 1) / idf);
 
 						var tf = 0, tfTitle = 0; //tf weight
-						if (article.titleKeywords.indexOf(word) !== -1) {
-							tfTitle = article.tfTitle[article.titleKeywords.indexOf(word)];
+						if (article.titleKeywords.indexOf(q.word) !== -1) {
+							tfTitle = article.tfTitle[article.titleKeywords.indexOf(q.word)];
 							tfTitle = (Math.log(1 + tfTitle)) * 2;
 						}
-						if (article.keywords.indexOf(word) !== -1) {
-							tf = article.tf[article.keywords.indexOf(word)];
+						if (article.keywords.indexOf(q.word) !== -1) {
+							tf = article.tf[article.keywords.indexOf(q.word)];
 							tf = Math.log(1 + tf);
 						}
 						vector.push((tf + tfTitle)*idf); //tf-idf score

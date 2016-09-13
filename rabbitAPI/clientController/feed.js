@@ -26,11 +26,12 @@ var searchFeed = function(q, callback) {
 			}
 			else if (word !== null) {
 				var tmp = [];
-				for (i = 0; i < word.articleIDs.length; i++)
+				for (i = 0; i < word.articleIDs.length; i++) {
 					tmp.push(word.articleIDs[i].toString());
-				for (i = 0; i < tmp.length; i++)
-					if (articles.indexOf(tmp[i]) === -1)
+				// for (i = 0; i < tmp.length; i++)
+					// if (articles.indexOf(tmp[i]) === -1)
 						articles.push(tmp[i]);
+				}
 				cb();
 			}
 			else cb();

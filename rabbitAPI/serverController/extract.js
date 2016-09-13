@@ -90,6 +90,7 @@ var extractImage = function(url, callback) { //extract thumbnail of an article u
 				else callback(extractImageFromContent(html));
 			});
 		}
+		else callback(null);
 	});
 };
 module.exports.extractImage = extractImage;
@@ -97,6 +98,8 @@ module.exports.extractImage = extractImage;
 var extractImageFromContent = function(content) {
 	// console.log(content);
 	var regex = /<img[^>]+src\s*=\s*['"](http[^'"]+)['"][^>]*>/g;
+	if (regex.exec(content) === null)
+		return null;
 	var image = regex.exec(content)[1];
 	return image;
 };

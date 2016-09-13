@@ -46,7 +46,7 @@ module.exports = {
 		"http://www.tmz.com/category/celebrity-justice/rss.xml"
 	],
 	"ninegag": [
-		"http://9gag-rss.com/api/rss/get?code=9GAG",
+		"http://9gag-rss.com/api/rss/get?code=9GAGNoGif&format=2",
 		"http://9gag-rss.com/api/rss/get?code=9GAGHot&format=2",
 		"http://9gag-rss.com/api/rss/get?code=9GAGFresh&format=2",
 		"http://9gag-rss.com/api/rss/get?code=9GAGNSFW&format=2"

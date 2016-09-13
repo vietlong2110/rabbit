@@ -31,9 +31,10 @@ setInterval(function() {
 				// callback(cache);
 			}
 			console.log(cache.length);
+			var maxComingArticle = cache.length;
 			var i = 0;
 
-			async.whilst(function() { return i < cache.length; },
+			async.whilst(function() { return i < maxComingArticle; },
 			function(cb) {
 				Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 					if (article === null) {

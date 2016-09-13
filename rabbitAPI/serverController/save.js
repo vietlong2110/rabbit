@@ -214,49 +214,58 @@ module.exports.saveArticle = saveArticle;
 
 var saveMediaArticle = function(articles, callback) {
 	var Article = require('../models/articles.js');
-	var keywords = [], originkeywords = [], articleIDs = [];
+	var keywords = [], originkeywords = [], articleIDs = [], dfOriginKeywords = [];
 
 	async.each(articles, function(article, cb) {
-		var Extract = require('./extract.js');
+		var query = {url: article.url};
+		var update = {
+			$set: {
+				title: article.title,
+				source: article.source,
+				avatar: article.avatar,
+				thumbnail: article.thumbnail,
+				publishedDate: article.publishedDate,
+				keywords: article.keywords,
+				tf: article.tf,
+				media: true
+			}
+		};
+		var options = {
+			upsert: true,
+			new: true
+		};
 
-		Extract.extractKeyword(null, article.title, function(originKeywordSet, keywordSet, tf) {
-			var query = {url: article.url};
-			var update = {
-				$set: {
-					title: article.title,
-					source: article.source,
-					avatar: article.avatar,
-					thumbnail: article.thumbnail,
-					publishedDate: article.publishedDate,
-					keywords: keywordSet,
-					tf: tf,
-					media: true
+		Article.findOneAndUpdate(query, update, options).exec(function(err, doc) {
+			if (err && err.code !== 11000 && err.code !== 11001) //process error case later
+				console.log(err);
+			else if (doc) {
+				for (i in article.keywords) {
+					var pos = keywords.indexOf(article.keywords[i]);
+					
+					if (pos === -1 || articleIDs[pos] !== doc._id) {
+						keywords.push(article.keywords[i]);
+						articleIDs.push(doc._id);
+					}
 				}
-			};
-			var options = {
-				upsert: true,
-				new: true
-			};
-
-			Article.findOneAndUpdate(query, update, options).exec(function(err, doc) {
-				if (err && err.code !== 11000 && err.code !== 11001) //process error case later
-					console.log(err);
-				else if (doc) {
-					for (i in keywordSet)
-						if (keywords.indexOf(keywordSet[i]) === -1) {
-							keywords.push(keywordSet[i]);
-							articleIDs.push(doc._id);
-						}
+				for (i in article.originkeywords) {
+					var pos = originkeywords.indexOf(article.originkeywords[i]);
+					
+					if (pos === -1) {
+						originkeywords.push(article.originkeywords[i]);
+						dfOriginKeywords.push(1);
+					}
+					else dfOriginKeywords[pos]++;
 				}
-				cb();
-			});
-			originkeywords = originkeywords.concat(originKeywordSet);
+			}
+			cb();
 		});
 	}, function(err) {
 		if (err) //process error case later
 			console.log(err);
 		
-		callback(keywords, articleIDs, originkeywords);
+		saveKeyword(keywords, articleIDs, originkeywords, dfOriginKeywords, function() {
+			callback();
+		});
 	});
 };
 module.exports.saveMediaArticle = saveMediaArticle;

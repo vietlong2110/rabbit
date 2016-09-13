@@ -153,4 +153,12 @@ router.post('/fblogin', function(req, res) {
 	});
 });
 
+router.get('/getlikes', function(req, res) {
+	var FB = require('../clientController/fb.js');
+
+	FB.getUserLikes(req.query.token, function(data) {
+		res.json({data: data});
+	});
+});
+
 module.exports = router;

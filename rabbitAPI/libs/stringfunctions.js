@@ -86,3 +86,9 @@ var contentToKeywords = function(content, callback) {
 	});
 };
 module.exports.contentToKeywords = contentToKeywords;
+
+var detectLanguage = function(st) {
+	st = preProcess(st);
+	return /^[a-zA-Z ]+$/.test(st);
+};
+module.exports.detectLanguage = detectLanguage;

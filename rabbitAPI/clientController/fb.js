@@ -7,21 +7,98 @@ var userInfo = function(token, callback) {
 	fb.api('me', {fields: ['name', 'email', 'cover', 'age_range'], access_token: token}, function (res) {
         if (!res || res.error)
             return callback(res.error);
-        else {
-        	var info = {
-				email: res.email,
-				name: res.name,
-				picture: '',
-				cover: res.cover.source,
-				age_range: res.age_range
-        	};
 
-        	fb.api('me/picture?redirect=0', {access_token: token}, function(response) {
-        		// console.log(response);
-        		info.picture = response.data.url;
-        		callback(info);
-        	});
-    	}
+    	var info = {
+			email: res.email,
+			name: res.name,
+			picture: '',
+			cover: res.cover.source,
+			age_range: res.age_range
+    	};
+
+    	fb.api('me/picture?redirect=0', {access_token: token}, function(response) {
+    		// console.log(response);
+            if (!res || res.error)
+                return callback(res.error);
+    		info.picture = response.data.url;
+    		callback(info);
+    	});
     });
 };
 module.exports.userInfo = userInfo;
+
+var getUserLikes = function(token, callback) {
+    fb.api('me/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
+        if (!res || res.error)
+            return callback(res.error);
+
+        var data = res.data;
+        var next = res.paging.cursors.after;
+
+        async.whilst(function() {return next !== undefined},
+        function(cb) {
+            fb.api('me/likes?after=' + next, {
+                fields: ['name', 'category', 'created_time'], 
+                access_token: token
+            },
+            function(response) {
+                if (!res || res.error)
+                    return callback(res.error);
+                if (response.paging) {
+                    data = data.concat(response.data);
+                    next = response.paging.cursors.after;
+                }
+                else next = undefined;
+                cb();
+            });
+        }, function() {
+            getSuggestionList(token, data, function(suggestList) {
+                callback(suggestList);
+            });
+        });
+    });
+};
+module.exports.getUserLikes = getUserLikes;
+
+var getSuggestionList = function(token, data, callback) {
+    var stringFuncs = require('../libs/stringfunctions.js');
+    var engData = [];
+
+    for (i = 0; i < data.length; i++)
+        if (stringFuncs.detectLanguage(data[i].name))
+            engData.push(data[i]);
+
+    engData.sort(function(a, b) {
+        return b.created_time - a.created_time;
+    });
+    engData = engData.slice(0, 25);
+    // callback(engData);
+    var resultData = [];
+
+    async.each(engData, function(enData, cb) {
+        fb.api(enData.id , {fields: ['fan_count', 'cover'], access_token: token}, function(res) {
+            if (!res || res.error)
+                return callback(res.error);
+            var d = {
+                id: enData.id,
+                name: enData.name,
+                likes: res.fan_count,
+                picture: ''
+            };
+            if (res.cover !== undefined)
+                d.picture = res.cover.source;
+            resultData.push(d);
+            cb();
+        });
+    }, function(err) {
+        if (err)
+            return callback(err);
+        
+        resultData.sort(function(a, b) {
+            return b.likes - a.likes;
+        })
+        resultData = resultData.slice(0, 10);
+        callback(resultData);
+    });
+};
+module.exports.getSuggestionList = getSuggestionList;

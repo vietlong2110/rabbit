@@ -4,60 +4,60 @@
 
 var async = require('async');
 var mongoose = require('mongoose');
+var Article = require('../models/articles.js');
+var Keyword = require('../models/keywords.js');
+var User = require('../models/users.js');
+var stringFuncs = require('../libs/stringfunctions.js');
+var Filter = require('../libs/filter.js');
+var searchFuncs = require('../libs/searchfunctions');
 
 //Search feed controller
 var searchFeed = function(q, callback) {
-	var stringFuncs = require('../libs/stringfunctions.js');
-
 	//preprocess query
 	var query = stringFuncs.preProcess(q);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	var Keyword = require('../models/keywords.js');
 	var searchResult = [];
 	var articles = [];
 
-	async.each(query, function(queryWord, cb) {
-		Keyword.findOne({word: queryWord}).exec(function(err, word) {
-			if (err) { //process error case later
-				console.log(err);
-				return callback();
-			}
-			if (word !== null) {
-				for (i = 0; i < word.articleIDs.length; i++)
-					articles.push(word.articleIDs[i].toString());
-				cb();
-			}
-			else cb();
-		});
-	}, function(err) {
-		if (err) {
-			console.log(err);
-			return callback();
-		}
-		// console.log(articles);
-		var Filter = require('../libs/filter.js');
-		var searchFuncs = require('../libs/searchfunctions');
-		var queryArr = Filter.queryArr(query);
+	async.series([
+		function(cb) {
+			async.each(query, function(queryWord, cb1) {
+				Keyword.findOne({word: queryWord}).exec(function(err, word) {
+					if (err) { //process error case later
+						console.log(err);
+						return callback();
+					}
+					if (word !== null) {
+						for (i = 0; i < word.articleIDs.length; i++)
+							articles.push(word.articleIDs[i].toString());
+						cb1();
+					}
+					else cb1();
+				});
+			}, function(err) {
+				if (err)
+					return cb(err);
+				cb(null);
+			});
+		}, function() {
+			// console.log(articles);
+			var queryArr = Filter.queryArr(query);
 
-		//calculate query vector score
-		searchFuncs.queryVector(queryArr, function(vector2) {
-			async.each(articles, function(articleID, cb2) { //with each article
-				//calculate its vector score
-				searchFuncs.docVector(query, articleID, function(vector1) {
-					var evalScore = searchFuncs.cosEval(vector1, vector2);
-					// console.log(articles.length);
+			//calculate query vector score
+			searchFuncs.queryVector(queryArr, function(vector2) {
+				async.each(articles, function(articleID, cb2) { //with each article
+					//calculate its vector score
+					searchFuncs.docVector(query, articleID, function(vector1) {
+						var evalScore = searchFuncs.cosEval(vector1, vector2);
+						// console.log(articles.length);
 
-					if (evalScore > 0) { //add only relating article
-						var Article = require('../models/articles.js');
+						if (evalScore > 0) { //add only relating article
 
-						Article.findById(articleID).exec(function(err, article) {
-							console.log('In here!');
-							if (article === null)
-								return cb2();
-							else {
-								// console.log(article);
+							Article.findById(articleID).exec(function(err, article) {
+								if (article === null)
+									return cb2();
 								var todayArr = [];
 								todayArr.push(article.publishedDate.getDate());
 								todayArr.push(article.publishedDate.getMonth());
@@ -76,34 +76,29 @@ var searchFeed = function(q, callback) {
 									media: article.media
 								});
 								cb2();
-							}
-						});
-					}
-					else cb2();
+							});
+						}
+						else cb2();
+					});
+				}, function(err) {
+					if (err) 
+						return callback(err);
+					console.log(searchResult);
+					callback(searchResult);
 				});
-			}, function(err) {
-				if (err) { //process error case later
-					console.log(err);
-					callback();
-				}
-				console.log(searchResult);
-				callback(searchResult);
 			});
-		});
-	});
+		}
+	]);
 };
 module.exports.searchFeed = searchFeed;
 
 //Find feed's ID in Article database
 var getFeedId = function(keyword, callback) {
-	var stringFuncs = require('../libs/stringfunctions.js');
-
 	//preprocess query
 	var query = stringFuncs.preProcess(keyword);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	var Keyword = require('../models/keywords.js');
 	var searchResult = [];
 	var articles = [];
 
@@ -137,18 +132,14 @@ module.exports.getFeedId = getFeedId;
 
 //Find feed from a specific set of user article
 var getFeedUser = function(keyword, articleIds, callback) {
-	var stringFuncs = require('../libs/stringfunctions.js');
-
 	//preprocess query
 	var query = stringFuncs.preProcess(keyword);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	var searchFuncs = require('../libs/searchfunctions');
 	var searchResult = [];
 	var Ids = [];
 
-	var Filter = require('../libs/filter.js');
 	var queryArr = Filter.queryArr(query);
 
 	//calculate query vector score
@@ -160,8 +151,6 @@ var getFeedUser = function(keyword, articleIds, callback) {
 				var evalScore = searchFuncs.cosEval(vector1, vector2);
 
 				if (evalScore > 0) { //consider only relating articles
-					var Article = require('../models/articles.js');
-
 					Article.findById(articleId).exec(function(err, article) {
 						if (err) { //process error case later
 							console.log(err);
@@ -205,8 +194,6 @@ module.exports.getFeedUser = getFeedUser;
 
 //Find feed corresponding to user's settings
 var getFeed = function(userId, callback) {
-	var User = require('../models/users.js');
-
 	User.findById(userId).exec(function(err, user) {
 		if (err) { //process error case later
 			console.log(err);
@@ -273,8 +260,6 @@ var getFeed = function(userId, callback) {
 module.exports.getFeed = getFeed;
 
 var updateFavorite = function(userId, articleId, callback) {
-	var User = require('../models/users.js');
-
 	User.findById(userId).exec(function(err, user) {
 		if (err) {
 			console.log(err);
@@ -307,7 +292,6 @@ var updateFavorite = function(userId, articleId, callback) {
 module.exports.updateFavorite = updateFavorite;
 
 var getFavorite = function(userId, callback) {
-	var User = require('../models/users.js');
 
 	User.findById(userId).exec(function(err, user) {
 		if (err) {
@@ -321,7 +305,6 @@ var getFavorite = function(userId, callback) {
 		}
 
 		var favoriteNewsList = [], favoriteMediaList = [];
-		var Article = require('../models/articles.js');
 
 		async.forEachOfSeries(user.stars, function(star, i, cb) {
 			if (star)

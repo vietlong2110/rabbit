@@ -3,10 +3,11 @@
 *********************************************************************/
 
 var async = require('async');
+var Keyword = require('../models/keywords.js');
+var Article = require('../models/articles.js');
 
 //Calculate vector tf-idf score of a document
 var docVector = function(query, articleID, callback) { //calculate document weight vector
-	var Article = require('../models/articles.js');
 	var vector = [];
 
 	Article.count({}, function(err, n) { //n documents
@@ -14,10 +15,9 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 		Article.findById(articleID).exec(function(err, article) {
 
 			async.each(query, function(q, cb) {
-				// console.log(word);
-				var Keyword = require('../models/keywords.js');
-
+//				console.log(q);
 				Keyword.findOne({word: q.word}).exec(function(err, keyword) {
+//					console.log('In Here!');
 					if (err) { //process error case later
 						console.log(err);
 						return cb();
@@ -45,7 +45,7 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 			}, function(err) {
 				if (err) //process error case later
 					console.log(err);
-
+				//console.log(vector);
 				callback(vector);
 			});
 		});

@@ -25,10 +25,8 @@ var searchFeed = function(q, callback) {
 		function(cb) {
 			async.each(query, function(queryWord, cb1) {
 				Keyword.findOne({word: queryWord}).exec(function(err, word) {
-					if (err) { //process error case later
-						console.log(err);
-						return callback();
-					}
+					if (err)
+						return cb(err);
 					if (word !== null) {
 						for (i = 0; i < word.articleIDs.length; i++)
 							articles.push(word.articleIDs[i].toString());
@@ -44,13 +42,12 @@ var searchFeed = function(q, callback) {
 		}, function() {
 			console.log(articles.length);
 			var queryArr = Filter.queryArr(query);
-			var i = 0;
 
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector2) {
-				async.eachLimit(articles, articles.length, function(articleID, cb2) { //with each article
+				async.each(articles, function(articleID, cb2) { 
 					//calculate its vector score
-					searchFuncs.docVector(query, articleID, function(vector1) {
+					searchFuncs.docVector(queryArr, articleID, function(vector1) {
 						var evalScore = searchFuncs.cosEval(vector1, vector2);
 
 						if (evalScore > 0) { //add only relating article
@@ -75,19 +72,12 @@ var searchFeed = function(q, callback) {
 									publishedDate: article.publishedDate,
 									media: article.media
 								});
-								i++;
-								console.log(i);
 								cb2();
 							});
 						}
-						else {
-							i++;
-							console.log(i);
-							cb2();
-						}
+						else cb2();
 					});
 				}, function(err) {
-					console.log('In Here!');
 					if (err) 
 						return callback(err);
 					console.log(searchResult);
@@ -156,7 +146,7 @@ var getFeedUser = function(keyword, articleIds, callback) {
 		async.each(articleIds, function(articleId, cb) { //with each article's ID
 
 			//calculate its vector score
-			searchFuncs.docVector(query, articleId, function(vector1) {
+			searchFuncs.docVector(queryArr, articleId, function(vector1) {
 				var evalScore = searchFuncs.cosEval(vector1, vector2);
 
 				if (evalScore > 0) { //consider only relating articles

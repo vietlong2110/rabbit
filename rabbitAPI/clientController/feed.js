@@ -48,7 +48,7 @@ var searchFeed = function(q, callback) {
 
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector2) {
-				async.each(articles, function(articleID, cb2) { //with each article
+				async.eachLimit(articles, articles.length, function(articleID, cb2) { //with each article
 					//calculate its vector score
 					searchFuncs.docVector(query, articleID, function(vector1) {
 						var evalScore = searchFuncs.cosEval(vector1, vector2);

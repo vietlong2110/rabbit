@@ -36,7 +36,7 @@ var searchFeed = function(q, callback) {
 			console.log(err);
 			return callback();
 		}
-		console.log(articles);
+		// console.log(articles);
 		var Filter = require('../libs/filter.js');
 		var searchFuncs = require('../libs/searchfunctions');
 		var queryArr = Filter.queryArr(query);
@@ -81,7 +81,7 @@ var searchFeed = function(q, callback) {
 					console.log(err);
 					callback();
 				}
-				// console.log(searchResult);
+				console.log(searchResult);
 				callback(searchResult);
 			});
 		});

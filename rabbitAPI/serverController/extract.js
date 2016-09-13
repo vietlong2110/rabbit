@@ -7,7 +7,7 @@ var request = require('request');
 var bcrypt = require('bcrypt');
 
 var extractContent = function(title, url, callback) { //extract content of an article url
-	request(url, function(err, res, html) {
+	request(url, {timeout: 5000}, function(err, res, html) {
 		if (!err && res.statusCode === 200) {
 			var boilerpipe = new Boilerpipe({
 				extractor: Boilerpipe.Extractor.Article,
@@ -20,10 +20,11 @@ var extractContent = function(title, url, callback) { //extract content of an ar
 		 		
 				extractKeyword(title, content,
 				function(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
-		 			callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
+		 			callback(null, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
 		 		});
 		 	});
 		}
+		else callback(err);
 	});
 };
 module.exports.extractContent = extractContent;
@@ -78,7 +79,7 @@ var extractKeyword = function(title, content, callback) { //extract keyword from
 module.exports.extractKeyword = extractKeyword;
 
 var extractImage = function(url, callback) { //extract thumbnail of an article url
-	request(url, function(err, res, html) {
+	request(url, {timeout: 5000}, function(err, res, html) {
 		if (!err && res.statusCode === 200) {
 			var boilerpipe = new Boilerpipe({
 				extractor: Boilerpipe.Extractor.Article,

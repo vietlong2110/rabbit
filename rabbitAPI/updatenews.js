@@ -50,7 +50,12 @@ setInterval(function() {
 							console.log('Start extracting ' + cache[0].link);
 							Extract.extractImage(cache[0].link, function(thumbnail) {
 								Extract.extractContent(entities.decode(cache[0].title), cache[0].link,
-								function(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
+								function(err, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
+									if (err) {
+										cache.shift();
+										i++;
+										return cb2();
+									}
 									console.log('End extracting ' + cache[0].link);
 									articles.push({
 										url: cache[0].link,

@@ -42,16 +42,17 @@ var searchFeed = function(q, callback) {
 				cb(null);
 			});
 		}, function() {
-			// console.log(articles);
+			console.log(articles.length);
 			var queryArr = Filter.queryArr(query);
+			var i = 0;
 
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector2) {
 				async.each(articles, function(articleID, cb2) { //with each article
+					console.log(i);
 					//calculate its vector score
 					searchFuncs.docVector(query, articleID, function(vector1) {
 						var evalScore = searchFuncs.cosEval(vector1, vector2);
-						// console.log(articles.length);
 
 						if (evalScore > 0) { //add only relating article
 
@@ -75,12 +76,17 @@ var searchFeed = function(q, callback) {
 									publishedDate: article.publishedDate,
 									media: article.media
 								});
+								i++;
 								cb2();
 							});
 						}
-						else cb2();
+						else {
+							i++;
+							cb2();
+						}
 					});
 				}, function(err) {
+					console.log('In Here!');
 					if (err) 
 						return callback(err);
 					console.log(searchResult);
@@ -88,7 +94,9 @@ var searchFeed = function(q, callback) {
 				});
 			});
 		}
-	]);
+	], function(err) {
+		callback(err);
+	});
 };
 module.exports.searchFeed = searchFeed;
 

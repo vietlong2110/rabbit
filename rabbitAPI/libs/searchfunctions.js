@@ -14,12 +14,13 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 		Article.findById(articleID).exec(function(err, article) {
 
 			async.each(query, function(word, cb) {
+				console.log(word);
 				var Keyword = require('../models/keywords.js');
 
 				Keyword.findOne({word: word}).exec(function(err, keyword) {
 					if (err) { //process error case later
 						console.log(err);
-						cb();
+						return cb();
 					}
 
 					if (keyword !== null) {

@@ -36,7 +36,6 @@ module.exports = function(passport) {
 					return b.publishedDate - a.publishedDate; //sort by published date
 				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
 			});
-
 			for (i in searchResult)
 				if (searchResult[i].media)
 					mediaFeedResult.push({
@@ -58,38 +57,37 @@ module.exports = function(passport) {
 					publishedDate: searchResult[i].publishedDate,
 					hashtag: hashtag
 				});
+			// var FollowKeyword = require('../models/followkeywords.js');
 
-			var FollowKeyword = require('../models/followkeywords.js');
+			// FollowKeyword.findOne({query: req.query.q}).exec(function(err, keyword) {
+			// 	if (err)
+			// 		console.log(err);
+			// 	else if (keyword === null) {
+			// 		//will replace by searchMediaFeed later...
+			// 		Feed.searchInstaFeed(req.query.q, function(media) {
+			// 			var Algo = require('../libs/classic-algorithm.js');
 
-			FollowKeyword.findOne({query: req.query.q}).exec(function(err, keyword) {
-				if (err)
-					console.log(err);
-				else if (keyword === null) {
-					//will replace by searchMediaFeed later...
-					Feed.searchInstaFeed(req.query.q, function(media) {
-						var Algo = require('../libs/classic-algorithm.js');
-
-						mediaFeedResult = Algo.mergeArray(media, mediaFeedResult);
+			// 			mediaFeedResult = Algo.mergeArray(media, mediaFeedResult);
 						
-						Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
-						function(newsFeedResult, moreDataNews) {
-							Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
-							function(mediaFeedResult, moreDataMedia) {
-								var queryTitle = Filter.niceTitle(query); 
+			// 			Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+			// 			function(newsFeedResult, moreDataNews) {
+			// 				Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+			// 				function(mediaFeedResult, moreDataMedia) {
+			// 					var queryTitle = Filter.niceTitle(query); 
 
-								res.json({
-									newsFeedResult: newsFeedResult, //search results
-									mediaFeedResult: mediaFeedResult,
-									keywordSearch: req.query.q, 
-									queryTitle: queryTitle, //title for search view
-									moreDataNews: moreDataNews,
-									moreDataMedia: moreDataMedia
-								});
-							});
-						});
-					});
-				}
-				else {
+			// 					res.json({
+			// 						newsFeedResult: newsFeedResult, //search results
+			// 						mediaFeedResult: mediaFeedResult,
+			// 						keywordSearch: req.query.q, 
+			// 						queryTitle: queryTitle, //title for search view
+			// 						moreDataNews: moreDataNews,
+			// 						moreDataMedia: moreDataMedia
+			// 					});
+			// 				});
+			// 			});
+			// 		});
+			// 	}
+			// 	else {
 					Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
 					function(newsFeedResult, moreDataNews) {
 						Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
@@ -106,8 +104,8 @@ module.exports = function(passport) {
 							});
 						});
 					});
-				}
-			});
+				// }
+			// });
 		});
 	});
 

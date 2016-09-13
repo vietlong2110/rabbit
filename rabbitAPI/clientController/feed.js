@@ -22,16 +22,11 @@ var searchFeed = function(q, callback) {
 		Keyword.findOne({word: queryWord}).exec(function(err, word) {
 			if (err) { //process error case later
 				console.log(err);
-				callback();
+				return callback();
 			}
-			else if (word !== null) {
-				var tmp = [];
-				for (i = 0; i < word.articleIDs.length; i++) {
-					tmp.push(word.articleIDs[i].toString());
-				// for (i = 0; i < tmp.length; i++)
-					// if (articles.indexOf(tmp[i]) === -1)
-						articles.push(tmp[i]);
-				}
+			if (word !== null) {
+				for (i = 0; i < word.articleIDs.length; i++)
+					articles.push(word.articleIDs[i].toString());
 				cb();
 			}
 			else cb();
@@ -39,55 +34,57 @@ var searchFeed = function(q, callback) {
 	}, function(err) {
 		if (err) {
 			console.log(err);
-			callback();
+			return callback();
 		}
-		else {
-			var Filter = require('../libs/filter.js');
-			var searchFuncs = require('../libs/searchfunctions');
-			var queryArr = Filter.queryArr(query);
+		console.log(articles);
+		var Filter = require('../libs/filter.js');
+		var searchFuncs = require('../libs/searchfunctions');
+		var queryArr = Filter.queryArr(query);
 
-			//calculate query vector score
-			searchFuncs.queryVector(queryArr, function(vector2) {
-				async.each(articles, function(articleID, cb2) { //with each article
-					//calculate its vector score
-					searchFuncs.docVector(query, articleID, function(vector1) {
-						var evalScore = searchFuncs.cosEval(vector1, vector2);
+		//calculate query vector score
+		searchFuncs.queryVector(queryArr, function(vector2) {
+			async.each(articles, function(articleID, cb2) { //with each article
+				//calculate its vector score
+				searchFuncs.docVector(query, articleID, function(vector1) {
+					var evalScore = searchFuncs.cosEval(vector1, vector2);
+					console.log(evalScore);
 
-						if (evalScore > 0) { //add only relating article
-							var Article = require('../models/articles.js');
+					if (evalScore > 0) { //add only relating article
+						var Article = require('../models/articles.js');
 
-							Article.findById(articleID).exec(function(err, article) {
-								var todayArr = [];
-								todayArr.push(article.publishedDate.getDate());
-								todayArr.push(article.publishedDate.getMonth());
-								todayArr.push(article.publishedDate.getFullYear());
-								
-								searchResult.push({
-									evalScore: evalScore,
-									today: todayArr,
-									id: articleID,
-									url: article.url,
-									title: article.title,
-									source: article.source,
-									avatar: article.avatar,
-									thumbnail: article.thumbnail,
-									publishedDate: article.publishedDate,
-									media: article.media
-								});
-								cb2();
+						Article.findById(articleID).exec(function(err, article) {
+							// console.log(article);
+							var todayArr = [];
+							todayArr.push(article.publishedDate.getDate());
+							todayArr.push(article.publishedDate.getMonth());
+							todayArr.push(article.publishedDate.getFullYear());
+							
+							searchResult.push({
+								evalScore: evalScore,
+								today: todayArr,
+								id: articleID,
+								url: article.url,
+								title: article.title,
+								source: article.source,
+								avatar: article.avatar,
+								thumbnail: article.thumbnail,
+								publishedDate: article.publishedDate,
+								media: article.media
 							});
-						}
-						else cb2();
-					});
-				}, function(err) {
-					if (err) { //process error case later
-						console.log(err);
-						callback();
+							cb2();
+						});
 					}
-					callback(searchResult);
+					else cb2();
 				});
+			}, function(err) {
+				if (err) { //process error case later
+					console.log(err);
+					callback();
+				}
+				// console.log(searchResult);
+				callback(searchResult);
 			});
-		}
+		});
 	});
 };
 module.exports.searchFeed = searchFeed;

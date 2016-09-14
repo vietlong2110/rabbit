@@ -39,7 +39,7 @@ var searchFeed = function(q, callback) {
 					return cb(err);
 				cb(null);
 			});
-		}, function() {
+		}, function(cb) {
 			console.log(articles.length);
 			var queryArr = Filter.queryArr(query);
 			var evals = [];
@@ -75,15 +75,18 @@ var searchFeed = function(q, callback) {
 							cb2();
 						});
 					}, function(err) {
+						console.log('In here!');
 						if (err)
-							return callback(err);
-						callback(searchResult);
+							return cb(err);
+						cb(null);
 					});
 				});
 			});
 		}
 	], function(err) {
-		callback(err);
+		if (err)
+			return callback(err);
+		callback(searchResult);
 	});
 };
 module.exports.searchFeed = searchFeed;

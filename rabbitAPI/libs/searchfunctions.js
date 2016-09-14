@@ -32,6 +32,7 @@ var docVector = function(query, article, j, callback) { //calculate document wei
 				}
 				vector.push((tf + tfTitle)*idf);
 			}
+			console.log(vector);
 			callback(vector);
 		});
 	});

@@ -20,6 +20,7 @@ var Search = function(query, callback) { //calculate document weight vector
 
 		Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
 			async.eachSeries(keywords, function(keyword, cb1) {
+				console.log(keyword);
 				Article.find({
 					_id: {"$in": keyword.articleIDs} 
 				}).exec(function(err, fullArticles) {
@@ -29,8 +30,11 @@ var Search = function(query, callback) { //calculate document weight vector
 						var vector2 = queryVector(queryArr);
 						evals.push(cosEval(vector1, vector2));
 						Result.push(article);
+						console.log(evals.length);
+						console.log(Result.length);
 						cb2();
 					}, function(err) {
+						console.log('In here!');
 						if (err)
 							return cb1(err);
 						cb1();

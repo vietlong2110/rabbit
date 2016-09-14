@@ -20,14 +20,11 @@ var searchFeed = function(q, callback) {
 
 	var searchResult = [];
 	searchFuncs.Search(query, function(articles, evalScore) {
-		// console.log(articles.length);
-		// console.log(evalScore.length);
-		for (i = 0; i < articles.length; i++) {
+		for (i = 0; i < 40; i++) {
 			var todayArr = [];
 			todayArr.push(articles[i].publishedDate.getDate());
 			todayArr.push(articles[i].publishedDate.getMonth());
 			todayArr.push(articles[i].publishedDate.getFullYear());
-			console.log('In here!');
 			searchResult.push({
 				evalScore: evalScore[i],
 				today: todayArr,
@@ -40,7 +37,6 @@ var searchFeed = function(q, callback) {
 				publishedDate: articles[i].publishedDate,
 				media: articles[i].media
 			});
-			console.log('In here 2!');
 		}
 		console.log(searchResult);
 		callback(searchResult);

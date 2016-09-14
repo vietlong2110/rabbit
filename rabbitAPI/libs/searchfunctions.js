@@ -7,16 +7,16 @@ var Keyword = require('../models/keywords.js');
 var Article = require('../models/articles.js');
 
 //Calculate vector tf-idf score of a document
-var docVector = function(query, articleID, callback) { //calculate document weight vector
+var docVector = function(query, articleID, j, callback) { //calculate document weight vector
 	var vector = [];
 
 	Article.count({}, function(err, n) { //n documents
 		Article.findById(articleID).exec(function(err, article) {
 			Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+				console.log(j);
 				for (i = 0; i < keywords.length; i++) {
 					var idf = keywords[i].df; //idf weight
-					if (n > 0)
-						idf = Math.log((n + 1) / idf);
+					idf = Math.log((n + 1) / idf);
 
 					var tf = 0, tfTitle = 0; //tf weight
 					if (article.titleKeywords.indexOf(keywords[i].word) !== -1) {

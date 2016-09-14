@@ -43,12 +43,13 @@ var searchFeed = function(q, callback) {
 			console.log(articles.length);
 			var queryArr = Filter.queryArr(query);
 			var evals = [];
+			var i = 0;
 
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector1) {
 				Article.find({ _id: {"$in": articles} }).exec(function(err, fullArticles) {
 					async.eachSeries(fullArticles, function(article, cb2) {
-						searchFuncs.docVector(query, article._id, function(vector2) {
+						searchFuncs.docVector(query, article._id, i, function(vector2) {
 							var evalScore = searchFuncs.cosEval(vector1, vector2);
 							if (evalScore > 0) {
 								var todayArr = [];
@@ -69,6 +70,7 @@ var searchFeed = function(q, callback) {
 									media: article.media
 								});
 							}
+							i++;
 							cb2();
 						});
 					}, function(err) {

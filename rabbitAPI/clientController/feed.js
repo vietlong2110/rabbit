@@ -41,6 +41,7 @@ var searchFeed = function(q, callback) {
 				media: articles[i].media
 			});
 		}
+		console.log(searchResult);
 		callback(searchResult);
 	});
 };

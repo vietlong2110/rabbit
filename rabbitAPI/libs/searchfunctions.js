@@ -25,10 +25,12 @@ var Search = function(query, callback) { //calculate document weight vector
 				}).exec(function(err, fullArticles) {
 					console.log(fullArticles.length);
 					async.eachSeries(fullArticles, function(article, cb2) {
-						var vector1 = docVector(n, keywords, article);
-						var vector2 = queryVector(queryArr);
-						evals.push(cosEval(vector1, vector2));
-						Result.push(article);
+						if (Result.indexOf(article) === -1) {
+							var vector1 = docVector(n, keywords, article);
+							var vector2 = queryVector(queryArr);
+							evals.push(cosEval(vector1, vector2));
+							Result.push(article);
+						}
 						cb2();
 					}, function(err) {
 						if (err)

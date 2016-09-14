@@ -20,7 +20,7 @@ var searchFeed = function(q, callback) {
 
 	var searchResult = [];
 	searchFuncs.Search(query, function(articles, evalScore) {
-		for (i = 0; i < 40; i++) {
+		for (i = 0; i < Math.min(40, articles.length); i++) {
 			var todayArr = [];
 			todayArr.push(articles[i].publishedDate.getDate());
 			todayArr.push(articles[i].publishedDate.getMonth());
@@ -38,7 +38,6 @@ var searchFeed = function(q, callback) {
 				media: articles[i].media
 			});
 		}
-		console.log(searchResult);
 		callback(searchResult);
 	});
 };

@@ -42,24 +42,15 @@ var searchFeed = function(q, callback) {
 		}, function() {
 			console.log(articles.length);
 			var queryArr = Filter.queryArr(query);
-var i = 0;
+			var evals = [];
 
 			//calculate query vector score
-			searchFuncs.queryVector(queryArr, function(vector2) {
-				async.each(articles, function(articleID, cb2) { 
-					//calculate its vector score
-					searchFuncs.docVector(queryArr, articleID, function(vector1) {
-						var evalScore = searchFuncs.cosEval(vector1, vector2);
-
-						if (evalScore > 0) { //add only relating article
-							console.log(evalScore);
-							Article.findById(articleID).exec(function(err, article) {
-								if (err) {
-									console.log(err);
-									return cb2();
-								}
-								if (article === null)
-									return cb2();
+			searchFuncs.queryVector(queryArr, function(vector1) {
+				Article.find({ _id: {"$in": articles} }).exec(function(err, fullArticles) {
+					async.each(fullArticles, function(article, cb2) {
+						searchFuncs.docVector(queryArr, article._id, function(vector2) {
+							var evalScore = searchFuncs.cosEval(vector1, vector2);
+							if (evalScore > 0) {
 								var todayArr = [];
 								todayArr.push(article.publishedDate.getDate());
 								todayArr.push(article.publishedDate.getMonth());
@@ -68,7 +59,7 @@ var i = 0;
 								searchResult.push({
 									evalScore: evalScore,
 									today: todayArr,
-									id: articleID,
+									id: article._id,
 									url: article.url,
 									title: article.title,
 									source: article.source,
@@ -77,18 +68,14 @@ var i = 0;
 									publishedDate: article.publishedDate,
 									media: article.media
 								});
-								console.log(i);
-								i++;
-								cb2();
-							});
-						}
-						else cb2();
+							}
+							cb2();
+						});
+					}, function(err) {
+						if (err)
+							return callback(err);
+						callback(searchResult);
 					});
-				}, function(err) {
-					if (err) 
-						return callback(err);
-					console.log(searchResult);
-					callback(searchResult);
 				});
 			});
 		}

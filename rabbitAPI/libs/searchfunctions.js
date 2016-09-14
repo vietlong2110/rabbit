@@ -30,8 +30,8 @@ var Search = function(query, callback) { //calculate document weight vector
 						var vector2 = queryVector(queryArr);
 						evals.push(cosEval(vector1, vector2));
 						Result.push(article);
-						console.log(evals.length);
-						console.log(Result.length);
+						console.log('Evals:' + evals.length);
+						console.log('Result: ' + Result.length);
 						cb2();
 					}, function(err) {
 						console.log('In here!');
@@ -41,6 +41,7 @@ var Search = function(query, callback) { //calculate document weight vector
 					});
 				});
 			}, function(err) {
+				console.log('In here 2!');
 				if (err)
 					return callback(err);
 				callback(Result, evals);

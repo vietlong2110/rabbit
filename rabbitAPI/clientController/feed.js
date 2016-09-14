@@ -19,8 +19,9 @@ var searchFeed = function(q, callback) {
 	query = stringFuncs.stemArr(query);
 
 	var searchResult = [];
-	var articles = [];
 	searchFuncs.Search(query, function(articles, evalScore) {
+		console.log(articles.length);
+		console.log(evalScore.length);
 		for (i = 0; i < articles.length; i++) {
 			var todayArr = [];
 			todayArr.push(articles[i].publishedDate.getDate());

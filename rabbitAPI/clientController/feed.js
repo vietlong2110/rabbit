@@ -47,8 +47,8 @@ var searchFeed = function(q, callback) {
 			//calculate query vector score
 			searchFuncs.queryVector(queryArr, function(vector1) {
 				Article.find({ _id: {"$in": articles} }).exec(function(err, fullArticles) {
-					async.each(fullArticles, function(article, cb2) {
-						searchFuncs.docVector(queryArr, article._id, function(vector2) {
+					async.eachSeries(fullArticles, function(article, cb2) {
+						searchFuncs.docVector(query, article._id, function(vector2) {
 							var evalScore = searchFuncs.cosEval(vector1, vector2);
 							if (evalScore > 0) {
 								var todayArr = [];

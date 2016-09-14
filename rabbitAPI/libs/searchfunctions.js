@@ -11,41 +11,24 @@ var docVector = function(query, articleID, callback) { //calculate document weig
 	var vector = [];
 
 	Article.count({}, function(err, n) { //n documents
-
 		Article.findById(articleID).exec(function(err, article) {
+			Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+				for (i = 0; i < keywords.length; i++) {
+					var idf = keywords[i].df; //idf weight
+					if (n > 0)
+						idf = Math.log((n + 1) / idf);
 
-			async.each(query, function(q, cb) {
-//				console.log(q);
-				Keyword.findOne({word: q.word}).exec(function(err, keyword) {
-//					console.log('In Here!');
-					if (err) { //process error case later
-						console.log(err);
-						return cb();
+					var tf = 0, tfTitle = 0; //tf weight
+					if (article.titleKeywords.indexOf(keywords[i].word) !== -1) {
+						tfTitle = article.tfTitle[article.titleKeywords.indexOf(keywords[i].word)];
+						tfTitle = (Math.log(1 + tfTitle)) * 2;
 					}
-
-					if (keyword !== null) {
-						var idf = keyword.df; //idf weight
-						if (n > 0)
-							idf = Math.log((n + 1) / idf);
-
-						var tf = 0, tfTitle = 0; //tf weight
-						if (article.titleKeywords.indexOf(q.word) !== -1) {
-							tfTitle = article.tfTitle[article.titleKeywords.indexOf(q.word)];
-							tfTitle = (Math.log(1 + tfTitle)) * 2;
-						}
-						if (article.keywords.indexOf(q.word) !== -1) {
-							tf = article.tf[article.keywords.indexOf(q.word)];
-							tf = Math.log(1 + tf);
-						}
-						vector.push((tf + tfTitle)*idf); //tf-idf score
+					if (article.keywords.indexOf(keywords[i].word) !== -1) {
+						tf = article.tf[article.keywords.indexOf(keywords[i].word)];
+						tf = Math.log(1 + tf);
 					}
-					else vector.push(0);
-					cb();
-				});
-			}, function(err) {
-				if (err) //process error case later
-					console.log(err);
-				//console.log(vector);
+					vector.push((tf + tfTitle)*idf);
+				}
 				callback(vector);
 			});
 		});

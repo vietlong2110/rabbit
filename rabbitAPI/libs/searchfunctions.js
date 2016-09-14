@@ -7,30 +7,28 @@ var Keyword = require('../models/keywords.js');
 var Article = require('../models/articles.js');
 
 //Calculate vector tf-idf score of a document
-var docVector = function(query, articleID, j, callback) { //calculate document weight vector
+var docVector = function(query, article, j, callback) { //calculate document weight vector
 	var vector = [];
 
 	Article.count({}, function(err, n) { //n documents
-		Article.findById(articleID).exec(function(err, article) {
-			Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-				console.log(j);
-				for (i = 0; i < keywords.length; i++) {
-					var idf = keywords[i].df; //idf weight
-					idf = Math.log((n + 1) / idf);
+		Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+			console.log(j);
+			for (i = 0; i < keywords.length; i++) {
+				var idf = keywords[i].df; //idf weight
+				idf = Math.log((n + 1) / idf);
 
-					var tf = 0, tfTitle = 0; //tf weight
-					if (article.titleKeywords.indexOf(keywords[i].word) !== -1) {
-						tfTitle = article.tfTitle[article.titleKeywords.indexOf(keywords[i].word)];
-						tfTitle = (Math.log(1 + tfTitle)) * 2;
-					}
-					if (article.keywords.indexOf(keywords[i].word) !== -1) {
-						tf = article.tf[article.keywords.indexOf(keywords[i].word)];
-						tf = Math.log(1 + tf);
-					}
-					vector.push((tf + tfTitle)*idf);
+				var tf = 0, tfTitle = 0; //tf weight
+				if (article.titleKeywords.indexOf(keywords[i].word) !== -1) {
+					tfTitle = article.tfTitle[article.titleKeywords.indexOf(keywords[i].word)];
+					tfTitle = (Math.log(1 + tfTitle)) * 2;
 				}
-				callback(vector);
-			});
+				if (article.keywords.indexOf(keywords[i].word) !== -1) {
+					tf = article.tf[article.keywords.indexOf(keywords[i].word)];
+					tf = Math.log(1 + tf);
+				}
+				vector.push((tf + tfTitle)*idf);
+			}
+			callback(vector);
 		});
 	});
 };

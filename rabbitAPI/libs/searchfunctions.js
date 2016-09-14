@@ -11,6 +11,10 @@ var docVector = function(query, article, j, callback) { //calculate document wei
 	var vector = [];
 
 	Article.count({}, function(err, n) { //n documents
+		if (err) {
+			console.log(err);
+			callback(vector);
+		}
 		Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
 			console.log(j);
 			for (i = 0; i < keywords.length; i++) {

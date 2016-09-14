@@ -20,72 +20,26 @@ var searchFeed = function(q, callback) {
 
 	var searchResult = [];
 	var articles = [];
-
-	async.series([
-		function(cb) {
-			async.each(query, function(queryWord, cb1) {
-				Keyword.findOne({word: queryWord}).exec(function(err, word) {
-					if (err)
-						return cb(err);
-					if (word !== null) {
-						for (i = 0; i < word.articleIDs.length; i++)
-							articles.push(word.articleIDs[i].toString());
-						cb1();
-					}
-					else cb1();
-				});
-			}, function(err) {
-				if (err)
-					return cb(err);
-				cb(null);
-			});
-		}, function(cb) {
-			console.log(articles.length);
-			var queryArr = Filter.queryArr(query);
-			var evals = [];
-			var i = 0;
-
-			//calculate query vector score
-			searchFuncs.queryVector(queryArr, function(vector1) {
-				Article.find({ _id: {"$in": articles} }).exec(function(err, fullArticles) {
-					async.eachSeries(fullArticles, function(article, cb2) {
-						console.log(fullArticles[i].url);
-						searchFuncs.docVector(query, article, fullArticles[i].url, function(vector2) {
-							var evalScore = searchFuncs.cosEval(vector1, vector2);
-							if (evalScore > 0) {
-								var todayArr = [];
-								todayArr.push(article.publishedDate.getDate());
-								todayArr.push(article.publishedDate.getMonth());
-								todayArr.push(article.publishedDate.getFullYear());
-								
-								searchResult.push({
-									evalScore: evalScore,
-									today: todayArr,
-									id: article._id,
-									url: article.url,
-									title: article.title,
-									source: article.source,
-									avatar: article.avatar,
-									thumbnail: article.thumbnail,
-									publishedDate: article.publishedDate,
-									media: article.media
-								});
-							}
-							i++;
-							cb2();
-						});
-					}, function(err) {
-						console.log('In here!');
-						if (err)
-							return cb(err);
-						cb(null);
-					});
-				});
+	searchFuncs.Search(query, function(articles, evalScore) {
+		for (i = 0; i < articles.length; i++) {
+			var todayArr = [];
+			todayArr.push(articles[i].publishedDate.getDate());
+			todayArr.push(articles[i].publishedDate.getMonth());
+			todayArr.push(articles[i].publishedDate.getFullYear());
+			
+			searchResult.push({
+				evalScore: evalScore[i],
+				today: todayArr,
+				id: articles[i]._id,
+				url: articles[i].url,
+				title: articles[i].title,
+				source: articles[i].source,
+				avatar: articles[i].avatar,
+				thumbnail: articles[i].thumbnail,
+				publishedDate: articles[i].publishedDate,
+				media: articles[i].media
 			});
 		}
-	], function(err) {
-		if (err)
-			return callback(err);
 		callback(searchResult);
 	});
 };

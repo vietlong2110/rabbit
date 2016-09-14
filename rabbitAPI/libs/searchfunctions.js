@@ -48,6 +48,40 @@ var Search = function(query, callback) { //calculate document weight vector
 };
 module.exports.Search = Search;
 
+var userFeed = function(query, articles, callback) {
+	var evals = [], Result = [];
+	var queryArr = Filter.queryArr(query);
+
+	Article.count({}, function(err, n) { //n documents
+		if (err) {
+			console.log(err);
+			return callback(Result, evals);
+		}
+
+		Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+			async.eachSeries(keywords, function(keyword, cb1) {
+				async.eachSeries(articles, function(article, cb2) {
+					if (Result.indexOf(article) === -1) {
+						var vector1 = docVector(n, keywords, article);
+						var vector2 = queryVector(queryArr);
+						evals.push(cosEval(vector1, vector2));
+						Result.push(article);
+					}
+					cb2();
+				}, function(err) {
+					if (err)
+						return cb1(err);
+					cb1();
+				});
+			}, function(err) {
+				if (err)
+					return callback(err, err);
+				callback(Result, evals);
+			});
+		});
+	});
+}
+
 var docVector = function(n, keywords, article) {
 	var vector = [];
 

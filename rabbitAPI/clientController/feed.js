@@ -53,30 +53,27 @@ var getFeedId = function(keyword, callback) {
 	var searchResult = [];
 	var articles = [];
 
-	async.each(query, function(queryWord, cb) {
-		Keyword.findOne({word: queryWord}).exec(function(err, word) {
-			if (err) { //process error case later
-				console.log(err);
-				callback();
-			}
-			else if (word !== null) {
-				var tmp = [];
-				for (i = 0; i < word.articleIDs.length; i++)
-					tmp.push(word.articleIDs[i].toString());
-				for (i = 0; i < tmp.length; i++)
-					if (articles.indexOf(tmp[i]) === -1)
-						articles.push(tmp[i]);
-				cb();
-			}
-			else cb();
+	Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+		async.eachSeries(keywords, function(keyword, cb1) {
+			Article.find({
+				_id: {"$in": keyword.articleIDs} 
+			}).exec(function(err, fullArticles) {
+				console.log(fullArticles.length);
+				async.eachSeries(fullArticles, function(article, cb2) {
+					if (articles.indexOf(article) === -1)
+						articles.push(article);
+					cb2();
+				}, function(err) {
+					if (err)
+						return cb1(err);
+					cb1();
+				});
+			});
+		}, function(err) {
+			if (err)
+				return callback(err);
+			callback(articles);
 		});
-	}, function(err) {
-		if (err) {
-			console.log(err);
-			callback();
-		}
-		
-		callback(articles);
 	});
 };
 module.exports.getFeedId = getFeedId;
@@ -91,54 +88,27 @@ var getFeedUser = function(keyword, articleIds, callback) {
 	var searchResult = [];
 	var Ids = [];
 
-	var queryArr = Filter.queryArr(query);
-
-	//calculate query vector score
-	searchFuncs.queryVector(queryArr, function(vector2) {
-		async.each(articleIds, function(articleId, cb) { //with each article's ID
-
-			//calculate its vector score
-			searchFuncs.docVector(queryArr, articleId, function(vector1) {
-				var evalScore = searchFuncs.cosEval(vector1, vector2);
-
-				if (evalScore > 0) { //consider only relating articles
-					Article.findById(articleId).exec(function(err, article) {
-						if (err) { //process error case later
-							console.log(err);
-							cb();
-						}
-
-						var todayArr = [];
-						todayArr.push(article.publishedDate.getDate());
-						todayArr.push(article.publishedDate.getMonth());
-						todayArr.push(article.publishedDate.getFullYear());
-
-						searchResult.push({ //article's properties
-							evalScore: evalScore,
-							today: todayArr,
-							id: article._id,
-							url: article.url,
-							title: article.title,
-							source: article.source,
-							avatar: article.avatar,
-							thumbnail: article.thumbnail,
-							publishedDate: article.publishedDate,
-							media: article.media
-						});
-						Ids.push(articleId); //article's ID
-
-						cb();
-					});
-				}
-				else cb();
+	searchFuncs.Search(query, articleIds, function(articles, evalScore) {
+		for (i = 0; i < Math.min(40, articles.length); i++) {
+			var todayArr = [];
+			todayArr.push(articles[i].publishedDate.getDate());
+			todayArr.push(articles[i].publishedDate.getMonth());
+			todayArr.push(articles[i].publishedDate.getFullYear());
+			searchResult.push({
+				evalScore: evalScore[i],
+				today: todayArr,
+				id: articles[i]._id,
+				url: articles[i].url,
+				title: articles[i].title,
+				source: articles[i].source,
+				avatar: articles[i].avatar,
+				thumbnail: articles[i].thumbnail,
+				publishedDate: articles[i].publishedDate,
+				media: articles[i].media
 			});
-		}, function(err) {
-			if (err) { //process error case later
-				console.log(err);
-				callback();
-			}
-			callback(searchResult, Ids);
-		});
+			Ids.push(articles[i]._id);
+		}
+		callback(searchResult, Ids);
 	});
 };
 module.exports.getFeedUser = getFeedUser;

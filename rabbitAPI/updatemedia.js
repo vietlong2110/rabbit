@@ -6,7 +6,7 @@ var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 
 var RSS = require('./serverController/rss.js');
-var Article = require('./models/articles.js');
+var Media = require('./models/media.js');
 var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var feed_link = require('./seed/feed_link.js');
@@ -96,7 +96,7 @@ setInterval(function() {
 
 				async.whilst(function() { return i < maxComingArticle; },
 				function(cb2) {
-					Article.findOne({title: entities.decode(cache[0].title)})
+					Media.findOne({title: entities.decode(cache[0].title)})
 					.exec(function(err, article) {
 						if (article === null) {
 							var icon = require('./seed/icon_link.js');
@@ -118,6 +118,8 @@ setInterval(function() {
 								function(originKeywordSet, keywordSet, tf) {
 									console.log('End extracting ' + cache[0].link);
 									console.log(i);
+									if (cache[0].publishedDate === null)
+										cache[0].publishedDate = new Date();
 									media.push({
 										url: cache[0].link,
 										source: "9gag",

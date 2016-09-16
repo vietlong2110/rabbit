@@ -25,6 +25,7 @@
     "html-entities": "^1.2.0",
     "jwt-simple": "^0.5.0",
     "lemmer": "^0.1.6",
+    "lodash": "^4.15.0",
     "mongoose": "^4.5.1",
     "natural": "^0.4.0",
     "node-cache": "^3.2.1",
@@ -34,6 +35,7 @@
     "porter-stemmer": "^0.9.1",
     "redis": "^2.6.2",
     "request": "^2.72.0",
+    "underscore": "^1.8.3",
     "urlencode": "^1.1.0"
   }
 }

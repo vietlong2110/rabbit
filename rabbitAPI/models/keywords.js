@@ -11,7 +11,8 @@ var Keyword = new Schema({
 		unique: true
 	},
 	df: Number, //document frequency of corresponding word
-	articleIDs: [Schema.Types.ObjectId]
+	articleIDs: [Schema.Types.ObjectId],
+	mediaIDs: [Schema.Types.ObjectId]
 });
 
 module.exports = mongoose.model('keywords', Keyword);

@@ -8,9 +8,12 @@ var router = express.Router();
 
 var async = require('async');
 
+var Feed = require('../clientController/feed.js');
+var Filter = require('../libs/filter.js');
 var Extract = require('../clientController/extract.js');
 var UserController = require('../clientController/user.js');
 var Pagination = require('../libs/pagination.js');
+var stringFuncs = require('../libs/stringfunctions.js');
 
 module.exports = function(passport) {
 	router.get('/suggest', function(req, res) {
@@ -23,89 +26,47 @@ module.exports = function(passport) {
 
 	//API router for searching a keyword/hashtag
 	router.get('/search', function(req, res) { 
-		var Feed = require('../clientController/feed.js');
-		var Filter = require('../libs/filter.js');
-		var query = Filter.querySanitize(req.query.q); //sanitize query before processing
+		var querySanitized = Filter.querySanitize(req.query.q); //sanitize query before processing
+		var query = stringFuncs.preProcess(querySanitized);
+		query = stringFuncs.wordTokenize(query);
+		query = stringFuncs.stemArr(query);
 
-		Feed.searchFeed(query, function(searchResult) { 
-			var newsFeedResult = [], mediaFeedResult = [];
-			var hashtag = Filter.keywordToHashtag(query); //convert keyword to hashtag before sending JSON
+		Feed.searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
+			if (err)
+				res.json({
+					success: false,
+					err: err
+				});
 
-			searchResult.sort(function(a,b) { 
+			newsFeedResult.sort(function(a,b) { 
 				if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
 					return b.publishedDate - a.publishedDate; //sort by published date
 				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
 			});
-			for (i in searchResult)
-				if (searchResult[i].media)
-					mediaFeedResult.push({
-						id: searchResult[i].id,
-						url: searchResult[i].url,
-						title: searchResult[i].title,
-						source: searchResult[i].source,
-						avatar: searchResult[i].avatar,
-						thumbnail: searchResult[i].thumbnail,
-						publishedDate: searchResult[i].publishedDate,
-						hashtag: hashtag
+
+			mediaFeedResult.sort(function(a,b) { 
+				if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
+					return b.publishedDate - a.publishedDate; //sort by published date
+				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
+			});
+
+			Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+			function(newsFeedResult, moreDataNews) {
+				Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+				function(mediaFeedResult, moreDataMedia) {
+					var queryTitle = Filter.niceTitle(querySanitized); 
+
+					res.json({
+						success: true,
+						newsFeedResult: newsFeedResult,
+						mediaFeedResult: mediaFeedResult,
+						keywordSearch: req.query.q, 
+						queryTitle: queryTitle, //title for search view
+						moreDataNews: moreDataNews,
+						moreDataMedia: moreDataMedia
 					});
-				else newsFeedResult.push({
-					id: searchResult[i].id,
-					url: searchResult[i].url,
-					title: searchResult[i].title,
-					source: searchResult[i].source,
-					thumbnail: searchResult[i].thumbnail,
-					publishedDate: searchResult[i].publishedDate,
-					hashtag: hashtag
 				});
-			// var FollowKeyword = require('../models/followkeywords.js');
-
-			// FollowKeyword.findOne({query: req.query.q}).exec(function(err, keyword) {
-			// 	if (err)
-			// 		console.log(err);
-			// 	else if (keyword === null) {
-			// 		//will replace by searchMediaFeed later...
-			// 		Feed.searchInstaFeed(req.query.q, function(media) {
-			// 			var Algo = require('../libs/classic-algorithm.js');
-
-			// 			mediaFeedResult = Algo.mergeArray(media, mediaFeedResult);
-						
-			// 			Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
-			// 			function(newsFeedResult, moreDataNews) {
-			// 				Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
-			// 				function(mediaFeedResult, moreDataMedia) {
-			// 					var queryTitle = Filter.niceTitle(query); 
-
-			// 					res.json({
-			// 						newsFeedResult: newsFeedResult, //search results
-			// 						mediaFeedResult: mediaFeedResult,
-			// 						keywordSearch: req.query.q, 
-			// 						queryTitle: queryTitle, //title for search view
-			// 						moreDataNews: moreDataNews,
-			// 						moreDataMedia: moreDataMedia
-			// 					});
-			// 				});
-			// 			});
-			// 		});
-			// 	}
-			// 	else {
-					Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
-					function(newsFeedResult, moreDataNews) {
-						Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
-						function(mediaFeedResult, moreDataMedia) {
-							var queryTitle = Filter.niceTitle(query); 
-
-							res.json({
-								newsFeedResult: newsFeedResult, //search results
-								mediaFeedResult: mediaFeedResult,
-								keywordSearch: req.query.q, 
-								queryTitle: queryTitle, //title for search view
-								moreDataNews: moreDataNews,
-								moreDataMedia: moreDataMedia
-							});
-						});
-					});
-				// }
-			// });
+			});
 		});
 	});
 
@@ -113,29 +74,23 @@ module.exports = function(passport) {
 	router.post('/follow', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var Filter = require('../libs/filter.js');
 				var query = Filter.querySanitize(req.body.q);
 				var Follow = require('../clientController/follow.js');
 
-				Follow.addList(query, userId, function(addlist) { //add keyword/hashtag to following list
-					if (addlist) //added keyword/hashtag successfully to database
-						Follow.addArticle(query, userId, function(addarticle) {
-							if (addarticle) //added article successfully to database
-								Extract.getFeed(userId, 0, 0,
-								function(newsfeed, mediafeed, moreDataNews, moreDataMedia) {
-									Extract.getList(userId, function(list) {
-										res.json({
-											news: newsfeed,
-											media: mediafeed,
-											keywords: list,
-											moreDataNews: moreDataNews,
-											moreDataMedia: moreDataMedia
-										});
-									});
-								});
-							// else 
+				Follow.addList(query, userId, function(addedlist) { //add keyword/hashtag to following list
+					if (addedlist) //added keyword/hashtag successfully to database
+						Follow.addToArticle(query, userId, function(addedarticle) {
+							if (addedarticle) //added article successfully to database
+								res.json({success: true});
+							else res.json({
+								success: false,
+								error: 'Error occured!'
+							});
 						});
-					// else
+					else res.json({
+						success: false,
+						error: 'Error occured!'
+					});
 				});
 			}
 			else res.status(403).json({
@@ -150,26 +105,22 @@ module.exports = function(passport) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
 				var Follow = require('../clientController/follow.js');
+				var query = Filter.querySanitize(req.body.q);
 
-				Follow.deleteList(req.body.keyword, userId, function(deletedList) {
+				Follow.deleteList(query, userId, function(deletedList) {
 					if (deletedList) //deleted keyword/hashtag successfully from database
-						Follow.deleteArticle(req.body.keyword, userId, function(deletedArticle) {
+						Follow.deleteArticle(query, userId, function(deletedArticle) {
 							if (deletedArticle) //deleted article successfully from database
-								Extract.getFeed(userId, 0, 0,
-								function(newsfeed, mediafeed, moreDataNews, moreDataMedia) {
-									Extract.getList(userId, function(list) {
-										res.json({
-											news: newsfeed,
-											media: mediafeed,
-											keywords: list,
-											moreDataNews: moreDataNews,
-											moreDataMedia: moreDataMedia
-										});
-									});
-								});
-							//else
+								res.json({success: true});
+							else res.json({
+								success: false,
+								error: 'Error occured!'
+							});
 						});
-					// else
+					else res.json({
+						success: false,
+						error: 'Error occured!'
+					});
 				});
 			}
 			else res.status(403).json({
@@ -193,6 +144,7 @@ module.exports = function(passport) {
 					Extract.getFeed(userId, 0, 0,
 					function(newsfeed, mediafeed, moreDataNews, moreDataMedia) {
 						res.json({
+							success: true,
 							news: newsfeed,
 							media: mediafeed,
 							moreDataNews: moreDataNews,
@@ -213,8 +165,14 @@ module.exports = function(passport) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId)
 				Extract.getFeed(userId, parseInt(req.query.sizenews), parseInt(req.query.sizemedia),
-				function(newsfeed, mediafeed, moreDataNews, moreDataMedia) {
-					res.json({
+				function(err, newsfeed, mediafeed, moreDataNews, moreDataMedia) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					else res.json({
+						success: true,
 						news: newsfeed,
 						media: mediafeed,
 						moreDataNews: moreDataNews,
@@ -233,7 +191,10 @@ module.exports = function(passport) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId)
 				Extract.getList(userId, function(list) {
-					res.json({keywords: list});
+					res.json({
+						success: true,
+						keywords: list
+					});
 				});
 			else res.status(403).json({
 				success: false,
@@ -245,83 +206,20 @@ module.exports = function(passport) {
 	router.get('/getfeedbykeyword', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var Feed = require('../clientController/feed.js');
-				var Filter = require('../libs/filter.js');
-				var query = Filter.querySanitize(req.query.q); //sanitize query before processing
-
-				Feed.searchFeed(query, function(searchResult) { 
-					var newsFeedResult = [], mediaFeedResult = [];
-					var hashtag = Filter.keywordToHashtag(query); //convert keyword to hashtag before sending JSON
-
-					searchResult.sort(function(a,b) { 
-						var bToday = b.today[0] + b.today[1]*10 + b.today[2]*100;
-						var aToday = a.today[0] + a.today[1]*10 + a.today[2]*100;
-
-						if (bToday - aToday === 0) { //if 2 articles are on the same day
-							if (b.evalScore - a.evalScore === 0)  //if 2 articles have the same score
-								return b.publishedDate - a.publishedDate; //sort by published date
-							else return b.evalScore - a.evalScore; //otherwise sort by ranking score
-						}
-						else return bToday - aToday; //otherwise sort by day first
-					});
-
-					var User = require('../models/users.js');
-
-					async.eachSeries(searchResult, function(result, callback) {
-						User.findById(userId).exec(function(err, user) {
-							if (err) {
-								console.log(err);
-								res.json({});
-							}
-
-							var star = user.stars[user.articles.indexOf(result.id)];
-
-							if (result.media)
-								mediaFeedResult.push({
-									id: result.id,
-									url: result.url,
-									title: result.title,
-									source: result.source,
-									avatar: result.avatar,
-									thumbnail: result.thumbnail,
-									publishedDate: result.publishedDate,
-									hashtag: hashtag,
-									star: star
-								});
-							else newsFeedResult.push({
-								id: result.id,
-								url: result.url,
-								title: result.title,
-								source: result.source,
-								avatar: result.avatar,
-								thumbnail: result.thumbnail,
-								publishedDate: result.publishedDate,
-								hashtag: hashtag,
-								star: star
-							});
-							callback();
+				var querySanitized = Filter.querySanitize(req.query.q);
+				Extract.getFeedByKeyword(userId, querySanitized, parseInt(req.query.sizenews),
+				parseInt(req.query.sizemedia), function(err, newsfeed, mediafeed, moreDataNews, moreDataMedia) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
 						});
-					}, function(err) {
-						if (err) {
-							console.log(err);
-							res.json({});
-						}
-
-						Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
-						function(newsFeedResult, moreDataNews) {
-							Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
-							function(mediaFeedResult, moreDataMedia) {
-								var queryTitle = Filter.niceTitle(query); //capitalize query to have a nice title
-
-								res.json({
-									news: newsFeedResult, //search results
-									media: mediaFeedResult,
-									titleNews: queryTitle, //title for search view
-									moreDataNews: moreDataNews,
-									moreDataMedia: moreDataMedia
-								});	
-							});
-						});
+					else res.json({
+						success: true,
+						news: newsfeed,
+						media: mediafeed,
+						moreDataNews: moreDataNews,
+						moreDataMedia: moreDataMedia
 					});
 				});
 			}
@@ -335,12 +233,13 @@ module.exports = function(passport) {
 	router.post('/updatefavorite', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var Feed = require('../clientController/feed.js');
-
 				Feed.updateFavorite(userId, req.body.id, function(updated) {
 					if (updated)
-						res.json({updated: true});
-					else res.json({updated: false});
+						res.json({success: true});
+					else res.json({
+						success: false,
+						error: 'Error occured!'
+					});
 				});
 			}
 			else res.status(403).json({
@@ -353,8 +252,6 @@ module.exports = function(passport) {
 	router.get('/getfavorite', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var Feed = require('../clientController/feed.js');
-
 				Feed.getFavorite(userId, function(favoriteNewsList, favoriteMediaList) {
 					Pagination.paginate(favoriteNewsList, parseInt(req.query.sizenews),
 					function(favoriteNewsList, moreDataNews) {

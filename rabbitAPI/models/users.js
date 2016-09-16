@@ -27,11 +27,8 @@ var User = new Schema({
 	},
 	wordList: [String],
 	checkList: [Boolean],
-	articles: [Schema.Types.ObjectId], //id of all articles that relate to whatever user follow
-	articleKeywords: [{ 
-		keywords: [String] //corresponding list keywords
-	}],
-	stars: [Boolean]
+	articles: [Schema.Types.ObjectId],
+	medias: [Schema.Types.ObjectId]
 });
 
 User.pre('save', function(callback) {

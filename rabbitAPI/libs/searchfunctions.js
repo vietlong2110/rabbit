@@ -5,82 +5,78 @@
 var async = require('async');
 var Keyword = require('../models/keywords.js');
 var Article = require('../models/articles.js');
+var Media = require('../models/media.js');
 var Filter = require('../libs/filter.js');
 
 //Calculate vector tf-idf score of a document
 var Search = function(query, callback) { //calculate document weight vector
-	var evals = [], Result = [];
+	var newsEvals = [], newsResult = [], mediaEvals = [], mediaResult = [];
 	var queryArr = Filter.queryArr(query);
 
-	Article.count({}, function(err, n) { //n documents
-		if (err) {
-			console.log(err);
-			return callback(Result, evals);
-		}
+	async.parallel([
+		function(cb) {
+			Article.count({}, function(err, n) { //n documents
+				if (err)
+					return cb(err);
 
-		Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-			async.eachSeries(keywords, function(keyword, cb1) {
-				Article.find({
-					_id: {"$in": keyword.articleIDs} 
-				}).exec(function(err, fullArticles) {
-					console.log(fullArticles.length);
-					async.eachSeries(fullArticles, function(article, cb2) {
-						if (Result.indexOf(article) === -1) {
-							var vector1 = docVector(n, keywords, article);
-							var vector2 = queryVector(queryArr);
-							evals.push(cosEval(vector1, vector2));
-							Result.push(article);
-						}
-						cb2();
-					}, function(err) {
-						if (err)
-							return cb1(err);
-						cb1();
+				Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+					var articleIDs = [];
+					for (i = 0; i < keywords.length; i++)
+						articleIDs = articleIDs.concat(keywords[i].articleIDs);
+					Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
+						async.each(fullArticles, function(article, cb2) {
+							if (newsResult.indexOf(article) === -1) {
+								var vector1 = docVector(n, keywords, article);
+								var vector2 = queryVector(queryArr);
+								newsEvals.push(cosEval(vector1, vector2));
+								newsResult.push(article);
+							}
+							cb2();
+						}, function(err) {
+							if (err)
+								return cb(err);
+							cb();
+						});
 					});
 				});
-			}, function(err) {
-				if (err)
-					return callback(err);
-				callback(Result, evals);
 			});
-		});
+		},
+		function(cb) {
+			Media.count({}, function(err, n) { //n documents
+				if (err) {
+					console.log(err);
+					return callback(mediaResult, mediaEvals);
+				}
+
+				Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+					var mediaIDs = [];
+					for (i = 0; i < keywords.length; i++)
+						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
+					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
+						async.each(fullArticles, function(article, cb2) {
+							if (mediaResult.indexOf(article) === -1) {
+								var vector1 = mediaDocVector(n, keywords, article);
+								var vector2 = queryVector(queryArr);
+								mediaEvals.push(cosEval(vector1, vector2));
+								mediaResult.push(article);
+							}
+							cb2();
+						}, function(err) {
+							if (err)
+								return cb(err);
+							cb();
+						});
+					});
+				});
+			});
+		}
+	], function(err) {
+		if (err)
+			return callback(err);
+		callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
 	});
 };
 module.exports.Search = Search;
-
-var userFeed = function(query, articles, callback) {
-	var evals = [], Result = [];
-	var queryArr = Filter.queryArr(query);
-
-	Article.count({}, function(err, n) { //n documents
-		if (err) {
-			console.log(err);
-			return callback(Result, evals);
-		}
-
-		Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-			async.eachSeries(keywords, function(keyword, cb1) {
-				async.eachSeries(articles, function(article, cb2) {
-					if (Result.indexOf(article) === -1) {
-						var vector1 = docVector(n, keywords, article);
-						var vector2 = queryVector(queryArr);
-						evals.push(cosEval(vector1, vector2));
-						Result.push(article);
-					}
-					cb2();
-				}, function(err) {
-					if (err)
-						return cb1(err);
-					cb1();
-				});
-			}, function(err) {
-				if (err)
-					return callback(err, err);
-				callback(Result, evals);
-			});
-		});
-	});
-}
 
 var docVector = function(n, keywords, article) {
 	var vector = [];
@@ -104,6 +100,25 @@ var docVector = function(n, keywords, article) {
 	return vector;
 };
 module.exports.docVector = docVector;
+
+var mediaDocVector = function(n, keywords, article) {
+	var vector = [];
+
+	for (i = 0; i < keywords.length; i++) {
+		var idf = keywords[i].df; //idf weight
+		idf = Math.log((n + 1) / idf);
+
+		var tf = 0; //tf weight
+		if (article.keywords.indexOf(keywords[i].word) !== -1) {
+			tf = article.tf[article.keywords.indexOf(keywords[i].word)];
+			tf = Math.log(1 + tf);
+		}
+		vector.push(tf*idf);
+	}
+	// console.log(vector);
+	return vector;
+};
+module.exports.mediaDocVector = mediaDocVector;
 
 //Calculate vector tf-idf score of a query
 var queryVector = function(query) {

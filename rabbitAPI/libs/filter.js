@@ -40,15 +40,12 @@ module.exports.querySanitize = querySanitize;
 
 //Convert keyword to a hashtag
 var keywordToHashtag = function(keyword) {
-	keyword = '#' + keyword.replace(/\s/g,'');
-	return keyword;
+	return '#' + keyword.replace(/\s/g,'');
 };
 module.exports.keywordToHashtag = keywordToHashtag;
 
 //Convert a string to a nice title
-var niceTitle = function(string) {
-	// string = string.toLowerCase();
-	string = string.charAt(0).toUpperCase() + string.slice(1); //Capitalize the first letter
-	return string;
+var niceTitle = function(st) {
+	return st.charAt(0).toUpperCase() + st.slice(1); //Capitalize the first letter
 };
 module.exports.niceTitle = niceTitle;

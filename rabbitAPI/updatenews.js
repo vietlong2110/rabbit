@@ -40,7 +40,7 @@ setInterval(function() {
 			},
 			function(cb) {
 				console.log(cache.length);
-				var maxComingArticle = Math.min(50, cache.length);
+				var maxComingArticle = Math.min(20, cache.length);
 				var i = 0;
 
 				async.whilst(function() { return i < maxComingArticle; },
@@ -57,6 +57,8 @@ setInterval(function() {
 										return cb2();
 									}
 									console.log('End extracting ' + cache[0].link);
+									if (cache[0].publishedDate === null)
+										cache[0].publishedDate = new Date();
 									articles.push({
 										url: cache[0].link,
 										title: entities.decode(cache[0].title),

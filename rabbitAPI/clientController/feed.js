@@ -3,8 +3,10 @@
 *****************************************************************************/
 
 var async = require('async');
+var _ = require('lodash');
 var mongoose = require('mongoose');
 var Article = require('../models/articles.js');
+var Media = require('../models/media.js');
 var Keyword = require('../models/keywords.js');
 var User = require('../models/users.js');
 var stringFuncs = require('../libs/stringfunctions.js');
@@ -12,200 +14,240 @@ var Filter = require('../libs/filter.js');
 var searchFuncs = require('../libs/searchfunctions');
 
 //Search feed controller
-var searchFeed = function(q, callback) {
+var searchFeed = function(query, callback) {
 	//preprocess query
-	var query = stringFuncs.preProcess(q);
-	query = stringFuncs.wordTokenize(query);
-	query = stringFuncs.stemArr(query);
+	var maxCache = 40;
 
-	var searchResult = [];
-	searchFuncs.Search(query, function(articles, evalScore) {
-		for (i = 0; i < Math.min(40, articles.length); i++) {
+	var newsSearchResult = [], mediaSearchResult = [];
+
+	searchFuncs.Search(query, function(err, articles, newsEvalScore, media, mediaEvalScore) {
+		if (err)
+			return callback(err);
+		for (i = 0; i < Math.min(maxCache, articles.length); i++) {
 			var todayArr = [];
+			if (articles[i].publishedDate === null)
+				articles[i].publishedDate = new Date();
 			todayArr.push(articles[i].publishedDate.getDate());
 			todayArr.push(articles[i].publishedDate.getMonth());
 			todayArr.push(articles[i].publishedDate.getFullYear());
-			searchResult.push({
-				evalScore: evalScore[i],
+			newsSearchResult.push({
+				evalScore: newsEvalScore[i],
 				today: todayArr,
 				id: articles[i]._id,
 				url: articles[i].url,
 				title: articles[i].title,
 				source: articles[i].source,
-				avatar: articles[i].avatar,
 				thumbnail: articles[i].thumbnail,
 				publishedDate: articles[i].publishedDate,
-				media: articles[i].media
+				hashtag: '',
+				star: ''
 			});
 		}
-		callback(searchResult);
+		for (i = 0; i < Math.min(maxCache, media.length); i++) {
+			var todayArr = [];
+			if (articles[i].publishedDate === null)
+				articles[i].publishedDate = new Date();
+			todayArr.push(media[i].publishedDate.getDate());
+			todayArr.push(media[i].publishedDate.getMonth());
+			todayArr.push(media[i].publishedDate.getFullYear());
+			mediaSearchResult.push({
+				evalScore: mediaEvalScore[i],
+				today: todayArr,
+				id: media[i]._id,
+				url: media[i].url,
+				title: media[i].title,
+				source: media[i].source,
+				avatar: media[i].avatar,
+				thumbnail: media[i].thumbnail,
+				publishedDate: media[i].publishedDate,
+				star: '',
+			});
+		}
+		callback(null, newsSearchResult, mediaSearchResult);
 	});
 };
 module.exports.searchFeed = searchFeed;
 
-//Find feed's ID in Article database
-var getFeedId = function(keyword, callback) {
-	//preprocess query
+var getFeedByKeyword = function(userId, keyword, callback) {
 	var query = stringFuncs.preProcess(keyword);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	var searchResult = [];
-	var articles = [];
+	searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
+		if (err)
+			return cb(err);
 
-	Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-		async.eachSeries(keywords, function(keyword, cb1) {
-			Article.find({
-				_id: {"$in": keyword.articleIDs} 
-			}).exec(function(err, fullArticles) {
-				console.log(fullArticles.length);
-				async.eachSeries(fullArticles, function(article, cb2) {
-					if (articles.indexOf(article) === -1)
-						articles.push(article);
-					cb2();
-				}, function(err) {
-					if (err)
-						return cb1(err);
-					cb1();
-				});
-			});
-		}, function(err) {
+		var keywords = [];
+		for (i in newsFeedResult)
+			keywords.push(keyword);
+
+		getUsersArticleInfo(userId, newsFeedResult, mediaFeedResult, keywords, keywords,
+		function(err, newsfeed, media) {
 			if (err)
 				return callback(err);
-			callback(articles);
+			callback(null, newsfeed, media);
 		});
 	});
 };
-module.exports.getFeedId = getFeedId;
+module.exports.getFeedByKeyword = getFeedByKeyword;
 
-//Find feed from a specific set of user article
-var getFeedUser = function(keyword, articleIds, callback) {
-	//preprocess query
-	var query = stringFuncs.preProcess(keyword);
-	query = stringFuncs.wordTokenize(query);
-	query = stringFuncs.stemArr(query);
-
-	var searchResult = [];
-	var Ids = [];
-
-	searchFuncs.Search(query, articleIds, function(articles, evalScore) {
-		for (i = 0; i < Math.min(40, articles.length); i++) {
-			var todayArr = [];
-			todayArr.push(articles[i].publishedDate.getDate());
-			todayArr.push(articles[i].publishedDate.getMonth());
-			todayArr.push(articles[i].publishedDate.getFullYear());
-			searchResult.push({
-				evalScore: evalScore[i],
-				today: todayArr,
-				id: articles[i]._id,
-				url: articles[i].url,
-				title: articles[i].title,
-				source: articles[i].source,
-				avatar: articles[i].avatar,
-				thumbnail: articles[i].thumbnail,
-				publishedDate: articles[i].publishedDate,
-				media: articles[i].media
-			});
-			Ids.push(articles[i]._id);
-		}
-		callback(searchResult, Ids);
-	});
-};
-module.exports.getFeedUser = getFeedUser;
-
-//Find feed corresponding to user's settings
 var getFeed = function(userId, callback) {
 	User.findById(userId).exec(function(err, user) {
-		if (err) { //process error case later
-			console.log(err);
-			callback([], []);
-		}
+		if (err)
+			return callback(err);
+		var newsfeed = [], mediafeed = [], newsKeywords = [], mediaKeywords = [];
 
-		if (user === null) { //there is no user has this id in database
-			console.log('User not found!');
-			callback(0);
-		}
-
-		var feedResult = [], tmpIds = [];
-		var articleIds = user.articles;
-
-		async.forEachOfSeries(user.checkList, function(check, i, cb) { //with each checked keyword
+		async.forEachOfSeries(user.checkList, function(check, i, cb) {
 			if (check) {
-				var Follow = require('../clientController/follow.js');
-
-				Follow.addArticle(user.wordList[i], userId, function(addarticle) {
-					if (addarticle) {
-						//get a list of articles
-						getFeedUser(user.wordList[i], articleIds, function(results, Ids) {
-							for (j in results) {
-								feedResult.push(results[j]);
-
-								//save results' ID for later purpose due to the effect of deleting items
-								//from user.articles
-								tmpIds.push(Ids[j]);
-								
-								//eliminate added result here
-								articleIds.splice(articleIds.indexOf(Ids[j]), 1);
-							}
-							cb();
-						});
+				var query = stringFuncs.preProcess(user.wordList[i]);
+				query = stringFuncs.wordTokenize(query);
+				query = stringFuncs.stemArr(query);
+				searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
+					if (err)
+						return cb(err);
+					for (j in newsFeedResult) {
+						var tmp = _.find(newsfeed, {id: newsFeedResult[j].id});
+						if (tmp === undefined) {
+							newsfeed.push(newsFeedResult[j]);
+							newsKeywords.push(user.wordList[i]);
+						}
 					}
+					for (j in mediaFeedResult) {
+						var tmp = _.find(mediafeed, {id: mediaFeedResult[j].id});
+						// console.log(tmp);
+						if (tmp === undefined) {
+							mediafeed.push(mediaFeedResult[j]);
+							mediaKeywords.push(user.wordList[i]);
+						}
+					}
+					cb();
 				});
 			}
 			else cb();
 		}, function(err) {
-			if (err) { //process error case later
-				console.log(err);
-				callback([], []);
-			}
-
-			User.findById(userId).exec(function(err, u) {
-				if (err) { //process error case later
-					console.log(err);
-					callback([], []);
-				}
-
-				var hashtagResult = [], starResult = [];
-
-				for (i in tmpIds) {
-					//use u.articles' ID to extract keyword list corresponding to each article
-					hashtagResult.push(u.articleKeywords[u.articles.indexOf(tmpIds[i])].keywords);
-					starResult.push(u.stars[u.articles.indexOf(tmpIds[i])]);
-				}
-			
-				callback(feedResult, hashtagResult, starResult);
+			if (err)
+				return callback(err);
+			getUsersArticleInfo(userId, newsfeed, mediafeed, newsKeywords, mediaKeywords, 
+			function(err, news, media) {
+				if (err)
+					return callback(err);
+				callback(null, news, media);
 			});
-		});	
+		});
 	});
 };
 module.exports.getFeed = getFeed;
 
+var getUsersArticleInfo = function(userId, newsfeed, mediafeed, newsKeywords, mediaKeywords, callback) {
+	var newsFeedIDs = [], mediaFeedIDs = [];
+	for (i = 0; i < newsfeed.length; i++)
+		newsFeedIDs.push(newsfeed[i].id + '');
+	for (i = 0; i < mediafeed.length; i++)
+		mediaFeedIDs.push(mediafeed[i].id + '');
+
+	async.parallel([
+		function(cb) {
+			Article.find({ _id: {"$in": newsFeedIDs} }).exec(function(err, articles) {
+				if (err)
+					return cb(err);
+				async.each(articles, function(article, cb1) {
+					var Index = article.user.indexOf(userId);
+					var ID = newsFeedIDs.indexOf(article._id + '');
+					// console.log(article._id);
+					// console.log(ID);
+
+					if (Index === -1) {
+						article.user.push(userId);
+						article.userStar.push(false);
+						article.userKeywords.push({
+							keywords: []
+						});
+						article.userKeywords[article.user.indexOf(userId)].keywords.push(newsKeywords[ID]);
+						newsfeed[ID].hashtag = article.userKeywords[article.user.indexOf(userId)].keywords[0];
+						newsfeed[ID].star = false;
+					}
+					else {
+						var keywordList = article.userKeywords[Index].keywords;
+						var hashtag = '';
+						for (j = 0; j < keywordList.length; j++)
+							hashtag += keywordList[j] + ' ';
+						if (keywordList.indexOf(newsKeywords[ID]) === -1) {
+							article.userKeywords[article.user.indexOf(userId)].keywords.push(newsKeywords[ID]);
+							hashtag += newsKeywords[ID];
+						}
+						newsfeed[ID].hashtag = hashtag;
+						newsfeed[ID].star = article.userStar[Index];
+					}
+
+					article.save();
+					cb1();
+				}, function(err) {
+					if (err)
+						return cb(err);
+					cb();
+				});
+			});
+		}, function(cb) {
+			Media.find({ _id: {"$in": mediaFeedIDs} }).exec(function(err, articles) {
+				// console.log(articles);
+				if (err)
+					return cb(err);
+				async.each(articles, function(article, cb2) {
+					var Index = article.user.indexOf(userId);
+					var ID = mediaFeedIDs.indexOf(article._id + '');
+
+					// console.log(article._id);
+					// console.log(ID);
+					if (Index === -1) {
+						article.user.push(userId);
+						article.userStar.push(false);
+						article.userKeywords.push({
+							keywords: []
+						});
+						article.userKeywords[article.user.indexOf(userId)].keywords.push(mediaKeywords[ID]);
+						mediafeed[ID].star = false;
+					}
+					else {
+						var keywordList = article.userKeywords[Index].keywords;
+						if (keywordList.indexOf(mediaKeywords[ID]) === -1)
+							article.userKeywords[article.user.indexOf(userId)].keywords.push(mediaKeywords[ID]);
+							
+						mediafeed[ID].star = article.userStar[Index];
+					}
+
+					article.save();
+					cb2();
+				}, function(err) {
+					if (err)
+						return cb(err);
+					cb();
+				});
+			});
+		}
+	], function(err) {
+		if (err)
+			return callback(err);
+		callback(null, newsfeed, mediafeed);
+	});
+};
+module.exports.getUsersArticleInfo = getUsersArticleInfo;
+
 var updateFavorite = function(userId, articleId, callback) {
-	User.findById(userId).exec(function(err, user) {
-		if (err) {
-			console.log(err);
-			callback(false);
-		}
-
-		if (user === null) {
-			console.log('User not found!');
-			callback(false);
-		}
-
+	Article.findById(articleId).exec(function(err, article) {
+		if (err)
+			return callback(false);
+		var Index = article.user.indexOf(userId);
+		if (Index === -1)
+			return callback(false);
 		var tmp = [];
-		for (i = 0; i < user.stars.length; i++)
-			tmp.push(user.stars[i]);
 
-		var index = user.articles.indexOf(articleId);
-		tmp[index] = !tmp[index];
-		user.stars = tmp;
-
-		user.save(function(err) {
-			if (err) {
-				console.log(err);
-				callback(false);
-			}
-
+		for (i in article.userStar)
+			tmp.push(article.userStar[i]);
+		tmp[Index] = !tmp[Index];
+		article.userStar = tmp;
+		article.save(function(err) {
+			if (err)
+				return callback(false);
 			callback(true);
 		});
 	});
@@ -213,60 +255,7 @@ var updateFavorite = function(userId, articleId, callback) {
 module.exports.updateFavorite = updateFavorite;
 
 var getFavorite = function(userId, callback) {
-
-	User.findById(userId).exec(function(err, user) {
-		if (err) {
-			console.log(err);
-			callback([]);
-		}
-
-		if (user === null) {
-			console.log('User not found!');
-			callback([]);
-		}
-
-		var favoriteNewsList = [], favoriteMediaList = [];
-
-		async.forEachOfSeries(user.stars, function(star, i, cb) {
-			if (star)
-				Article.findById(user.articles[i]).exec(function(err, article) {
-					if (err) { //process error case later
-						console.log(err);
-						cb();
-					}
-
-					if (article.media)
-						favoriteMediaList.push({ //article's properties
-							id: article._id,
-							url: article.url,
-							title: article.title,
-							source: article.source,
-							avatar: article.avatar,
-							thumbnail: article.thumbnail,
-							publishedDate: article.publishedDate,
-							star: true
-						});
-					else favoriteNewsList.push({
-						id: article._id,
-						url: article.url,
-						title: article.title,
-						source: article.source,
-						thumbnail: article.thumbnail,
-						publishedDate: article.publishedDate,
-						star: true
-					});
-					cb();
-				});
-			else cb();
-		}, function(err) {
-			if (err) {
-				console.log(err);
-				callback([]);
-			}
-
-			callback(favoriteNewsList, favoriteMediaList);
-		});
-	});
+	
 };
 module.exports.getFavorite = getFavorite;
 

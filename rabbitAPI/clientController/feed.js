@@ -16,7 +16,7 @@ var searchFuncs = require('../libs/searchfunctions');
 //Search feed controller
 var searchFeed = function(query, callback) {
 	//preprocess query
-	var maxCache = 40;
+	var maxCache = 4000;
 
 	var newsSearchResult = [], mediaSearchResult = [];
 

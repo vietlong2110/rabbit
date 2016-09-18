@@ -40,11 +40,18 @@ angular.module('starter.services', [])
 	return {
 		fblogin: function() {
 			return $q(function(resolve, reject) {
-				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile'], 
+				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile', 'publish_action'], 
 				{redirect_uri: 'http://localhost/callback'}).then(function(result) {
-					console.log(result);
-					if (result.access_token)
-						resolve(result.access_token);
+					if (result.access_token) {
+						$http.post(API_ENDPOINT.url + '/fblogin', {token: result.access_token})
+						.then(function(res) {
+							if (res.data.success) {
+								storeUserCredentials(res.data.token);
+								resolve(res.data.message);
+							}
+							else reject(res.data.message);
+						});
+					}
 					else reject('Facebook Login Error!');
 				}, function(err) {
 					console.log(err);
@@ -91,79 +98,81 @@ angular.module('starter.services', [])
 	};
 })
 
-.factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout, $rootScope) {
-	// var domain = 'http://52.221.228.17:8080/clientapi';
-	var domain = 'http://localhost:8080/clientapi';
+.factory('apiServices', function($http, $ionicLoading, $ionicPopup, $timeout, $rootScope, API_ENDPOINT) {
+	var getNewsFeedAPI = API_ENDPOINT.api + '/getnewsfeed';
 
-	var getFeedAPI = domain + '/getfeed';
+	var getMediaFeedAPI = API_ENDPOINT.api + '/getmediafeed';
 
-	var searchAPI = domain + '/search';
+	var searchAPI = API_ENDPOINT.api + '/search';
 
-	var suggestAPI = domain + '/suggest';
+	var suggestAPI = API_ENDPOINT.api + '/suggest';
 
-	var followAPI = domain + '/follow';
+	var followAPI = API_ENDPOINT.api + '/follow';
 
-	var getListAPI = domain + '/getlist';
+	var getListAPI = API_ENDPOINT.api + '/getlist';
 
-	var unfollowAPI = domain + '/unfollow';
+	var unfollowAPI = API_ENDPOINT.api + '/unfollow';
 
-	var updateListAPI = domain + '/updatelist';
+	var updateListAPI = API_ENDPOINT.api + '/updatelist';
 
-	var getFeedByKeywordAPI = domain + '/getfeedbykeyword';
+	var getNewsByKeywordAPI = API_ENDPOINT.api + '/getnewsbykeyword';
 
-	var updateFavoriteAPI = domain + '/updatefavorite';
+	var getMediaByKeywordAPI = API_ENDPOINT.api + '/getmediabykeyword';
 
-	var getFavoriteAPI = domain + '/getfavorite';
+	var updateNewsFavoriteAPI = API_ENDPOINT.api + '/updatenewsfavorite';
+
+	var getNewsFavoriteAPI = API_ENDPOINT.api + '/getnewsfavorite';
+
+	var updateMediaFavoriteAPI = API_ENDPOINT.api + '/updatemediafavorite';
+
+	var getMediaFavoriteAPI = API_ENDPOINT.api + '/getmediafavorite';
 
 	return {
-		getFeed: function(sizenews, sizemedia, callback) {
-			$ionicLoading.show({
-				templateUrl: 'templates/spinner/loadingspinner.html',
-				noBackdrop: true
-			});
-			$timeout(function() {
-				$ionicLoading.hide();
-			}, 5000);
-
-			$http.get(getFeedAPI, {
+		getNewsFeed: function(size, callback) {
+			$http.get(getNewsFeedAPI, {
 				params: {
-					sizenews: sizenews,
-					sizemedia: sizemedia
+					size: size
 				}
 			}).success(function(data) {
-				$ionicLoading.hide();
-
 				$rootScope.news = data.news; // newsfeed
                 $rootScope.moreDataNews = data.moreDataNews;
-
-                $rootScope.media = data.media;
-                $rootScope.moreDataMedia = data.moreDataMedia;
-
                 callback();
 			});
 		},
-		getFeedByKeyword: function(value, sizenews, sizemedia, callback) {
-			$ionicLoading.show({
-				templateUrl: 'templates/spinner/loadingspinner.html',
-				noBackdrop: true
-			});
-			$timeout(function() {
-				$ionicLoading.hide();
-			}, 5000);
-
-			$http.get(getFeedByKeywordAPI, {
+		getMediaFeed: function(size, callback) {
+			$http.get(getMediaFeedAPI, {
 				params: {
-					q: value,
-					sizenews: sizenews,
-					sizemedia: sizemedia
+					size: size
 				}
 			}).success(function(data) {
-				$ionicLoading.hide();
-
+				$rootScope.media = data.media; // newsfeed
+                $rootScope.moreDataMedia = data.moreDataMedia;
+                callback();
+			});
+		},
+		getNewsByKeyword: function(value, size, callback) {
+			$http.get(getNewsByKeywordAPI, {
+				params: {
+					q: value,
+					size: size
+				}
+			}).success(function(data) {
 				$rootScope.titleNews = data.titleNews;
 
 				$rootScope.followingNews = data.news;
                 $rootScope.moreDataFollowing = data.moreDataNews;
+
+                callback();
+			});
+		},
+		getMediaByKeyword: function(value, size, callback) {
+			$http.get(getMediaByKeywordAPI, {
+				params: {
+					q: value,
+					size: size
+				}
+			}).success(function(data) {
+				$rootScope.titleNews = data.titleNews;
 
                 $rootScope.followingMedia = data.media;
                 $rootScope.moreDataFollowingMedia = data.moreDataMedia;
@@ -191,13 +200,6 @@ angular.module('starter.services', [])
             });
 		},
 		search: function(value, sizenews, sizemedia) {
-			$ionicLoading.show({
-				templateUrl: 'templates/spinner/loadingspinner.html',
-				noBackdrop: true
-			});
-			$timeout(function() {
-				$ionicLoading.hide();
-			}, 5000);
 			$http.get(searchAPI, {
 	            params: {
 	                q: value,
@@ -232,24 +234,26 @@ angular.module('starter.services', [])
 			$http.post(followAPI, {
                 q: value
             }).success(function(data) {
-            	$ionicLoading.hide();
+            	// if (data.success) {
+	            	$ionicLoading.hide();
 
-            	var popup = $ionicPopup.alert({
-            		title: 'You have followed "' + keyword + '"',
-            		buttons: []
-            	});
-            	$timeout(function() {
-            		popup.close();
-            	}, 2000);
+	            	var popup = $ionicPopup.alert({
+	            		title: 'You have followed "' + keyword + '"',
+	            		buttons: []
+	            	});
+	            	$timeout(function() {
+	            		popup.close();
+	            	}, 2000);
 
-                $rootScope.keywords = data.keywords;        
-                $rootScope.listCount = data.keywords.length;
+	                $rootScope.keywords = data.keywords;
+	                $rootScope.listCount = data.keywords.length;
 
-                $rootScope.news = data.news;
-                $rootScope.moreDataNews = data.moreDataNews;
+	                $rootScope.news = data.news;
+	                $rootScope.moreDataNews = data.moreDataNews;
 
-                $rootScope.media = data.media;
-                $rootScope.moreDataMedia = data.moreDataMedia;
+	                $rootScope.media = data.media;
+	                $rootScope.moreDataMedia = data.moreDataMedia;
+	            // }
             });
 		},
 		unfollow: function(value) {
@@ -257,39 +261,56 @@ angular.module('starter.services', [])
 				templateUrl: 'templates/spinner/unfollowspinner.html'
 			});
 			$http.post(unfollowAPI, {
-                keyword: value
+                q: value
             }).success(function(data) {
-            	$ionicLoading.hide();
+            	// if (data.success) {
+            		$ionicLoading.hide();
+            		$rootScope.keywords = data.keywords;        
+	                $rootScope.listCount = data.keywords.length;
 
-            	$rootScope.keywords = data.keywords;        
-                $rootScope.listCount = data.keywords.length;
+	                $rootScope.news = data.news;
+	                $rootScope.moreDataNews = data.moreDataNews;
 
-                $rootScope.news = data.news;
-                $rootScope.moreDataNews = data.moreDataNews;
-
-                $rootScope.media = data.media;
-                $rootScope.moreDataMedia = data.moreDataMedia;
+	                $rootScope.media = data.media;
+	                $rootScope.moreDataMedia = data.moreDataMedia;
+            	// }
             });
 		},
-		updateFavorite: function(id, callback) {
-			$http.post(updateFavoriteAPI, {
+		updateNewsFavorite: function(id, callback) {
+			$http.post(updateNewsFavoriteAPI, {
 				id: id
 			}).success(function(data) {
 				if (data.updated)
 					callback();
 			});
 		},
-		getFavorite: function(sizenews, sizemedia, callback) {
-			$http.get(getFavoriteAPI, {
+		getNewsFavorite: function(size, callback) {
+			$http.get(getNewsFavoriteAPI, {
 				params: {
-					sizenews: sizenews,
-					sizemedia: sizemedia
+					size: size
 				}
 			}).success(function(data) {
-				$rootScope.favoriteNews = data.favoriteNews;
+				$rootScope.favoriteNews = data.news;
                 $rootScope.moreDataFavorite = data.moreDataNews;
 
-                $rootScope.favoriteMedia = data.favoriteMedia;
+                callback();		
+			})
+		},
+		updateMediaFavorite: function(id, callback) {
+			$http.post(updateMediaFavoriteAPI, {
+				id: id
+			}).success(function(data) {
+				if (data.updated)
+					callback();
+			});
+		},
+		getMediaFavorite: function(size, callback) {
+			$http.get(getMediaFavoriteAPI, {
+				params: {
+					size: size
+				}
+			}).success(function(data) {
+                $rootScope.favoriteMedia = data.media;
                 $rootScope.moreDataMediaFavorite = data.moreDataMedia;
 
                 callback();		

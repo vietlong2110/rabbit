@@ -2,7 +2,7 @@
 angular.module('socialmedia.controller', [])
 .controller('SocialMediaController',
 function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate,
-$ionicViewSwitcher, LOAD_SIZE) {
+$ionicViewSwitcher, LOAD_SIZE, API_ENDPOINT) {
     $rootScope.moreDataMedia = false;
 
     $scope.onSearch = function() { // enter search part
@@ -15,10 +15,9 @@ $ionicViewSwitcher, LOAD_SIZE) {
     };
 
     $scope.doRefresh = function() {
-        $http.get('http://localhost:8080/clientapi/getfeed', {
+        $http.get(API_ENDPOINT.api + '/getmediafeed', {
             params: {
-                sizenews: $rootScope.news.length - LOAD_SIZE,
-                sizemedia: 0
+                size: 0
             }
         }).success(function(data) {
             $rootScope.media = data.media; // newsfeed
@@ -33,13 +32,13 @@ $ionicViewSwitcher, LOAD_SIZE) {
         e.preventDefault(); 
         e.stopPropagation();
 
-        apiServices.updateFavorite(item.id, function() {
+        apiServices.updateMediaFavorite(item.id, function() {
             item.star = !item.star;
         });
     };
 
     $scope.loadMore = function() {
-        apiServices.getFeed($rootScope.news.length - LOAD_SIZE, $rootScope.media.length, function() {});
+        apiServices.getMediaFeed($rootScope.media.length, function() {});
         $scope.$broadcast('scroll.infiniteScrollComplete');
     };
 

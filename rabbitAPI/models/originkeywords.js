@@ -16,10 +16,6 @@ var OriginKeyword = new Schema({
 		type: Number,
 		default: 0
 	},
-	dfDaily: [{
-		df: Number,
-		daily: Date
-	}],
 	weight: {
 		type: Number,
 		default: 0

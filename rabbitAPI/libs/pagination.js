@@ -1,5 +1,5 @@
 var paginate = function(feed, querySize, callback) {
-	var offset = (feed.length < 8) ? feed.length : 8;
+	var offset = (feed.length < 10) ? feed.length : 10;
 	var size = 5;
 	var moreData = true;
 

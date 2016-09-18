@@ -21,20 +21,18 @@ function($rootScope, $scope, $state, $ionicPopup, $ionicScrollDelegate, apiServi
 
         confirmPopup.then(function(res) {
             if (res) {
-                apiServices.updateFavorite(item.id, function() {
-                    apiServices.getFavorite($rootScope.favoriteNews.length - LOAD_SIZE, 
-                    $rootScope.favoriteMedia.length - LOAD_SIZE, function() {
+                apiServices.updateNewsFavorite(item.id, function() {
+                    apiServices.getNewsFavorite($rootScope.favoriteNews.length - LOAD_SIZE, function() {
                         $rootScope.currentReadingState = $rootScope.favoriteNews[0];
                     });
                     $state.go('tabs.favorites');
-                });    
+                });
             }
         });
 	};
 
     $scope.loadMore = function() {
-        apiServices.getFavorite($rootScope.favoriteNews.length,
-        $rootScope.favoriteMedia.length - LOAD_SIZE, function() {});
+        apiServices.getNewsFavorite($rootScope.favoriteNews.length, function() {});
         $scope.$broadcast('scroll.infiniteScrollComplete');
     };
 

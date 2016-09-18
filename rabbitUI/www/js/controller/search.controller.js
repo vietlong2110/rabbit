@@ -1,7 +1,7 @@
 //Search Controller
 angular.module('search.controller', [])
 .controller('SearchController', 
-function($rootScope, $scope, $state, apiServices, $ionicPopup, 
+function($rootScope, $scope, $state, apiServices, $ionicPopup, $ionicHistory,
 $ionicViewSwitcher, $ionicScrollDelegate, navServices, LOAD_SIZE) {
     $rootScope.onSearch = true;
 
@@ -21,7 +21,7 @@ $ionicViewSwitcher, $ionicScrollDelegate, navServices, LOAD_SIZE) {
 
     $scope.backHome = function() {
         $rootScope.onSearch = false;
-        $ionicViewSwitcher.nextDirection('forward');
+        $ionicViewSwitcher.nextDirection('back');
         navServices.nav();
     };
 

@@ -9,10 +9,11 @@ var router = express.Router();
 var async = require('async');
 
 var Feed = require('../clientController/feed.js');
+var Favorite = require('../clientController/favorite.js');
 var Filter = require('../libs/filter.js');
-var Extract = require('../clientController/extract.js');
 var UserController = require('../clientController/user.js');
 var Pagination = require('../libs/pagination.js');
+var List = require('../clientController/list.js');
 var stringFuncs = require('../libs/stringfunctions.js');
 
 module.exports = function(passport) {
@@ -75,16 +76,22 @@ module.exports = function(passport) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
 				var query = Filter.querySanitize(req.body.q);
-				var Follow = require('../clientController/follow.js');
 
-				Follow.addList(query, userId, function(addedlist) { //add keyword/hashtag to following list
+				List.addList(query, userId, function(addedlist) { //add keyword/hashtag to following list
 					if (addedlist) //added keyword/hashtag successfully to database
-						Follow.addToArticle(query, userId, function(addedarticle) {
-							if (addedarticle) //added article successfully to database
-								res.json({success: true});
+						Feed.updateFeedByKeyword(userId, query, function(err, results) {
+							if (err)
+								res.json({
+									success: false,
+									error: 'Error occured!'
+								});
 							else res.json({
-								success: false,
-								error: 'Error occured!'
+								success: true,
+								news: results.newsfeed[0],
+								moreDataNews: results.newsfeed[1],
+								media: results.mediafeed[0],
+								moreDataMedia: results.mediafeed[1],
+								keywords: results.list
 							});
 						});
 					else res.json({
@@ -104,17 +111,23 @@ module.exports = function(passport) {
 	router.post('/unfollow', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var Follow = require('../clientController/follow.js');
 				var query = Filter.querySanitize(req.body.q);
 
-				Follow.deleteList(query, userId, function(deletedList) {
+				List.deleteList(query, userId, function(deletedList) {
 					if (deletedList) //deleted keyword/hashtag successfully from database
-						Follow.deleteArticle(query, userId, function(deletedArticle) {
-							if (deletedArticle) //deleted article successfully from database
-								res.json({success: true});
+						Feed.deleteFeedByKeyword(userId, query, function(err, results) {
+							if (err)
+								res.json({
+									success: false,
+									error: err
+								});
 							else res.json({
-								success: false,
-								error: 'Error occured!'
+								success: true,
+								news: results.newsfeed[0],
+								moreDataNews: results.newsfeed[1],
+								media: results.mediafeed[0],
+								moreDataMedia: results.mediafeed[1],
+								keywords: results.list
 							});
 						});
 					else res.json({
@@ -134,22 +147,30 @@ module.exports = function(passport) {
 	router.post('/updatelist', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var List = require('../clientController/list.js');
 				var checkList = [];
 
 				for (i in req.body.keywords)
 					checkList.push(req.body.keywords[i].isChecked);
 
 				List.updateList(userId, checkList, function(updated) {
-					Extract.getFeed(userId, 0, 0,
-					function(newsfeed, mediafeed, moreDataNews, moreDataMedia) {
-						res.json({
-							success: true,
-							news: newsfeed,
-							media: mediafeed,
-							moreDataNews: moreDataNews,
-							moreDataMedia: moreDataMedia
+					if (updated)
+						Feed.refreshFeed(userId, function(err, results) {
+							if (err)
+								res.json({
+									success: false,
+									error: err
+								});
+							else res.json({
+								success: true,
+								news: results.newsfeed[0],
+								moreDataNews: results.newsfeed[1],
+								media: results.mediafeed[0],
+								moreDataMedia: results.mediafeed[1]
+							});
 						});
+					else res.json({
+						success: false,
+						error: err
 					});
 				});
 			}
@@ -161,11 +182,11 @@ module.exports = function(passport) {
 	});
 
 	//API router for loading the newsfeed
-	router.get('/getfeed', function(req, res) {
+	router.get('/getnewsfeed', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId)
-				Extract.getFeed(userId, parseInt(req.query.sizenews), parseInt(req.query.sizemedia),
-				function(err, newsfeed, mediafeed, moreDataNews, moreDataMedia) {
+				Feed.getNewsFeed(userId, parseInt(req.query.size),
+				function(err, newsfeed, moreDataNews) {
 					if (err)
 						res.json({
 							success: false,
@@ -174,8 +195,29 @@ module.exports = function(passport) {
 					else res.json({
 						success: true,
 						news: newsfeed,
+						moreDataNews: moreDataNews
+					});
+				});
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.get('/getmediafeed', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId)
+				Feed.getMediaFeed(userId, parseInt(req.query.size),
+				function(err, mediafeed, moreDataMedia) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					else res.json({
+						success: true,
 						media: mediafeed,
-						moreDataNews: moreDataNews,
 						moreDataMedia: moreDataMedia
 					});
 				});
@@ -190,7 +232,7 @@ module.exports = function(passport) {
 	router.get('/getlist', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId)
-				Extract.getList(userId, function(list) {
+				List.getList(userId, function(list) {
 					res.json({
 						success: true,
 						keywords: list
@@ -203,12 +245,107 @@ module.exports = function(passport) {
 		});
 	});
 
-	router.get('/getfeedbykeyword', function(req, res) {
+	router.get('/getnewsbykeyword', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var querySanitized = Filter.querySanitize(req.query.q);
-				Extract.getFeedByKeyword(userId, querySanitized, parseInt(req.query.sizenews),
-				parseInt(req.query.sizemedia), function(err, newsfeed, mediafeed, moreDataNews, moreDataMedia) {
+				var query = Filter.querySanitize(req.query.q);
+				Feed.getNewsByKeyword(userId, query, parseInt(req.query.size), 
+				function(err, newsfeed, moreDataNews) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					else res.json({
+						success: true,
+						titleNews: Filter.niceTitle(query),
+						news: newsfeed,
+						moreDataKeywordNews: moreDataNews
+					});
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.get('/getmediabykeyword', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				var query = Filter.querySanitize(req.query.q);
+				Feed.getMediaByKeyword(userId, query, parseInt(req.query.size), 
+				function(err, mediafeed, moreDataMedia) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					else res.json({
+						success: true,
+						titleNews: Filter.niceTitle(query),
+						media: mediafeed,
+						moreDataKeywordMedia: moreDataMedia
+					});
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.post('/updatenewsfavorite', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				Favorite.updateNewsFavorite(userId, req.body.id, function(updated) {
+					if (!updated)
+						res.json({
+							success: false,
+							error: 'Error occured!'
+						});
+					else res.json({
+						success: true,
+						updated: updated
+					});
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.post('/updatemediafavorite', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				Favorite.updateMediaFavorite(userId, req.body.id, function(updated) {
+					if (!updated)
+						res.json({
+							success: false,
+							error: 'Error occured!'
+						});
+					else res.json({
+						success: true,
+						updated: updated
+					});
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.get('/getnewsfavorite', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				Favorite.getNewsFavorite(userId, parseInt(req.query.size),
+				function(err, newsfeed, moreDataNews) {
 					if (err)
 						res.json({
 							success: false,
@@ -217,10 +354,8 @@ module.exports = function(passport) {
 					else res.json({
 						success: true,
 						news: newsfeed,
-						media: mediafeed,
-						moreDataNews: moreDataNews,
-						moreDataMedia: moreDataMedia
-					});
+						moreDataNews: moreDataNews
+					})
 				});
 			}
 			else res.status(403).json({
@@ -230,40 +365,43 @@ module.exports = function(passport) {
 		});
 	});
 
-	router.post('/updatefavorite', function(req, res) {
+	router.get('/getmediafavorite', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				Feed.updateFavorite(userId, req.body.id, function(updated) {
-					if (updated)
-						res.json({success: true});
-					else res.json({
-						success: false,
-						error: 'Error occured!'
-					});
-				});
-			}
-			else res.status(403).json({
-				success: false,
-				error: 'Invalid authentication!'
-			});
-		});
-	});
-
-	router.get('/getfavorite', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
-				Feed.getFavorite(userId, function(favoriteNewsList, favoriteMediaList) {
-					Pagination.paginate(favoriteNewsList, parseInt(req.query.sizenews),
-					function(favoriteNewsList, moreDataNews) {
-						Pagination.paginate(favoriteMediaList, parseInt(req.query.sizemedia),
-						function(favoriteMediaList, moreDataMedia) {
-							res.json({
-								favoriteNews: favoriteNewsList,
-								favoriteMedia: favoriteMediaList,
-								moreDataNews: moreDataNews,
-								moreDataMedia: moreDataMedia
-							});
+				Favorite.getMediaFavorite(userId, parseInt(req.query.size),
+				function(err, mediafeed, moreDataMedia) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
 						});
+					else res.json({
+						success: true,
+						media: mediafeed,
+						moreDataMedia: moreDataMedia
+					})
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.post('/updatefeed', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				Update.updateFeed(userId, function(err, updatednews, updatedmedia) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					else res.json({
+						success: true,
+						updatednews: updatednews,
+						updatedmedia: updatedmedia
 					});
 				});
 			}

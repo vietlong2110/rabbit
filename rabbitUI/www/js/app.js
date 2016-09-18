@@ -3,15 +3,17 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.c
 'login.controller', 'register.controller', 'news.controller', 'socialmedia.controller',
 'suggest.controller', 'search.controller', 'socialsearch.controller', 'reading.controller',
 'socialreading.controller', 'favorites.controller', 'socialfavorites.controller',
-'followinglist.controller', 'socialfollowinglist.controller'])
+'followinglist.controller', 'socialfollowinglist.controller', 'login-ui.controller'])
 
 .constant('AUTH_EVENTS', {
     notAuthenticated: 'auth-not-authenticated'
 })
 
 .constant('API_ENDPOINT', {
-    url: 'http://localhost:8080/auth'
-    // url: 'http://52.221.228.17:8080/auth'
+    // url: 'http://54.163.93.190:8080/auth',
+    // api: 'http://54.163.93.190:8080/clientapi'
+    url: 'http://localhost:8080/auth',
+    api: 'http://localhost:8080/clientapi'
 })
 
 .constant('FB', {
@@ -38,17 +40,17 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.c
   });
 })
 
-.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
-    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-        if (!AuthService.isAuthenticated()) {
-            // console.log(next.name);
-            if (next.name !== 'login' && next.name !== 'register') {
-                event.preventDefault();
-                $state.go('login');
-            }
-        }
-    });
-})
+// .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+//     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+//         if (!AuthService.isAuthenticated()) {
+//             // console.log(next.name);
+//             if (next.name !== 'login' && next.name !== 'register') {
+//                 event.preventDefault();
+//                 $state.go('login');
+//             }
+//         }
+//     });
+// })
 
 .directive('focus', function($timeout) {
     return {
@@ -78,6 +80,11 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.c
         url: '/login',
         templateUrl: 'templates/login.html',
         controller: 'LoginController'
+    })
+    .state('login-ui', {
+        url: '/loginui',
+        templateUrl: 'templates/login-ui.html',
+        controller: 'LoginUIController'
     })
     .state('register', {
         url: '/register',

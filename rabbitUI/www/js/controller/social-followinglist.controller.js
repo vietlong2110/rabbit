@@ -1,7 +1,7 @@
 // Social Media Following list controller
 angular.module('socialfollowinglist.controller', [])
 .controller('SocialFollowingListController', 
-function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices, LOAD_SIZE) {
+function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices, LOAD_SIZE, API_ENDPOINT) {
     $scope.onSearch = function() { // enter search part
         $state.go('suggest');
     };
@@ -15,17 +15,16 @@ function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices, L
         e.preventDefault(); 
         e.stopPropagation();
 
-        apiServices.updateFavorite(item.id, function() {
+        apiServices.updateMediaFavorite(item.id, function() {
             item.star = !item.star;
         });
     };
 
     $scope.doRefresh = function() {
-        $http.get('http://localhost:8080/clientapi/getfeedbykeyword', {
+        $http.get(API_ENDPOINT.api + '/getmediabykeyword', {
             params: {
                 q: $rootScope.followingKeyword,
-                sizenews: $rootScope.followingNews.length - LOAD_SIZE,
-                sizemedia: 0
+                size: 0
             }
         }).success(function(data) {
             $rootScope.followingMedia = data.media; // newsfeed
@@ -36,8 +35,8 @@ function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices, L
     };
 
     $scope.loadMore = function() {
-        apiServices.getFeedByKeyword($rootScope.followingKeyword, 
-        $rootScope.followingNews.length - LOAD_SIZE, $rootScope.followingMedia.length, function() {});
+        apiServices.getMediaByKeyword($rootScope.followingKeyword, 
+        $rootScope.followingMedia.length, function() {});
         $scope.$broadcast('scroll.infiniteScrollComplete');
     };
 

@@ -26,6 +26,11 @@
 	text-decoration: none;
 }
 
+.card {
+	margin-bottom: 5px !important;
+	margin-top: 7px !important;
+}
+
 #hashtag {
 	/*color: #01579B;*/
 }
@@ -71,26 +76,24 @@
 }
 
 #search {
-	width: 335px; 
-	height: 27px; 
-	margin-top: 1%;
+	/*padding-left: 3px;*/
+	height: 27px;
 	background-color: white;
 }
 
-#search2 {
-	width: 335px; 
-	height: 27px;
-	margin-top: 0.955%;
-	margin-left: 2%;
-	background-color: white;
+#backButton {
+	/*padding-bottom: 16px;*/
+	font-size: 200%;
+	padding-right: 14px;
 }
 
 #searchBar {
-	padding-bottom: 3.2%;
+	padding-left: 4px;
 }
 
-#searchBarSetting {
-	padding-top: 0.1%;
+#search2 {
+	height: 27px;
+	background-color: white;
 }
 
 #follow {
@@ -160,7 +163,7 @@ right: 5%; /* Adjust position */
 }
 
 .cover-image {
-	background-image: url("https://4kwallpapers.co/wp-content/uploads/2015/09/blue-material-design-ultra-hd-wallpapers.png");
+	background-image: url("./cover.png");
 	height: 190px;
 	overflow: hidden;
 }
@@ -197,7 +200,12 @@ right: 5%; /* Adjust position */
 }
 
 .item-image {
+	max-width: 100%;
 	height: 250px;
+	overflow: hidden;
+}
+
+.item-image #reading-image {
 	overflow: hidden;
 }
 
@@ -215,6 +223,100 @@ right: 5%; /* Adjust position */
 	background-color: #e3f2fd;
 }
 
-#newsfeed-star {
-	padding-top: 45px;
+#bookmark {
+	height: 14px !important;
+}
+
+#facebook-icon {
+	color: #1565C0;
+	font-size: 150%;
+	height: 90px !important;
+}
+
+#twitter-icon {
+	color: #11c1f3;
+	font-size: 150%;
+	height: 160px !important;
+}
+
+#login-background {
+	background-image: url('./login.jpg');
+	background-repeat: no-repeat;
+	text-align: center;
+}
+
+#signin-background {
+	background-image: url('./login.jpg');
+	background-repeat: no-repeat;
+}
+
+#button-group {
+	padding-top: 90%;
+}
+
+#field-group {
+	padding-top: 70%;
+}
+
+#register-group {
+	padding-top: 60%;
+}
+
+#connectfb {
+	background-color: #3B5998;
+	color: white;
+	width: 85%;
+}
+
+#connecttwitter {
+	margin-top: 5%;
+	background-color: #55ACEE;
+	color: white;
+	width: 85%;
+}
+
+#login {
+	margin-top: 5%;
+	background-color: #DD4B39;
+	width: 85%;
+	color: white;
+}
+
+#signin {
+	margin-top: 5%;
+	margin-left: 7.5%;
+	background-color: #1E88E5;
+	color: white;
+	width: 85%;
+}
+
+#forgotpass {
+	margin-top: 2%;
+	font-size: 120%;
+	color: #1565C0;
+	margin-left: 31.1%;
+}
+
+#signup {
+	margin-top: 1%;
+	font-size: 120%;
+	color: #1565C0;
+	margin-left: 30%;
+}
+
+#register {
+	margin-top: 5%;
+	font-size: 120%;
+	color: #1565C0;
+}
+
+#login-field {
+	background-color: #EEEEEE;
+	margin-left: 7.5% !important;
+	/*margin-bottom: 3%;*/
+	width: 85% !important;
+}
+
+#closeButton {
+	font-size: 150%;
 }

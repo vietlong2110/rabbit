@@ -1,26 +1,19 @@
-<ion-view title="#News">
+<ion-view>
 	
-	<ion-content class="padding">
-		<button class="button button-positive button-clear button-full" ui-sref="register">
-			#News
-		</button>
-		<div class="list">
-			<label class="item item-input">
-				<input type="text" placeholder="Email" ng-model="user.email">
-			</label>
-			<label class="item item-input">
-				<input type="password" placeholder="Password" ng-model="user.password">
-			</label>
+	<ion-content id="login-background" class="padding">
+		<div id="button-group">
+			<button id="connectfb" class="button" ng-click="fblogin()">
+				Sign in with Facebook
+			</button>
+			<button id="connecttwitter" class="button">
+				Sign in with Twitter
+			</button>
+			<button id="login" class="button" ui-sref="login-ui">
+				Sign in with email
+			</button>
+			<button id="register" class="button button-clear" ui-sref="register">
+				Create an account
+			</button>
 		</div>
-
-		<button class="button button-full button-balanced" ng-click="login()">
-			Login
-		</button>
-		<button class="button button-full button-positive" ng-click="fblogin()">
-			Connect to Facebook
-		</button>
-		<!-- <label class="item item-input">
-			<input type="text" ng-model="token">
-		</label> -->
 	</ion-content>
 </ion-view>

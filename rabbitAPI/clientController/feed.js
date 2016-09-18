@@ -8,7 +8,11 @@ var mongoose = require('mongoose');
 var Article = require('../models/articles.js');
 var Media = require('../models/media.js');
 var Keyword = require('../models/keywords.js');
+var List = require('./list.js');
 var User = require('../models/users.js');
+var NewsHub = require('../models/newshub.js');
+var MediaHub = require('../models/mediahub.js');
+var Pagination = require('../libs/pagination.js');
 var stringFuncs = require('../libs/stringfunctions.js');
 var Filter = require('../libs/filter.js');
 var searchFuncs = require('../libs/searchfunctions');
@@ -30,17 +34,16 @@ var searchFeed = function(query, callback) {
 			todayArr.push(articles[i].publishedDate.getDate());
 			todayArr.push(articles[i].publishedDate.getMonth());
 			todayArr.push(articles[i].publishedDate.getFullYear());
+			dayScore = todayArr[0] + todayArr[1]*100 + todayArr[2]*10;
 			newsSearchResult.push({
 				evalScore: newsEvalScore[i],
-				today: todayArr,
+				dayScore: dayScore,
 				id: articles[i]._id,
 				url: articles[i].url,
 				title: articles[i].title,
 				source: articles[i].source,
 				thumbnail: articles[i].thumbnail,
-				publishedDate: articles[i].publishedDate,
-				hashtag: '',
-				star: ''
+				publishedDate: articles[i].publishedDate
 			});
 		}
 		for (i = 0; i < Math.min(maxCache, media.length); i++) {
@@ -50,17 +53,17 @@ var searchFeed = function(query, callback) {
 			todayArr.push(media[i].publishedDate.getDate());
 			todayArr.push(media[i].publishedDate.getMonth());
 			todayArr.push(media[i].publishedDate.getFullYear());
+			dayScore = todayArr[0] + todayArr[1]*100 + todayArr[2]*10;
 			mediaSearchResult.push({
 				evalScore: mediaEvalScore[i],
-				today: todayArr,
+				dayScore: dayScore,
 				id: media[i]._id,
 				url: media[i].url,
 				title: media[i].title,
 				source: media[i].source,
 				avatar: media[i].avatar,
 				thumbnail: media[i].thumbnail,
-				publishedDate: media[i].publishedDate,
-				star: '',
+				publishedDate: media[i].publishedDate
 			});
 		}
 		callback(null, newsSearchResult, mediaSearchResult);
@@ -68,119 +71,197 @@ var searchFeed = function(query, callback) {
 };
 module.exports.searchFeed = searchFeed;
 
-var getFeedByKeyword = function(userId, keyword, callback) {
+var refreshFeed = function(userId, callback) {
+	async.parallel({
+		newsfeed: function(cb) {
+			getNewsFeed(userId, 0, function(err, newsFeedResult, moreData) {
+				if (err)
+					return cb(err);
+				newsfeed = newsFeedResult;
+				moreDataNews = moreData;
+				cb(null, newsFeedResult, moreData);
+			});
+		}, mediafeed: function(cb) {
+			getMediaFeed(userId, 0, function(err, mediaFeedResult, moreData) {
+				if (err)
+					return cb(err);
+				mediafeed = mediaFeedResult;
+				moreDataMedia = moreData;
+				cb(null, mediaFeedResult, moreData);
+			});
+		}, list: function(cb) {
+			List.getList(userId, function(list) {
+				listKeywords = list;
+				cb(null, list);
+			});
+		}
+	}, function(err, results) {
+		if (err)
+			return callback(err);
+		callback(null, results);
+	});
+};
+module.exports.refreshFeed = refreshFeed;
+
+var updateFeedByKeyword = function(userId, keyword, callback) {
+	var updatednews = false, updatedmedia = false;
 	var query = stringFuncs.preProcess(keyword);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
 	searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
 		if (err)
-			return cb(err);
-
-		var keywords = [];
-		for (i in newsFeedResult)
-			keywords.push(keyword);
-
-		getUsersArticleInfo(userId, newsFeedResult, mediaFeedResult, keywords, keywords,
-		function(err, newsfeed, media) {
-			if (err)
-				return callback(err);
-			callback(null, newsfeed, media);
-		});
-	});
-};
-module.exports.getFeedByKeyword = getFeedByKeyword;
-
-var getFeed = function(userId, callback) {
-	User.findById(userId).exec(function(err, user) {
-		if (err)
 			return callback(err);
-		var newsfeed = [], mediafeed = [], newsKeywords = [], mediaKeywords = [];
-
-		async.forEachOfSeries(user.checkList, function(check, i, cb) {
-			if (check) {
-				var query = stringFuncs.preProcess(user.wordList[i]);
-				query = stringFuncs.wordTokenize(query);
-				query = stringFuncs.stemArr(query);
-				searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
+		async.parallel([
+			function(cb) {
+				async.eachSeries(newsFeedResult, function(newsfeed, cb1) {
+					NewsHub.findOne({
+						userId: userId,
+						articleId: newsfeed.id
+					}).exec(function(err, hub) {
+						if (err)
+							return cb1(err);
+						if (hub === null) {
+							// console.log('In here!');
+							Article.findById(newsfeed.id).exec(function(err, article) {
+								var newsHub = new NewsHub({
+									userId: userId,
+									articleId: newsfeed.id,
+									url: article.url,
+									title: article.title,
+									thumbnail: article.thumbnail,
+									source: article.source,
+									userKeywordList: [keyword],
+									evalScoreList: [newsfeed.evalScore],
+									evalScore: newsfeed.evalScore,
+									publishedDate: newsfeed.publishedDate,
+									dayScore: newsfeed.dayScore,
+									star: false
+								});
+								newsHub.save(function(err) {
+									if (err)
+										return cb1(err);
+									updatednews = true;
+									cb1();
+								});
+							});
+						}
+						else {
+							if (hub.userKeywordList.indexOf(keyword) !== -1)
+								return cb1();
+							hub.userKeywordList.push(keyword);
+							hub.evalScoreList.push(newsfeed.evalScore);
+							hub.evalScore += newsfeed.evalScore;
+							hub.save(function(err) {
+								if (err)
+									return cb1(err);
+								updatednews = true;
+								cb1();
+							});
+						}
+					});
+				}, function(err) {
 					if (err)
 						return cb(err);
-					for (j in newsFeedResult) {
-						var tmp = _.find(newsfeed, {id: newsFeedResult[j].id});
-						if (tmp === undefined) {
-							newsfeed.push(newsFeedResult[j]);
-							newsKeywords.push(user.wordList[i]);
+					cb();
+				});
+			}, function(cb) {
+				async.eachSeries(mediaFeedResult, function(mediafeed, cb1) {
+					MediaHub.findOne({
+						userId: userId,
+						articleId: mediafeed.id
+					}).exec(function(err, hub) {
+						if (err)
+							return cb1(err);
+						if (hub === null) {
+							Media.findById(mediafeed.id).exec(function(err, media) {
+								var mediaHub = new MediaHub({
+									userId: userId,
+									articleId: mediafeed.id,
+									url: media.url,
+									title: media.title,
+									thumbnail: media.thumbnail,
+									source: media.source,
+									avatar: media.avatar,
+									userKeywordList: [keyword],
+									evalScoreList: [mediafeed.evalScore],
+									evalScore: mediafeed.evalScore,
+									publishedDate: mediafeed.publishedDate,
+									dayScore: mediafeed.dayScore,
+									star: false
+								});
+								mediaHub.save(function(err) {
+									if (err)
+										return cb1(err);
+									updatedmedia = true;
+									cb1();
+								});
+							});
 						}
-					}
-					for (j in mediaFeedResult) {
-						var tmp = _.find(mediafeed, {id: mediaFeedResult[j].id});
-						// console.log(tmp);
-						if (tmp === undefined) {
-							mediafeed.push(mediaFeedResult[j]);
-							mediaKeywords.push(user.wordList[i]);
+						else {
+							if (hub.userKeywordList.indexOf(keyword) !== -1)
+								return cb1();
+							hub.userKeywordList.push(keyword);
+							hub.evalScoreList.push(mediafeed.evalScore);
+							hub.evalScore += mediafeed.evalScore;
+							hub.save(function(err) {
+								if (err)
+									return cb1(err);
+								updatedmedia = true;
+								cb1();
+							});
 						}
-					}
+					});
+				}, function(err) {
+					if (err)
+						return cb(err);
 					cb();
 				});
 			}
-			else cb();
-		}, function(err) {
+		], function(err) {
 			if (err)
 				return callback(err);
-			getUsersArticleInfo(userId, newsfeed, mediafeed, newsKeywords, mediaKeywords, 
-			function(err, news, media) {
+			refreshFeed(userId, function(err, results) {
 				if (err)
 					return callback(err);
-				callback(null, news, media);
+				callback(null, results);
 			});
 		});
 	});
 };
-module.exports.getFeed = getFeed;
+module.exports.updateFeedByKeyword = updateFeedByKeyword;
 
-var getUsersArticleInfo = function(userId, newsfeed, mediafeed, newsKeywords, mediaKeywords, callback) {
-	var newsFeedIDs = [], mediaFeedIDs = [];
-	for (i = 0; i < newsfeed.length; i++)
-		newsFeedIDs.push(newsfeed[i].id + '');
-	for (i = 0; i < mediafeed.length; i++)
-		mediaFeedIDs.push(mediafeed[i].id + '');
-
+var deleteFeedByKeyword = function(userId, keyword, callback) {
+	var deletednews = false, deletedmedia = false;
 	async.parallel([
 		function(cb) {
-			Article.find({ _id: {"$in": newsFeedIDs} }).exec(function(err, articles) {
+			NewsHub.find({userId: userId}).exec(function(err, hubs) {
 				if (err)
 					return cb(err);
-				async.each(articles, function(article, cb1) {
-					var Index = article.user.indexOf(userId);
-					var ID = newsFeedIDs.indexOf(article._id + '');
-					// console.log(article._id);
-					// console.log(ID);
-
-					if (Index === -1) {
-						article.user.push(userId);
-						article.userStar.push(false);
-						article.userKeywords.push({
-							keywords: []
+				if (hubs === null)
+					return cb();
+				async.each(hubs, function(hub, cb1) {
+					if (hub.userKeywordList.length === 1 && hub.userKeywordList[0] === keyword)
+						hub.remove(function(err) {
+							if (err)
+								return cb1(err);
+							deletednews = true;
+							cb1();
 						});
-						article.userKeywords[article.user.indexOf(userId)].keywords.push(newsKeywords[ID]);
-						newsfeed[ID].hashtag = article.userKeywords[article.user.indexOf(userId)].keywords[0];
-						newsfeed[ID].star = false;
-					}
 					else {
-						var keywordList = article.userKeywords[Index].keywords;
-						var hashtag = '';
-						for (j = 0; j < keywordList.length; j++)
-							hashtag += keywordList[j] + ' ';
-						if (keywordList.indexOf(newsKeywords[ID]) === -1) {
-							article.userKeywords[article.user.indexOf(userId)].keywords.push(newsKeywords[ID]);
-							hashtag += newsKeywords[ID];
-						}
-						newsfeed[ID].hashtag = hashtag;
-						newsfeed[ID].star = article.userStar[Index];
+						var Index = hub.userKeywordList.indexOf(keyword);
+						if (Index === -1)
+							return cb1();
+						hub.userKeywordList.splice(Index, 1);
+						hub.evalScore -= hub.evalScoreList[Index];
+						hub.evalScoreList.splice(Index, 1);
+						hub.save(function(err) {
+							if (err)
+								return cb1(err);
+							deletednews = true;
+							cb1();
+						});
 					}
-
-					article.save();
-					cb1();
 				}, function(err) {
 					if (err)
 						return cb(err);
@@ -188,35 +269,33 @@ var getUsersArticleInfo = function(userId, newsfeed, mediafeed, newsKeywords, me
 				});
 			});
 		}, function(cb) {
-			Media.find({ _id: {"$in": mediaFeedIDs} }).exec(function(err, articles) {
-				// console.log(articles);
+			MediaHub.find({userId: userId}).exec(function(err, hubs) {
 				if (err)
 					return cb(err);
-				async.each(articles, function(article, cb2) {
-					var Index = article.user.indexOf(userId);
-					var ID = mediaFeedIDs.indexOf(article._id + '');
-
-					// console.log(article._id);
-					// console.log(ID);
-					if (Index === -1) {
-						article.user.push(userId);
-						article.userStar.push(false);
-						article.userKeywords.push({
-							keywords: []
+				if (hubs === null)
+					return cb();
+				async.each(hubs, function(hub, cb1) {
+					if (hub.userKeywordList.length === 1 && hub.userKeywordList[0] === keyword)
+						hub.remove(function(err) {
+							if (err)
+								return cb1(err);
+							deletedmedia = true;
+							cb1();
 						});
-						article.userKeywords[article.user.indexOf(userId)].keywords.push(mediaKeywords[ID]);
-						mediafeed[ID].star = false;
-					}
 					else {
-						var keywordList = article.userKeywords[Index].keywords;
-						if (keywordList.indexOf(mediaKeywords[ID]) === -1)
-							article.userKeywords[article.user.indexOf(userId)].keywords.push(mediaKeywords[ID]);
-							
-						mediafeed[ID].star = article.userStar[Index];
+						var Index = hub.userKeywordList.indexOf(keyword);
+						if (Index === -1)
+							return cb1();
+						hub.userKeywordList.splice(Index, 1);
+						hub.evalScore -= hub.evalScoreList[Index];
+						hub.evalScoreList.splice(Index, 1);
+						hub.save(function(err) {
+							if (err)
+								return cb1(err);
+							deletedmedia = true;
+							cb1();
+						});
 					}
-
-					article.save();
-					cb2();
 				}, function(err) {
 					if (err)
 						return cb(err);
@@ -227,46 +306,202 @@ var getUsersArticleInfo = function(userId, newsfeed, mediafeed, newsKeywords, me
 	], function(err) {
 		if (err)
 			return callback(err);
-		callback(null, newsfeed, mediafeed);
-	});
-};
-module.exports.getUsersArticleInfo = getUsersArticleInfo;
-
-var updateFavorite = function(userId, articleId, callback) {
-	Article.findById(articleId).exec(function(err, article) {
-		if (err)
-			return callback(false);
-		var Index = article.user.indexOf(userId);
-		if (Index === -1)
-			return callback(false);
-		var tmp = [];
-
-		for (i in article.userStar)
-			tmp.push(article.userStar[i]);
-		tmp[Index] = !tmp[Index];
-		article.userStar = tmp;
-		article.save(function(err) {
+		refreshFeed(userId, function(err, results) {
 			if (err)
-				return callback(false);
-			callback(true);
+				return callback(err);
+			callback(null, results);
 		});
 	});
 };
-module.exports.updateFavorite = updateFavorite;
+module.exports.deleteFeedByKeyword = deleteFeedByKeyword;
 
-var getFavorite = function(userId, callback) {
-	
-};
-module.exports.getFavorite = getFavorite;
+var updateFeed = function(userId, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err)
+			return callback(err);
+		var updatedNewsFeed = false, updatedMediaFeed = false;
 
-var searchInstaFeed = function(q, callback) {
-	var Insta = require('../serverController/instagram.js');
-
-	// Insta.searchUser(q, function(data) {
-		Insta.searchMediaTags(q, function(images) {
-			// images = images.concat(data);
-			callback(images);
+		async.eachSeries(user.wordList, function(word, cb) {
+			updateFeedByKeyword(userId, word, function(err, updatednews, updatedmedia) {
+				if (err)
+					return cb(err);
+				if (updatednews)
+					updatedNewsFeed = true;
+				if (updatedMediaFeed)
+					updatedMediaFeed = true;
+				cb();
+			});
+		}, function(err) {
+			if (err)
+				return callback(err);
+			callback(null, updatedNewsFeed, updatedMediaFeed);
 		});
-	// });
+	});
 };
-module.exports.searchInstaFeed = searchInstaFeed;
+module.exports.updateFeed = updateFeed;
+
+var getNewsFeed = function(userId, size, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err)
+			return callback(err);
+		var wordList = [];
+		for (i = 0; i < user.checkList.length; i++)
+			if (user.checkList[i])
+				wordList.push(user.wordList[i]);
+		// console.log(wordList);
+		NewsHub.find({userId: userId})
+		.sort({dayScore: -1, evalScore: -1, publishedDate: -1})
+		.exec(function(err, hubs) {
+			if (err)
+				return callback(err);
+			var newsfeed = [];
+			for (i = 0; i < hubs.length; i++) {
+				var Intersection = _.intersection(wordList, hubs[i].userKeywordList);
+				if (Intersection.length > 0) {
+					var hashtag = '';
+					for (j = 0; j < Intersection.length; j++)
+						hashtag += Filter.keywordToHashtag(Intersection[j]) + ' ';
+					newsfeed.push({
+						id: hubs[i].articleId,
+						url: hubs[i].url,
+						title: hubs[i].title,
+						thumbnail: hubs[i].thumbnail,
+						source: hubs[i].source,
+						publishedDate: hubs[i].publishedDate,
+						dayScore: hubs[i].dayScore,
+						hashtag: hashtag,
+						star: hubs[i].star,
+						timeline: false
+					});
+				}
+			}
+			if (newsfeed.length > 0) {
+				newsfeed[0].timeline = true;
+				for (i = 1; i < newsfeed.length; i++)
+					if (newsfeed[i].dayScore != newsfeed[i-1].dayScore)
+						newsfeed[i].timeline = true;
+			}
+			Pagination.paginate(newsfeed, size, function(newsFeedResult, moreDataNews) {
+				callback(null, newsFeedResult, moreDataNews);
+			});
+		});
+	});
+};
+module.exports.getNewsFeed = getNewsFeed;
+
+var getNewsByKeyword = function(userId, keyword, size, callback) {
+	NewsHub.find({userId: userId})
+	.sort({dayScore: -1, evalScore: -1, publishedDate: -1})
+	.exec(function(err, hubs) {
+		if (err)
+			return callback(err);
+		var newsfeed = [];
+		for (i = 0; i < hubs.length; i++)
+			if (hubs[i].userKeywordList.indexOf(keyword) !== -1) {
+				var hashtag = '';
+				for (j = 0; j < hubs[i].userKeywordList.length; j++)
+					hashtag += Filter.keywordToHashtag(hubs[i].userKeywordList[j]) + ' ';
+				newsfeed.push({
+					id: hubs[i].articleId,
+					url: hubs[i].url,
+					title: hubs[i].title,
+					thumbnail: hubs[i].thumbnail,
+					source: hubs[i].source,
+					publishedDate: hubs[i].publishedDate,
+					dayScore: hubs[i].dayScore,
+					hashtag: hashtag,
+					star: hubs[i].star,
+					timeline: false
+				});
+			}
+		newsfeed[0].timeline = true;
+		for (i = 1; i < newsfeed.length; i++)
+			if (newsfeed[i].dayScore != newsfeed[i-1].dayScore)
+				newsfeed[i].timeline = true;
+		Pagination.paginate(newsfeed, size, function(newsFeedResult, moreDataNews) {
+			callback(null, newsFeedResult, moreDataNews);
+		});
+	});
+};
+module.exports.getNewsByKeyword = getNewsByKeyword;
+
+var getMediaFeed = function(userId, size, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err)
+			return callback(err);
+		var wordList = [];
+		for (i = 0; i < user.checkList.length; i++)
+			if (user.checkList[i])
+				wordList.push(user.wordList[i]);
+
+		MediaHub.find({userId: userId})
+		.sort({dayScore: -1, evalScore: -1, publishedDate: -1})
+		.exec(function(err, hubs) {
+			if (err)
+				return callback(err);
+			var mediafeed = [];
+			for (i = 0; i < hubs.length; i++)
+				if (_.intersection(wordList, hubs[i].userKeywordList).length > 0) {
+					mediafeed.push({
+						id: hubs[i].articleId,
+						url: hubs[i].url,
+						title: hubs[i].title,
+						thumbnail: hubs[i].thumbnail,
+						source: hubs[i].source,
+						avatar: hubs[i].avatar,
+						publishedDate: hubs[i].publishedDate,
+						dayScore: hubs[i].dayScore,
+						star: hubs[i].star,
+						timeline: false
+					});
+				}
+			if (mediafeed.length > 0) {
+				mediafeed[0].timeline = true;
+				for (i = 1; i < mediafeed.length; i++)
+					if (mediafeed[i].dayScore != mediafeed[i-1].dayScore)
+						mediafeed[i].timeline = true;
+			}
+			Pagination.paginate(mediafeed, size, function(mediaFeedResult, moreDataMedia) {
+				callback(null, mediaFeedResult, moreDataMedia);
+			});
+		});
+	});
+};
+module.exports.getMediaFeed = getMediaFeed;
+
+var getMediaByKeyword = function(userId, keyword, size, callback) {
+	MediaHub.find({userId: userId})
+	.sort({dayScore: -1, evalScore: -1, publishedDate: -1})
+	.exec(function(err, hubs) {
+		if (err)
+			return callback(err);
+		var mediafeed = [];
+		for (i = 0; i < hubs.length; i++)
+			if (hubs[i].userKeywordList.indexOf(keyword) !== -1) {
+				var hashtag = '';
+				for (j = 0; j < hubs[i].userKeywordList.length; j++)
+					hashtag += Filter.keywordToHashtag(hubs[i].userKeywordList[j]) + ' ';
+				mediafeed.push({
+					id: hubs[i].articleId,
+					url: hubs[i].url,
+					title: hubs[i].title,
+					thumbnail: hubs[i].thumbnail,
+					source: hubs[i].source,
+					avatar: hubs[i].avatar,
+					publishedDate: hubs[i].publishedDate,
+					dayScore: hubs[i].dayScore,
+					hashtag: hashtag,
+					star: hubs[i].star,
+					timeline: false
+				});
+			}
+		mediafeed[0].timeline = true;
+		for (i = 1; i < mediafeed.length; i++)
+			if (mediafeed[i].dayScore != mediafeed[i-1].dayScore)
+				mediafeed[i].timeline = true;
+		Pagination.paginate(mediafeed, size, function(mediaFeedResult, moreDataMedia) {
+			callback(null, mediaFeedResult, moreDataMedia);
+		});
+	});
+};
+module.exports.getMediaByKeyword = getMediaByKeyword;

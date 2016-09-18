@@ -41,9 +41,9 @@ function($rootScope, $scope, $sce, $ionicSideMenuDelegate, $ionicPopup, apiServi
 
             confirmPopup.then(function(res) {
                 if (res) {
-                    apiServices.updateFavorite($rootScope.currentReadingState.id, function() {
-                        apiServices.getFavorite($rootScope.favoriteNews.length - LOAD_SIZE, 
-                        $rootScope.favoriteMedia.length - LOAD_SIZE, function() {
+                    apiServices.updateNewsFavorite($rootScope.currentReadingState.id, function() {
+                        apiServices.getNewsFavorite($rootScope.favoriteNews.length - LOAD_SIZE, 
+                        function() {
                             $scope.favorite = false;
                         });
                     });    

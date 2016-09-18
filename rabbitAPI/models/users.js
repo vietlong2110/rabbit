@@ -26,9 +26,7 @@ var User = new Schema({
 		min: Number
 	},
 	wordList: [String],
-	checkList: [Boolean],
-	articles: [Schema.Types.ObjectId],
-	medias: [Schema.Types.ObjectId]
+	checkList: [Boolean]
 });
 
 User.pre('save', function(callback) {

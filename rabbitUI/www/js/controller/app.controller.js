@@ -89,8 +89,10 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
                 $rootScope.keywords[i].star = false;
         if (item === 'Newsfeed') {
             $scope.onNewsfeed = true;
-            apiServices.getFeed(0, 0, function() {
+            apiServices.getNewsFeed(0, function() {
                 $rootScope.currentReadingState = $rootScope.news[0];
+            });
+            apiServices.getMediaFeed(0, function() {
                 $rootScope.currentSocialReadingState = $rootScope.media[0];
             });
 
@@ -102,8 +104,10 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
         }
         else if (item === 'Favorites') {
             $scope.onFavorite = true;
-            apiServices.getFavorite(0, 0, function() {
+            apiServices.getNewsFavorite(0, function() {
                 $rootScope.currentReadingState = $rootScope.favoriteNews[0];
+            });
+            apiServices.getMediaFavorite(0, function() {
                 $rootScope.currentSocialReadingState = $rootScope.favoriteMedia[0];
             });
 
@@ -123,8 +127,10 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
             $rootScope.keywords[$rootScope.keywords.indexOf(item)].star = true;
             $rootScope.followingKeyword = item.keyword;
 
-            apiServices.getFeedByKeyword(item.keyword, 0, 0, function() {
+            apiServices.getNewsByKeyword(item.keyword, 0, function() {
                 $rootScope.currentReadingState = $rootScope.followingNews[0];
+            });
+            apiServices.getMediaByKeyword(item.keyword, 0, function() {
                 $rootScope.currentSocialReadingState = $rootScope.followingMedia[0];
             });
 

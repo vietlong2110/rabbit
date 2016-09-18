@@ -19,12 +19,7 @@ var Article = new Schema({
 	titleKeywords: [String],
 	tfTitle: [Number],
 	keywords: [String],
-	tf: [Number],
-	user: [Schema.Types.ObjectId],
-	userKeywords: [{
-		keywords: [String]
-	}],
-	userStar: [Boolean]
+	tf: [Number]
 });
 
 module.exports = mongoose.model('articles', Article);

@@ -1,10 +1,14 @@
 //Register Controller
 angular.module('register.controller', [])
-.controller('RegisterController', function($scope, $ionicPopup, $state, AuthService) {
+.controller('RegisterController', function($scope, $ionicPopup, $ionicHistory, $state, AuthService) {
     $scope.user = {
         email: '',
         password: '',
         passwordConfirm: ''
+    };
+
+    $scope.back = function() {
+        $ionicHistory.goBack();
     };
 
     $scope.signup = function() {

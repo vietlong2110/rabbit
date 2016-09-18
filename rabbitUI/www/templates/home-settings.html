@@ -1,13 +1,12 @@
 <ion-modal-view>   
-    <ion-header-bar align-title="center" class="bar-calm">
-        <i ng-click="closeSetting()" 
-        class="button button-icon icon-left ion-ios-arrow-back button-clear">
-            Back
+    <ion-header-bar id="searchBar" align-title="center" class="bar-calm item-input-inset">
+        <i id="backButton" ng-click="closeSetting()" 
+        class="button-icon icon-left ion-ios-arrow-back">
         </i>
         
-        <label id="search2" class="item-input item-input-wrapper">
+        <label id="search2" class="item-input-wrapper">
             <i class="icon icon-left ion-ios-search placeholder-icon"></i>
-            <input id="searchBarSetting" type="search" ng-model="query" placeholder="Search">
+            <input id="searchBar" type="search" ng-model="query" placeholder="Search">
         </label>
         <!-- <h1 id="list" class="title">Newsfeed Settings</h1>
 

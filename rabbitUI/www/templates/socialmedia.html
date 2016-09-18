@@ -19,23 +19,19 @@
         <ion-refresher pulling-icon="" on-refresh="doRefresh()">
         </ion-refresher>
 
-        <div class="list card" ng-repeat="item in media">
+        <div class="card" ng-repeat="item in media">
             <ion-item ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-                <div class="item-avatar item-icon-right" ng-class="{'star': item.star}">
-                    <img src="{{item.avatar}}" alt="avatar">
-                    <h2 class="padding-top">{{item.source}}</h2>
-                    <i id="media-star" class="button button-clear icon ion-star"
-                    ng-click="toggleStar($event, item)" ng-class="{'button-energized': item.star}"></i>
-                </div>
 
                 <div class="item-image">
                     <img src="{{item.thumbnail}}" alt="thumbnail">
                 </div>
 
-                <div class="item-body">
-                    <h2>{{item.title}}</h2>
-                    <p>{{item.hashtag}}</p>
-                </div>
+                <!-- <div class="item-body"> -->
+                    <div class="item-avatar">
+                        <img src="{{item.avatar}}" alt="avatar">
+                        <h2>{{item.title}}</h2>
+                    </div>
+                <!-- </div> -->
             </ion-item>
         </div>
 

@@ -1,24 +1,26 @@
 <ion-view>
-    
 	<ion-content id="signin-background" class="padding">
 		<i id="closeButton" ng-click="back()"
-	        class="button button-icon ion-close-round">
-	    </i>
+        class="button button-icon ion-close-round">
+        </i>
 
-		<div id="register-group">
+		<div id="field-group">
 			<label id="login-field" class="item item-input">
 				<input type="text" placeholder="Email" ng-model="user.email">
 			</label>
 			<label id="login-field" class="item item-input">
 				<input type="password" placeholder="Password" ng-model="user.password">
 			</label>
-			<label id="login-field" class="item item-input">
-				<input type="password" placeholder="Password Confirm" ng-model="user.passwordConfirm">
-			</label>
 		</div>
 
-		<button id="signin" class="button" ng-click="signup()">
-			Sign up
+		<button id="signin" class="button" ng-click="login()">
+			Sign in
+		</button>
+		<button id="forgotpass" class="button button-clear">
+			Forgot password
+		</button>
+		<button id="signup" class="button button-clear" ui-sref="register">
+			Create an account
 		</button>
 	</ion-content>
 </ion-view>

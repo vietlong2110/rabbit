@@ -2,7 +2,7 @@
 angular.module('news.controller', [])
 .controller('NewsController', 
 function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate,
-$ionicViewSwitcher, LOAD_SIZE) {
+$ionicViewSwitcher, API_ENDPOINT, LOAD_SIZE) {
     $rootScope.moreDataNews = false;
 
     $scope.onSearch = function() { // enter search part
@@ -15,10 +15,9 @@ $ionicViewSwitcher, LOAD_SIZE) {
     };
 
     $scope.doRefresh = function() {
-        $http.get('http://localhost:8080/clientapi/getfeed', {
+        $http.get(API_ENDPOINT.api + '/getnewsfeed', {
             params: {
-                sizenews: 0,
-                sizemedia: $rootScope.media.length - LOAD_SIZE
+                size: 0
             }
         }).success(function(data) {
             $rootScope.news = data.news; // newsfeed
@@ -34,13 +33,13 @@ $ionicViewSwitcher, LOAD_SIZE) {
         e.preventDefault(); 
         e.stopPropagation();
 
-        apiServices.updateFavorite(item.id, function() {
+        apiServices.updateNewsFavorite(item.id, function() {
             item.star = !item.star;
         });
     };
 
     $scope.loadMore = function() {
-        apiServices.getFeed($rootScope.news.length, $rootScope.media.length - LOAD_SIZE, function() {});
+        apiServices.getNewsFeed($rootScope.news.length, function() {});
         $scope.$broadcast('scroll.infiniteScrollComplete');
     };
 

@@ -135,6 +135,8 @@ var saveArticle = function(articles, callback) {
 
 	async.each(articles, function(article, cb) {
 		var query = {url: article.url};
+		if (article.publishedDate === null)
+			article.publishedDate = new Date();
 		var update = {
 			$set: {
 				title: article.title,
@@ -201,6 +203,8 @@ var saveMediaArticle = function(articles, callback) {
 
 	async.each(articles, function(article, cb) {
 		var query = {url: article.url};
+		if (article.publishedDate === null)
+			article.publishedDate = new Date();
 		var update = {
 			$set: {
 				title: article.title,

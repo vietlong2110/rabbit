@@ -6,7 +6,7 @@
     </ion-nav-title>
     <ion-nav-buttons side="secondary">
         <a href="#/tabs/reading"> 
-            <i class="icon icon-clear ion-ios-book button button-icon"></i>
+            <i class="icon ion-ios-book-outline button button-icon"></i>
         </a>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
@@ -15,21 +15,26 @@
         </button>
     </ion-nav-buttons>
 
-    <ion-content>
+    <ion-content class="background">
         <ion-refresher pulling-icon="" on-refresh="doRefresh()">
         </ion-refresher>
         
-        <ion-list id="newsfeed">
-            <ion-item ng-class="{'star': item.star}" ng-repeat="item in followingNews"
-            class="item-thumbnail-left item-text-wrap item-icon-right" ng-click="assignCurrentReading(item)" 
-            href="#/tabs/reading">
+        <div id="newsfeed" class="card" ng-repeat="item in followingNews" can-swipe="true">
+            <ion-item id="item-newsfeed" ng-class="{'star': item.star}"
+            class="item-thumbnail-left item-text-wrap item-icon-right" 
+            ng-click="assignCurrentReading(item)" href="#/tabs/reading">
                 <img src="{{item.thumbnail}}" alt="thumbnail">
-                <h2>{{item.title}}</h2>
-                <p>{{item.hashtag}}</p>
-                <i class="button button-clear icon ion-star padding-left" ng-click="toggleStar($event, item)"
-                ng-class="{'button-energized': item.star}"></i>
+                <h2>{{item.title | limitTo: 55}}{{item.title.length > 55 ? '&hellip;' : ''}}</h2>
+                <!-- <h2>{{item.title}}</h2> -->
+                <p id="hashtag">
+                    {{item.hashtag | limitTo: 25}}{{item.hashtag.length > 25 ? '&hellip;' : ''}}
+                </p>
+                <i id="bookmark" class="icon ion-bookmark padding-left stable" 
+                ng-click="toggleStar($event, item)" ng-class="{'energized': item.star}"></i>
+                <!-- <i class="icon ion-social-facebook padding-left"></i> -->
+                <!-- <i id="twitter-icon" class="icon ion-social-twitter padding-left"></i> -->
             </ion-item>
-        </ion-list>
+        </div>
 
         <ion-infinite-scroll ng-if="moreDataFollowing" on-infinite="loadMore()" distance="1%">
         </ion-infinite-scroll>

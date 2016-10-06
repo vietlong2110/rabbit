@@ -13,7 +13,7 @@ var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var cache = [], saved = true;
 
-// setInterval(function() {
+setInterval(function() {
 	if (saved) {
 		saved = false;
 		var articles = [];
@@ -112,4 +112,4 @@ var cache = [], saved = true;
 		});
 	}
 	else console.log(cache.length);
-// }, 60 * 1000);
+}, 60 * 1000);

@@ -84,9 +84,13 @@ setInterval(function() {
 								});
 							});
 						}
-						else {
+						else if (cache.length > 0) {
 							console.log('This article was saved');
 							cache.shift();
+							i++;
+							cb2();
+						}
+						else {
 							i++;
 							cb2();
 						}

@@ -16,7 +16,7 @@ var extractContent = function(title, url, callback) { //extract content of an ar
 
 		 	boilerpipe.getText(function(err, content) {
 		 		if (err)
-		 			callback(err);
+		 			return callback(err);
 		 		
 				extractKeyword(title, content,
 				function(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
@@ -86,6 +86,8 @@ var extractImage = function(url, callback) { //extract thumbnail of an article u
 				html: html
 		 	});
 			boilerpipe.getImages(function(err, images) {
+				if (err)
+					return callback(err);
 				if (images.length > 0)
 					callback(images[0].src);
 				else callback(extractImageFromContent(html));

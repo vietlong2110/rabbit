@@ -13,7 +13,7 @@ var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var cache = [], saved = true;
 
-setInterval(function() {
+// setInterval(function() {
 	if (saved) {
 		saved = false;
 		var articles = [];
@@ -55,6 +55,12 @@ setInterval(function() {
 					Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 						if (article === null) {
 							console.log('Start extracting ' + cache[0].link);
+							if (cache[0].link.substr(cache[0].link.length-4, 4) === ".mp4") {
+								cache.shift();
+								i++;
+								return cb2();
+							}
+
 							Extract.extractImage(cache[0].link, function(thumbnail) {
 								Extract.extractContent(entities.decode(cache[0].title), cache[0].link,
 								function(err, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
@@ -84,13 +90,9 @@ setInterval(function() {
 								});
 							});
 						}
-						else if (cache.length > 0) {
+						else {
 							console.log('This article was saved');
 							cache.shift();
-							i++;
-							cb2();
-						}
-						else {
 							i++;
 							cb2();
 						}
@@ -110,4 +112,4 @@ setInterval(function() {
 		});
 	}
 	else console.log(cache.length);
-}, 60 * 1000);
+// }, 60 * 1000);

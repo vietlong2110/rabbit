@@ -155,8 +155,8 @@ router.post('/fblogin', function(req, res) {
 
 router.get('/getlikes', function(req, res) {
 	var FB = require('../clientController/fb.js');
-
-	FB.getUserLikes(req.query.token, function(data) {
+	var token = "EAAM98EFnHGMBAMZAi6NhfGrJeaI5MWLSGp93NQAQA8VCumVFgCZBnu6a9a0TqseQ9gTZANAdNad1AleSwIBKf4GVULWtd7Un6rsywJnr3NttbAZCSOT9lVvtAlmJ8el7iAPpmcwvhEHWYaFcgJn2Nt7OUd0ZAZBycZD"
+	FB.getUserLikes(token, function(data) {
 		res.json({data: data});
 	});
 });

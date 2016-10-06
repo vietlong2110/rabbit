@@ -32,8 +32,9 @@ function($rootScope, $scope, $state, $ionicPopup, $ionicScrollDelegate, apiServi
 	};
 
     $scope.loadMore = function() {
-        apiServices.getNewsFavorite($rootScope.favoriteNews.length, function() {});
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        apiServices.getNewsFavorite($rootScope.favoriteNews.length, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
 	$scope.assignCurrentReading = function(item) {

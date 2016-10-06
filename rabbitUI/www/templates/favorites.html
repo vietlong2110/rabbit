@@ -1,7 +1,7 @@
 <ion-view>
     <ion-nav-title>
         <button id="title" on-double-tap="scrollTop()" class="button button-clear">
-            Favorites
+            Read Later
         </button>
     </ion-nav-title>
     <ion-nav-buttons side="secondary">
@@ -15,17 +15,22 @@
     </ion-nav-buttons>
 
     <ion-content class="background">
-        <ion-list id="newsfeed">
-            <ion-item collection-repeat="item in favoriteNews" ng-click="assignCurrentReading(item)" 
-            href="#/tabs/reading" class="item-thumbnail-left item-text-wrap item-icon-right">
+        <div id="newsfeed" class="card" ng-repeat="item in favoriteNews">
+            <ion-item id="item-newsfeed" ng-class="{'star': item.star}"
+            class="item-thumbnail-left item-text-wrap item-icon-right" 
+            ng-click="assignCurrentReading(item)" href="#/tabs/reading">
                 <img src="{{item.thumbnail}}" alt="thumbnail">
-                <h2>{{item.title}}</h2>
-                <p>{{item.hashtag}}</p>
-                <button class="button button-clear button-energized icon ion-star padding-left"
-                ng-click="deleteItem($event, item)">
-                </button>
+                <h2>{{item.title | limitTo: 55}}{{item.title.length > 55 ? '&hellip;' : ''}}</h2>
+                <!-- <h2>{{item.title}}</h2> -->
+                <p id="hashtag">
+                    {{item.hashtag | limitTo: 25}}{{item.hashtag.length > 25 ? '&hellip;' : ''}}
+                </p>
+                <i id="bookmark" class="icon ion-bookmark padding-left stable" 
+                ng-click="deleteItem($event, item)" ng-class="{'energized': item.star}"></i>
+                <!-- <i class="icon ion-social-facebook padding-left"></i> -->
+                <!-- <i id="twitter-icon" class="icon ion-social-twitter padding-left"></i> -->
             </ion-item>
-        </ion-list>
+        </div>
 
         <ion-infinite-scroll ng-if="moreDataFavorite" on-infinite="loadMore()" distance="1%">
         </ion-infinite-scroll>

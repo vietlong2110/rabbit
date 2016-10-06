@@ -1,0 +1,34 @@
+<ion-view>
+    <ion-nav-title>
+        <button id="title" on-double-tap="scrollTop()" class="button button-clear">
+            Follow topics below
+        </button>
+    </ion-nav-title>
+
+    <ion-nav-buttons side="right">
+        <button ng-click="onSearch()" 
+        class="button button-icon icon-right ion-ios-search-strong button-clear">
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content class="has-header background">
+        <div class="list card" ng-repeat="item in suggestKeywords">
+            <!-- <p class="fancy"><span>Fill your hub with topics below</span></p> -->
+            <ion-item ng-click="search(item.name)" class="item item-image item-icon-right social-image">
+                <i class="icon ion-plus-round float-not-favorite" 
+                ng-click="follow($event, item)" ng-hide="item.followed"></i>
+                <i class="icon ion-checkmark float-favorite" 
+                ng-click="unfollow($event, item)" ng-show="item.followed"></i>
+                <div class="layer">
+                    <img src="{{item.cover}}">
+                </div>
+                <div class="center-avatar">
+                    <img src="{{item.avatar}}">
+                </div>
+                <div class="center-keyword">
+                    <h2>{{item.name}}</h2>
+                </div>
+            </ion-item>
+        </div>
+    </ion-content>
+</ion-view>

@@ -38,8 +38,9 @@ $ionicViewSwitcher, LOAD_SIZE, API_ENDPOINT) {
     };
 
     $scope.loadMore = function() {
-        apiServices.getMediaFeed($rootScope.media.length, function() {});
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        apiServices.getMediaFeed($rootScope.media.length, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
     $scope.assignCurrentReading = function(item) { // save the last link that we read

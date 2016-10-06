@@ -1,7 +1,7 @@
 <ion-view>
     <ion-nav-title>
         <button id="title" on-double-tap="scrollTop()" class="button button-clear">
-            Favorites
+            Read Later
         </button>
     </ion-nav-title>
     <ion-nav-buttons side="secondary">
@@ -16,23 +16,17 @@
 
     <ion-content class="background">
         <div class="list card" ng-repeat="item in favoriteMedia">
-            <ion-item ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-                <div class="item item-avatar item-icon-right" ng-class="{'star': item.star}">
-                    <img src="{{item.avatar}}" alt="avatar">
-                    <h2 class="padding-top">{{item.source}}</h2>
-                    <i id="media-star" class="button button-clear button-energized icon ion-star" 
-                    ng-click="deleteItem($event, item)"></i>
-                </div>
-
-                <div class="item item-image media-image">
-                    <img src="{{item.thumbnail}}" alt="thumbnail">
-                </div>
-
-                <div class="item item-body">
-                    <h2>{{item.title}}</h2>
-                    <p>{{item.hashtag}}</p>
-                </div>
-            </ion-item>
+            <div class="item item-image item-icon-right social-image">
+                <i id="social-bookmark" class="icon ion-bookmark float-favorite" 
+                ng-click="deleteItem($event, item)" ng-show="item.star"></i>
+                <a ng-click="assignCurrentReading(item)" href="#/tabs/socialreading"
+                on-double-tap="toggleStar($event, item)">
+                <img src="{{item.thumbnail}}">
+            </div>
+            <div class="item item-avatar">
+                <img src="{{item.avatar}}">
+                <h2>{{item.title}}</h2>
+            </div>
         </div>
 
         <ion-infinite-scroll ng-if="moreDataMediaFavorite" on-infinite="loadMore()" distance="1%">

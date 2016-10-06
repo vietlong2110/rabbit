@@ -4,6 +4,19 @@ angular.module('starter.services', [])
 	var LOCAL_TOKEN_KEY = 'yourTokenKey';
 	var isAuthenticated = false;
 	var authToken;
+	var intervalUpdate;
+
+	function update() {
+		intervalUpdate = setInterval(function() {
+	        $http.post(API_ENDPOINT.api + '/updatefeed').success(function(data) {
+	            console.log(data.success);
+	        });
+	    }, 60 * 15 * 1000);
+	}
+
+	function stopUpdate() {
+		clearInterval(intervalUpdate);
+	}
 
 	function loadUserCredentials() {
 		var token = window.localStorage.getItem(LOCAL_TOKEN_KEY);
@@ -40,7 +53,7 @@ angular.module('starter.services', [])
 	return {
 		fblogin: function() {
 			return $q(function(resolve, reject) {
-				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile', 'publish_action'], 
+				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile'], 
 				{redirect_uri: 'http://localhost/callback'}).then(function(result) {
 					if (result.access_token) {
 						$http.post(API_ENDPOINT.url + '/fblogin', {token: result.access_token})
@@ -48,6 +61,7 @@ angular.module('starter.services', [])
 							if (res.data.success) {
 								storeUserCredentials(res.data.token);
 								resolve(res.data.message);
+								// resolve(result.access_token);
 							}
 							else reject(res.data.message);
 						});
@@ -63,6 +77,7 @@ angular.module('starter.services', [])
 				$http.post(API_ENDPOINT.url + '/login', user).then(function(result) {
 					if (result.data.success) {
 						storeUserCredentials(result.data.token);
+						update();
 						resolve(result.data.message);
 					}
 					else reject(result.data.message);
@@ -78,8 +93,10 @@ angular.module('starter.services', [])
 				});
 			});
 		},
-		logout: function() {
+		logout: function(callback) {
+			stopUpdate();
 			destroyUserCredentials();
+			callback();
 		},
 		isAuthenticated: function() {
 			return isAuthenticated;
@@ -126,6 +143,8 @@ angular.module('starter.services', [])
 	var updateMediaFavoriteAPI = API_ENDPOINT.api + '/updatemediafavorite';
 
 	var getMediaFavoriteAPI = API_ENDPOINT.api + '/getmediafavorite';
+
+	var getSuggestionAPI = API_ENDPOINT.api + '/getsuggestion';
 
 	return {
 		getNewsFeed: function(size, callback) {
@@ -180,6 +199,11 @@ angular.module('starter.services', [])
                 callback();
 			});
 		},
+		getSuggestion: function() {
+			$http.get(getSuggestionAPI).success(function(data) {
+				$rootScope.suggestKeywords = data.likes;
+			});
+		},
 		getList: function() {
 			$http.get(getListAPI).success(function(data) {
             	$rootScope.keywords = data.keywords;
@@ -199,7 +223,7 @@ angular.module('starter.services', [])
 	            callback();
             });
 		},
-		search: function(value, sizenews, sizemedia) {
+		search: function(value, sizenews, sizemedia, callback) {
 			$http.get(searchAPI, {
 	            params: {
 	                q: value,
@@ -207,7 +231,7 @@ angular.module('starter.services', [])
 	                sizemedia: sizemedia
 	            }
 	        }).success(function(data) {
-	        	$ionicLoading.hide();
+	        	// $ionicLoading.hide();
 	        	$rootScope.keywordSearch = data.keywordSearch;
 	            $rootScope.queryTitle = data.queryTitle;
 
@@ -216,6 +240,7 @@ angular.module('starter.services', [])
 
 	            $rootScope.searchMediaResult = data.mediaFeedResult;
 	            $rootScope.moreDataMediaSearch = data.moreDataMedia;
+	            callback();
 	        });
 		},
 		suggest: function(value) {
@@ -337,6 +362,8 @@ angular.module('starter.services', [])
 	                $state.go('tabs.followinglist');
 	            else $state.go('tabs.socialfollowinglist');
 	        }
+	        else if ($rootScope.currentNewsfeedState === 'Discover') 
+	        	$state.go('tabs.discover');
 	        else { 
 	            if ($rootScope.currentTab === 'News')
 	                $state.go('tabs.news');

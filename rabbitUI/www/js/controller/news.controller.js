@@ -38,9 +38,16 @@ $ionicViewSwitcher, API_ENDPOINT, LOAD_SIZE) {
         });
     };
 
+    $scope.share = function(e, item) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+    };
+
     $scope.loadMore = function() {
-        apiServices.getNewsFeed($rootScope.news.length, function() {});
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        apiServices.getNewsFeed($rootScope.news.length, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
     $scope.assignCurrentReading = function(item) { // save the last link that we read

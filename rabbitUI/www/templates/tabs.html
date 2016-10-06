@@ -13,25 +13,25 @@
             <ion-list>
                 <ion-item menu-close id="header-menu" class="item-icon-left item-icon-right"
                 ng-click="chooseItem('Newsfeed')" ng-class="{'chosen': onNewsfeed}">
-                    <i ng-class="{'calm': onNewsfeed}" class="icon ion-ios-list stable"></i>
+                    <i ng-class="{'calm': onNewsfeed}" class="icon ion-home stable"></i>
 
-                    Newsfeed
+                    News Hub
 
                     <i ng-class="{'calm': onNewsfeed}" class="icon ion-gear-a stable"
                     ng-click="openSetting($event)"></i>
                 </ion-item>
 
                 <ion-item id="header-menu" ng-click="toggleList()" 
-                ng-class="{'chosen': !onNewsfeed && !onFavorite && !onFollowing}"
+                ng-class="{'chosen': !onNewsfeed && !onFavorite && !onFollowing && !onDiscover}"
                 class="item item-icon-left">
-                    <i ng-class="{'chosen': !onNewsfeed && !onFavorite && !onFollowing}"
+                    <i ng-class="{'chosen': !onNewsfeed && !onFavorite && !onFollowing && !onDiscover}"
                     class="icon ion-ios-arrow-right stable" ng-hide="showList"></i>
-                    <i ng-class="{'chosen': !onNewsfeed && !onFavorite && !onFollowing}"
+                    <i ng-class="{'chosen': !onNewsfeed && !onFavorite && !onFollowing && !onDiscover}"
                     class="icon ion-ios-arrow-down stable" ng-show="showList"></i>
-                    <span ng-class="{'badge-calm': !onNewsfeed && !onFavorite && !onFollowing}" 
-                    class="badge badge-stable">{{listCount}}</span>
+                    <span ng-class="{'badge-calm': !onNewsfeed && !onFavorite && !onFollowing 
+                    && !onDiscover}" class="badge badge-stable">{{listCount}}</span>
                     
-                    Following list
+                    Following List
 
                 </ion-item>
 
@@ -51,19 +51,20 @@
 
                 <ion-item id="header-menu" menu-close ng-click="chooseItem('Favorites')"
                 class="item-icon-left" ng-class="{'chosen': onFavorite}">
-                    <i ng-class="{'calm': onFavorite}" class="icon ion-star stable"></i>
+                    <i ng-class="{'calm': onFavorite}" class="icon ion-bookmark stable"></i>
 
-                    Favorites
+                    Read Later
 
                 </ion-item>
 
-                <ion-item id="header-menu" class="item-icon-left">
-                    <i class="icon ion-arrow-graph-up-right stable"></i>
-                    Trending
+                <ion-item id="header-menu" menu-close ng-click="chooseItem('Discover')" 
+                class="item-icon-left" ng-class="{'chosen': onDiscover}">
+                    <i ng-class="{'calm': onDiscover}" class="icon ion-ios-paperplane stable"></i>
+                    Discover
                 </ion-item>
 
 
-                <ion-item id="header-menu" class="item-icon-left" menu-close
+                <ion-item id="header-menu" menu-close class="item-icon-left" menu-close
                 ng-click="chooseItem('Logout')">
                     <i class="icon ion-log-out stable"></i>
 
@@ -82,8 +83,12 @@
                 </button>
             </ion-nav-buttons>
         </ion-nav-bar>
+
+    
+        <ion-nav-view name="discoverContent" ng-show="onDiscover"></ion-nav-view>
         
-        <ion-tabs class="tabs-background-light tabs-color-calm tabs-icon-top tabs-striped">
+        <ion-tabs class="tabs-background-light tabs-color-calm tabs-icon-top tabs-striped"
+        ng-hide="onDiscover">
 		    <ion-tab title="News" icon="ion-android-list" class="full-width-tab"
             ng-click="selectTab('News')">
 		        <ion-nav-view name="newsContent"></ion-nav-view>

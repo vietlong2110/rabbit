@@ -1,8 +1,9 @@
 angular.module('app.controller', [])
 
 //Menu side Controller
-.controller('AppController', function($rootScope, $scope, $ionicModal, $ionicBackdrop, $state, $ionicSideMenuDelegate, 
-$ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices, navServices, AUTH_EVENTS) {
+.controller('AppController', function($rootScope, $scope, $ionicModal, $ionicBackdrop, $state, 
+$ionicSideMenuDelegate, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, 
+apiServices, navServices, AUTH_EVENTS) {
     $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
         AuthService.logout();
         $state.go('login');
@@ -18,9 +19,9 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     $scope.showList = false;
 
     if ($rootScope.currentNewsfeedState === 'Newsfeed')
-        $scope.onNewsfeed = true;
+        $rootScope.onNewsfeed = true;
     else if ($rootScope.currentNewsfeedState === 'Favorites')
-        $scope.onFavorite = true;
+        $rootScope.onFavorite = true;
 
     $ionicModal.fromTemplateUrl('templates/home-settings.html', {
         scope: $scope,
@@ -81,14 +82,15 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     };
 
     $scope.chooseItem = function(item) {
-        $scope.onFavorite = false;
-        $scope.onNewsfeed = false;
-        $scope.onFollowing = false;
+        $rootScope.onFavorite = false;
+        $rootScope.onNewsfeed = false;
+        $rootScope.onFollowing = false;
+        $rootScope.onDiscover = false;
         $ionicScrollDelegate.scrollTop();
         for (i in $rootScope.keywords)
                 $rootScope.keywords[i].star = false;
         if (item === 'Newsfeed') {
-            $scope.onNewsfeed = true;
+            $rootScope.onNewsfeed = true;
             apiServices.getNewsFeed(0, function() {
                 $rootScope.currentReadingState = $rootScope.news[0];
             });
@@ -103,7 +105,7 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
             $rootScope.currentNewsfeedState = 'Newsfeed';
         }
         else if (item === 'Favorites') {
-            $scope.onFavorite = true;
+            $rootScope.onFavorite = true;
             apiServices.getNewsFavorite(0, function() {
                 $rootScope.currentReadingState = $rootScope.favoriteNews[0];
             });
@@ -117,13 +119,21 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
 
             $rootScope.currentNewsfeedState = 'Favorites';
         }
+        else if (item === 'Discover') {
+            apiServices.getSuggestion();
+            $rootScope.currentNewsfeedState = 'Discover';
+            $rootScope.onDiscover = true;
+            $state.go('tabs.discover');
+        }
         else if (item === 'Logout') {
-            AuthService.logout();
-            $ionicViewSwitcher.nextDirection('swap');
-            $state.go('login');
+            AuthService.logout(function() {
+                console.log(AuthService.isAuthenticated());
+                $ionicViewSwitcher.nextDirection('swap');
+                $state.go('login');
+            });
         }
         else {
-            $scope.onFollowing = true;
+            $rootScope.onFollowing = true;
             $rootScope.keywords[$rootScope.keywords.indexOf(item)].star = true;
             $rootScope.followingKeyword = item.keyword;
 
@@ -147,9 +157,10 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     };
 
     $scope.save = function() {
-        $scope.onNewsfeed = false;
-        $scope.onFavorite = false;
-        $scope.onFollowing = false;
+        $rootScope.onNewsfeed = false;
+        $rootScope.onFavorite = false;
+        $rootScope.onFollowing = false;
+        $rootScope.onDiscover = false;
         for (i in $rootScope.keywords)
             $rootScope.keywords[i].star = false;
         $ionicSideMenuDelegate.toggleLeft();
@@ -166,9 +177,10 @@ $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AuthService, apiServices,
     };
 
     $scope.toggleList = function() {
-        $scope.onFavorite = false;
-        $scope.onNewsfeed = false;
-        $scope.onFollowing = false;
+        $rootScope.onFavorite = false;
+        $rootScope.onNewsfeed = false;
+        $rootScope.onFollowing = false;
+        $rootScope.onDiscover = false;
         $scope.showList = !$scope.showList;
     };
 });

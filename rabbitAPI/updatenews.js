@@ -4,8 +4,8 @@ var async = require('async');
 var database = require('./database.js');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
-var feed_link = require('./seed/feed_link.js');
-var feedList = feed_link.rss;
+var feed_link = require('./seed/feed.js');
+var List = feed_link.data;
 
 var RSS = require('./serverController/rss.js');
 var Article = require('./models/articles.js');
@@ -21,18 +21,25 @@ setInterval(function() {
 		async.waterfall([
 			function(cb) {
 				if (cache.length === 0) {
-					async.each(feedList, function(feed, cb1) {
-						console.log('Start loading ' + feed);
-						RSS.feedParse(feed, function(links) {
-							console.log('End loading ' + feed);
-							cache = cache.concat(links);
+					async.eachSeries(List, function(feedList, cb1) {
+						async.eachSeries(feedList.links, function(feed, cb2) {
+							console.log('Start loading ' + feed);
+							RSS.feedParse(feed, function(links) {
+								console.log('End loading ' + feed);
+								cache = cache.concat(links);
+								for (i in cache)
+									cache[i].source = feedList.source;
+								// console.log(cache);
+								cb2();
+							});
+						}, function(err) {
+							if (err)
+								return cb(err);
 							cb1();
 						});
 					}, function(err) {
-						if (err) {
-							console.log(err);
+						if (err)
 							return cb(err);
-						}
 						cb(null);
 					});
 				}
@@ -63,6 +70,7 @@ setInterval(function() {
 										url: cache[0].link,
 										title: entities.decode(cache[0].title),
 										thumbnail: thumbnail,
+										source: cache[0].source,
 										publishedDate: cache[0].publishedDate,
 										titleKeywords: titleKeywordSet,
 										tfTitle: tfTitle,
@@ -92,7 +100,10 @@ setInterval(function() {
 					});
 				});
 			}
-		]);
+		], function(err) {
+			if (err)
+				console.log(err);
+		});
 	}
 	else console.log(cache.length);
 }, 60 * 1000);

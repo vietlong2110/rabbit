@@ -19,20 +19,20 @@
         <ion-refresher pulling-icon="" on-refresh="doRefresh()">
         </ion-refresher>
 
-        <div class="card" ng-repeat="item in media">
-            <ion-item ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-
-                <div class="item-image">
-                    <img src="{{item.thumbnail}}" alt="thumbnail">
-                </div>
-
-                <!-- <div class="item-body"> -->
-                    <div class="item-avatar">
-                        <img src="{{item.avatar}}" alt="avatar">
-                        <h2>{{item.title}}</h2>
-                    </div>
-                <!-- </div> -->
-            </ion-item>
+        <div class="list card" ng-repeat="item in media">
+            <div class="item item-image item-icon-right social-image">
+                <i id="social-bookmark" class="icon ion-plus-round float-not-favorite" 
+                ng-click="toggleStar($event, item)" ng-hide="item.star"></i>
+                <i id="social-bookmark" class="icon ion-bookmark float-favorite" 
+                ng-click="toggleStar($event, item)" ng-show="item.star"></i>
+                <a ng-click="assignCurrentReading(item)" href="#/tabs/socialreading"
+                on-double-tap="toggleStar($event, item)">
+                <img src="{{item.thumbnail}}">
+            </div>
+            <div class="item item-avatar">
+                <img src="{{item.avatar}}">
+                <h2>{{item.title}}</h2>
+            </div>
         </div>
 
         <ion-infinite-scroll ng-if="moreDataMedia" on-infinite="loadMore()" distance="1%">

@@ -15,16 +15,25 @@ function($rootScope, $scope, $ionicPopup, $state, $ionicHistory, $ionicViewSwitc
         AuthService.login($scope.user).then(function(message) {
             apiServices.getList();
             apiServices.getNewsFeed(0, function() {
-                $rootScope.currentReadingState = $rootScope.news[0]
+                $ionicViewSwitcher.nextDirection('swap');
+                if ($rootScope.news === undefined || 
+                ($rootScope.news.length === 0 && $rootScope.media.length === 0)) {
+                    apiServices.getSuggestion();
+                    $rootScope.currentNewsfeedState = 'Discover';
+                    $rootScope.onDiscover = true;
+                    $state.go('tabs.discover');
+                }
+                else {
+                    $rootScope.currentReadingState = $rootScope.news[0];
+                    $rootScope.currentNewsfeedState = 'Newsfeed';
+                    $rootScope.currentTab = 'News';
+                    $rootScope.onNewsfeed = true;
+                    $state.go('tabs.news');
+                }
             });
             apiServices.getMediaFeed(0, function() {
                 $rootScope.currentSocialReadingState = $rootScope.media[0];
             });
-            $rootScope.currentNewsfeedState = 'Newsfeed';
-            $rootScope.currentTab = 'News';
-
-            $ionicViewSwitcher.nextDirection('swap');
-            $state.go('tabs.news');
         }, function(errMessage) {
             var alertPopup = $ionicPopup.alert({
                 title: 'Login failed!',

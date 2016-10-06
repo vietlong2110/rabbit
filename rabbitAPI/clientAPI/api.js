@@ -79,7 +79,8 @@ module.exports = function(passport) {
 
 				List.addList(query, userId, function(addedlist) { //add keyword/hashtag to following list
 					if (addedlist) //added keyword/hashtag successfully to database
-						Feed.updateFeedByKeyword(userId, query, function(err, results) {
+						Feed.updateFeedByKeyword(userId, query, 
+						function(err, results, updatednews, updatedmedia) {
 							if (err)
 								res.json({
 									success: false,
@@ -390,19 +391,23 @@ module.exports = function(passport) {
 	});
 
 	router.post('/updatefeed', function(req, res) {
+		console.log('Updating!');
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				Update.updateFeed(userId, function(err, updatednews, updatedmedia) {
+				Feed.updateFeed(userId, function(err, updatednews, updatedmedia) {
 					if (err)
 						res.json({
 							success: false,
 							error: err
 						});
-					else res.json({
-						success: true,
-						updatednews: updatednews,
-						updatedmedia: updatedmedia
-					});
+					else {
+						console.log('Updated!');
+						res.json({
+							success: true,
+							news: updatednews,
+							media: updatedmedia
+						});
+					}
 				});
 			}
 			else res.status(403).json({
@@ -410,6 +415,11 @@ module.exports = function(passport) {
 				error: 'Invalid authentication!'
 			});
 		});
+	});
+
+	router.get('/getsuggestion', function(req, res) {
+		var Feedlink = require('../seed/feed_link.js');
+		res.json({likes: Feedlink.data});
 	});
 
 	return router;

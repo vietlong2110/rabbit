@@ -6,7 +6,7 @@
     </ion-nav-title>
 	<ion-nav-bar class="bar bar-calm">
 		<ion-nav-buttons side="left"> 
-        	<i class="button button-icon icon-right ion-ios-list button-clear" ng-click="backHome()">
+        	<i class="button button-icon icon-right ion-home button-clear" ng-click="backHome()">
         	</i>
 		</ion-nav-buttons>
 		<ion-nav-buttons side="secondary">
@@ -18,23 +18,14 @@
 
 	<ion-content class="background">
 		<div class="list card" ng-repeat="item in searchMediaResult">
-			<ion-item ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-	            <div class="item item-avatar item-icon-right" ng-class="{'star': item.star}">
-	                <img src="{{item.avatar}}" alt="avatar">
-	                <h2 class="padding-top">{{item.source}}</h2>
-	                <i id="media-star" class="button button-clear icon ion-star" 
-	                ng-click="toggleStar($event, item)" ng-class="{'button-energized': item.star}"></i>
-	            </div>
-
-	            <div class="item item-image media-image">
-	                <img src="{{item.thumbnail}}" alt="thumbnail">
-	            </div>
-
-	            <div class="item item-body">
-	                <h2>{{item.title}}</h2>
-	                <p>{{item.hashtag}}</p>
-	            </div>
-            </ion-item>
+            <div class="item item-image item-icon-right social-image">
+                <a ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
+                <img src="{{item.thumbnail}}">
+            </div>
+            <div class="item item-avatar">
+                <img src="{{item.avatar}}">
+                <h2>{{item.title}}</h2>
+            </div>
         </div>
 
 		<ion-infinite-scroll ng-if="moreDataMediaSearch" on-infinite="loadMore()" distance="1%">

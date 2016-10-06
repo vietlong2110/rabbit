@@ -32,8 +32,9 @@ function($rootScope, $scope, $state, $ionicPopup, $ionicScrollDelegate, apiServi
     };
 
     $scope.loadMore = function() {
-        apiServices.getMediaFavorite($rootScope.favoriteMedia.length - LOAD_SIZE, function() {});
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        apiServices.getMediaFavorite($rootScope.favoriteMedia.length - LOAD_SIZE, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
     $scope.assignCurrentReading = function(item) {

@@ -100,6 +100,7 @@ var getMediaFavorite = function(userId, size, callback) {
 				title: hubs[i].title,
 				thumbnail: hubs[i].thumbnail,
 				source: hubs[i].source,
+				avatar: hubs[i].avatar,
 				publishedDate: hubs[i].publishedDate,
 				dayScore: hubs[i].dayScore,
 				hashtag: hashtag,

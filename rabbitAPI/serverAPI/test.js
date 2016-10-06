@@ -11,6 +11,7 @@ var mongoose = require('mongoose');
 var async = require('async');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
+var fs = require('fs');
 var RSS = require('../serverController/rss.js');
 var Article = require('../models/articles.js');
 var Extract = require('../serverController/extract.js');
@@ -86,6 +87,23 @@ router.get('/lemma', function(req, res) {
 	stringFuncs.lemma(req.query.q, function(results) {
 		res.json({lemma: results});
 	})
+});
+
+router.get('/rss', function(req, res) {
+	var Site = require('../models/sites.js');
+
+	Site.find({}).exec(function(err, sites) {
+		if (err)
+			res.json({error: err});
+		var results = [];
+		
+		for (i in sites)
+			results.push({
+				source: sites[i].source,
+				links: sites[i].links
+			});
+		res.json({data: results});
+	});
 });
 
 module.exports = router;

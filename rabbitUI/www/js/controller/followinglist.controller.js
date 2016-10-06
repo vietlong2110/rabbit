@@ -36,8 +36,9 @@ function($rootScope, $scope, $state, $http, $ionicScrollDelegate, apiServices, L
 
     $scope.loadMore = function() {
         apiServices.getNewsByKeyword($rootScope.followingKeyword, 
-        $rootScope.followingNews.length, function() {});
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $rootScope.followingNews.length, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
     $scope.assignCurrentReading = function(item) { // save the last link that we read

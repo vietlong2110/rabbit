@@ -76,17 +76,18 @@ var getSuggestionList = function(token, data, callback) {
     var resultData = [];
 
     async.each(engData, function(enData, cb) {
-        fb.api(enData.id , {fields: ['fan_count', 'cover'], access_token: token}, function(res) {
+        fb.api(enData.id, {fields: ['fan_count', 'cover'], access_token: token}, function(res) {
             if (!res || res.error)
                 return callback(res.error);
             var d = {
                 id: enData.id,
                 name: enData.name,
                 likes: res.fan_count,
-                picture: ''
+                cover: '',
+                avatar: ''
             };
             if (res.cover !== undefined)
-                d.picture = res.cover.source;
+                d.cover = res.cover.source;
             resultData.push(d);
             cb();
         });
@@ -98,7 +99,18 @@ var getSuggestionList = function(token, data, callback) {
             return b.likes - a.likes;
         })
         resultData = resultData.slice(0, 10);
-        callback(resultData);
+        async.each(resultData, function(result, cb2) {
+            fb.api(result.id + '/picture?redirect=0', {access_token: token}, function(res) {
+                if (!res || res.error)
+                    return callback(res.error);
+                result.avatar = res.data.url;
+                cb2();
+            });
+        }, function(err) {
+            if (err)
+                return callback(err);
+            callback(resultData);
+        });
     });
 };
 module.exports.getSuggestionList = getSuggestionList;

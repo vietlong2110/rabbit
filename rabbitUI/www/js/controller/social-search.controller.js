@@ -27,8 +27,9 @@ $ionicViewSwitcher, $ionicScrollDelegate, navServices, LOAD_SIZE) {
 
     $scope.loadMore = function() {
         apiServices.search($rootScope.keywordSearch, $rootScope.searchResult.length - LOAD_SIZE,
-        $rootScope.searchMediaResult.length);
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $rootScope.searchMediaResult.length, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
     $scope.follow = function() {

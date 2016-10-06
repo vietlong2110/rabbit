@@ -21,14 +21,17 @@ $ionicViewSwitcher, $ionicScrollDelegate, navServices, LOAD_SIZE) {
 
     $scope.backHome = function() {
         $rootScope.onSearch = false;
+        $rootScope.currentNewsfeedState = 'Newsfeed';
+        $rootScope.onNewsfeed = true;
         $ionicViewSwitcher.nextDirection('back');
         navServices.nav();
     };
 
     $scope.loadMore = function() {
         apiServices.search($rootScope.keywordSearch, $rootScope.searchResult.length,
-        $rootScope.searchMediaResult.length - LOAD_SIZE);
-        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $rootScope.searchMediaResult.length - LOAD_SIZE, function() {
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
     };
 
     $scope.follow = function() {

@@ -224,7 +224,7 @@ var updateFeedByKeyword = function(userId, keyword, callback) {
 			refreshFeed(userId, function(err, results) {
 				if (err)
 					return callback(err);
-				callback(null, results);
+				callback(null, results, updatednews, updatedmedia);
 			});
 		});
 	});
@@ -322,12 +322,12 @@ var updateFeed = function(userId, callback) {
 		var updatedNewsFeed = false, updatedMediaFeed = false;
 
 		async.eachSeries(user.wordList, function(word, cb) {
-			updateFeedByKeyword(userId, word, function(err, updatednews, updatedmedia) {
+			updateFeedByKeyword(userId, word, function(err, results, updatednews, updatedmedia) {
 				if (err)
 					return cb(err);
 				if (updatednews)
 					updatedNewsFeed = true;
-				if (updatedMediaFeed)
+				if (updatedmedia)
 					updatedMediaFeed = true;
 				cb();
 			});

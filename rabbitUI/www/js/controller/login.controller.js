@@ -9,16 +9,21 @@ function($rootScope, $scope, $ionicPopup, $state, $ionicViewSwitcher, AuthServic
             // $scope.token = token;
             apiServices.getList();
             apiServices.getNewsFeed(0, function() {
-                $rootScope.currentReadingState = $rootScope.news[0];
+                $ionicViewSwitcher.nextDirection('swap');
+                if ($rootScope.news.length === 0 && $rootScope.media.length === 0) {
+                    apiServices.getSuggestion();
+                    $state.go('discover');
+                }
+                else {
+                    $rootScope.currentReadingState = $rootScope.news[0];
+                    $rootScope.currentNewsfeedState = 'Newsfeed';
+                    $rootScope.currentTab = 'News';
+                    $state.go('tabs.news');
+                }
             });
             apiServices.getMediaFeed(0, function() {
                 $rootScope.currentSocialReadingState = $rootScope.media[0];
             });
-            $rootScope.currentNewsfeedState = 'Newsfeed';
-            $rootScope.currentTab = 'News';
-
-            $ionicViewSwitcher.nextDirection('swap');
-            $state.go('tabs.news');
         }, function(errMessage) {
             var alertPopup = $ionicPopup.alert({
                 title: 'Login failed!',

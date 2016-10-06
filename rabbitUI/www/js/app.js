@@ -3,7 +3,8 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.c
 'login.controller', 'register.controller', 'news.controller', 'socialmedia.controller',
 'suggest.controller', 'search.controller', 'socialsearch.controller', 'reading.controller',
 'socialreading.controller', 'favorites.controller', 'socialfavorites.controller',
-'followinglist.controller', 'socialfollowinglist.controller', 'login-ui.controller'])
+'followinglist.controller', 'socialfollowinglist.controller', 'login-ui.controller',
+'discover.controller'])
 
 .constant('AUTH_EVENTS', {
     notAuthenticated: 'auth-not-authenticated'
@@ -95,6 +96,15 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.c
         url: '/tabs',
         abstract: true,
         templateUrl: 'templates/tabs.html'
+    })
+    .state('tabs.discover', {
+        url: '/discover',
+        views: {
+            'discoverContent': {
+                templateUrl: 'templates/discover.html',
+                controller: 'DiscoverController'
+            }
+        }
     })
     .state('tabs.news', {
         url: '/news',

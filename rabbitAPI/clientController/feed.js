@@ -366,7 +366,7 @@ var getNewsFeed = function(userId, size, callback) {
 						url: hubs[i].url,
 						title: hubs[i].title,
 						thumbnail: hubs[i].thumbnail,
-						source: hubs[i].source,
+						source: hubs[i].source.toUpperCase(),
 						publishedDate: hubs[i].publishedDate,
 						dayScore: hubs[i].dayScore,
 						hashtag: hashtag,

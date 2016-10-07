@@ -391,7 +391,7 @@ module.exports = function(passport) {
 	});
 
 	router.post('/updatefeed', function(req, res) {
-		console.log('Updating!');
+		// console.log('Updating!');
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
 				Feed.updateFeed(userId, function(err, updatednews, updatedmedia) {
@@ -401,7 +401,7 @@ module.exports = function(passport) {
 							error: err
 						});
 					else {
-						console.log('Updated!');
+						// console.log('Updated!');
 						res.json({
 							success: true,
 							news: updatednews,
@@ -418,8 +418,51 @@ module.exports = function(passport) {
 	});
 
 	router.get('/getsuggestion', function(req, res) {
-		var Feedlink = require('../seed/feed_link.js');
-		res.json({likes: Feedlink.data});
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				User.findById(userId).exec(function(err, user) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					var FB = require('./clientController/fb.js');
+					FB.getUserLikes(user.access_token, function(data) {
+						res.json({
+							data: data
+						});
+					});
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
+	});
+
+	router.get('/getinfo', function(req, res) {
+		UserController.getUserId(req.headers, function(userId) {
+			if (userId) {
+				User.findById(userId).exec(function(err, user) {
+					if (err)
+						res.json({
+							success: false,
+							error: err
+						});
+					else res.json({
+						success: true,
+						email: user.email,
+						name: user.name,
+						avatar: user.profile_picture
+					});
+				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
+			});
+		});
 	});
 
 	return router;

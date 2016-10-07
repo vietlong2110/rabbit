@@ -92,7 +92,6 @@ router.post('/login', function(req, res) {
 
 router.post('/fblogin', function(req, res) {
 	var accesstoken = req.body.token;
-	// var accesstoken = 'EAAM98EFnHGMBAEu3LROACIzTEmdMp4XkCZBnrba7Q6rmXFYhLazgXlZCZBl93TUgu9hZCyHPi907bNcO7SP0hZBFH5mf5sO0hKNENghHKrNT97FcWneDZAWHAHjZArMiv3j3xm9u3EjJ5p56B1GxepvJD7dv3Vc8XPu6yI7OBaxygZDZD';
 	var FB = require('../clientController/fb.js');
 
 	FB.userInfo(accesstoken, function(data) {
@@ -108,7 +107,7 @@ router.post('/fblogin', function(req, res) {
     			var newUser = new User({
     				email: data.email,
     				name: data.name,
-    				picture: data.picture,
+    				profile_picture: data.picture,
     				age_range: data.age_range,
     				password: require('generate-password').generate({
                         length: 32,
@@ -141,6 +140,7 @@ router.post('/fblogin', function(req, res) {
     						message: err
     					});
     				var token = jwt.encode(user, config.secret);
+    				console.log(token);
 
 					res.json({
 						success: true,
@@ -150,14 +150,6 @@ router.post('/fblogin', function(req, res) {
     			});
     		}
     	});
-	});
-});
-
-router.get('/getlikes', function(req, res) {
-	var FB = require('../clientController/fb.js');
-	var token = "EAAM98EFnHGMBAMZAi6NhfGrJeaI5MWLSGp93NQAQA8VCumVFgCZBnu6a9a0TqseQ9gTZANAdNad1AleSwIBKf4GVULWtd7Un6rsywJnr3NttbAZCSOT9lVvtAlmJ8el7iAPpmcwvhEHWYaFcgJn2Nt7OUd0ZAZBycZD"
-	FB.getUserLikes(token, function(data) {
-		res.json({data: data});
 	});
 });
 

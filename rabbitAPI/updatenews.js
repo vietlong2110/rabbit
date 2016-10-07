@@ -26,9 +26,9 @@ setInterval(function() {
 							console.log('Start loading ' + feed);
 							RSS.feedParse(feed, function(links) {
 								console.log('End loading ' + feed);
+								for (i in links)
+									links[i].source = feedList.source;
 								cache = cache.concat(links);
-								for (i in cache)
-									cache[i].source = feedList.source;
 								// console.log(cache);
 								cb2();
 							});

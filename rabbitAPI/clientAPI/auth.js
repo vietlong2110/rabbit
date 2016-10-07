@@ -132,8 +132,8 @@ router.post('/fblogin', function(req, res) {
 					res.json({
 						success: true,
 						token: 'JWT ' + token,
-						email: user.email,
-						name: user.name,
+						email: data.email,
+						name: data.name,
 						message: 'Logging in'
 					});
     			});

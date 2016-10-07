@@ -2,18 +2,21 @@ module.exports = {
   "data": [
     {
       "source": "nasa.gov",
+      "thumbnail": "http://www.nasa.gov/sites/default/files/images/nasaLogo-570x450.png",
       "links": [
         "https://www.nasa.gov/rss/dyn/breaking_news.rss"
       ]
     },
     {
       "source": "webmd.com",
+      "thumbnail": "http://blog.drugs.com/wp-content/uploads/2009/12/webmd.jpg",
       "links": [
         "http://rssfeeds.webmd.com/rss/rss.aspx?RSSSource=RSS_PUBLIC"
       ]
     },
     {
       "source": "cnn.com",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Cnn.svg/2000px-Cnn.svg.png",
       "links": [
         "http://rss.cnn.com/services/podcasting/studentnews/rss.xml",
         "http://rss.cnn.com/rss/cnn_allpolitics.rss",
@@ -33,6 +36,7 @@ module.exports = {
     },
     {
       "source": "nytimes.com",
+      "thumbnail": "http://static.peabodyawards.com/user_images/Times1.jpg",
       "links": [
         "http://atwar.blogs.nytimes.com/feed/",
         "http://cityroom.blogs.nytimes.com/feed/",
@@ -92,6 +96,7 @@ module.exports = {
     },
     {
       "source": "nbcnews.com",
+      "thumbnail": "http://www.thewrap.com/wp-content/uploads/2013/10/nbc-news-logo.jpg",
       "links": [
         "http://rss.nbcnews.com/id/3058960/displaymode/1026/eventType/1/rss/rss.xml",
         "http://feeds.nbcnews.com/feeds/topstories"
@@ -99,6 +104,7 @@ module.exports = {
     },
     {
       "source": "telegraph.co.uk",
+      "thumbnail": "http://www.peopletree.co.uk/Configuration/PeopleTree/Downloads/images/the%20telegraph.co.uk.png",
       "links": [
         "http://www.telegraph.co.uk/foodanddrink/rssfeeds/rss",
         "http://www.telegraph.co.uk/foodanddrink/beer/rss",
@@ -110,6 +116,7 @@ module.exports = {
     },
     {
       "source": "wired.com",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Wired_logo.svg/2000px-Wired_logo.svg.png",
       "links": [
         "https://www.wired.com/feed/",
         "https://www.wired.com/category/business/feed/",
@@ -128,6 +135,7 @@ module.exports = {
     },
     {
       "source": "tech.firstpost.com",
+      "thumbnail": "http://stech1.firstpost.com/wp-content/themes/techfirstpost/images/logo.png",
       "links": [
         "http://tech.firstpost.com/tag/rss-feed/feed",
         "http://tech.firstpost.com/feed",
@@ -136,6 +144,7 @@ module.exports = {
     },
     {
       "source": "wsj.com",
+      "thumbnail": "http://www.wsj.com/apple-touch-icon.png",
       "links": [
         "http://www.wsj.com/xml/rss/3_7041.xml",
         "http://www.wsj.com/xml/rss/3_7014.xml",
@@ -147,6 +156,7 @@ module.exports = {
     },
     {
       "source": "techcrunch.com",
+      "thumbnail": "https://tctechcrunch2011.files.wordpress.com/2013/10/techcrunch-logo1.png?w=707&h=405",
       "links": [
         "https://techcrunch.com/comments/feed/",
         "https://techcrunch.com/feed/",
@@ -191,6 +201,7 @@ module.exports = {
     },
     {
       "source": "theverge.com",
+      "thumbnail": "http://www.allgeek.tv/wp-content/uploads/2010/theverge.jpg",
       "links": [
         "http://www.theverge.com/rss/index.xml",
         "http://www.theverge.com/apple/rss/index.xml",
@@ -226,6 +237,7 @@ module.exports = {
     },
     {
       "source": "digitaltrends.com",
+      "thumbnail": "http://cdn2.digitaltrends.com/dt-logo-200x200.png",
       "links": [
         "http://www.digitaltrends.com/feed/",
         "http://www.digitaltrends.com/cars/feed/",
@@ -262,6 +274,7 @@ module.exports = {
     },
     {
       "source": "economist.com",
+      "thumbnail": "http://cdn.static-economist.com/sites/default/files/the-economist-logo.gif",
       "links": [
         "http://www.economist.com/sections/business-finance/rss.xml",
         "http://www.economist.com/sections/science-technology/rss.xml",
@@ -300,6 +313,7 @@ module.exports = {
     },
     {
       "source": "cnbc.com",
+      "thumbnail": "http://fm.cnbc.com/applications/cnbc.com/staticcontent/img/cnbc_logo.gif",
       "links": [
         "http://www.cnbc.com/id/100727362/device/rss/rss.html",
         "http://www.cnbc.com/id/100003114/device/rss/rss.html",
@@ -339,6 +353,7 @@ module.exports = {
     },
     {
       "source": "espn.com",
+      "thumbnail": "http://images.performgroup.com/di/library/sporting_news/57/9/espn-102215-ftrjpg_1x2ff5wf7ybvx1sg82exlvzoga.jpg?t=-1871569416",
       "links": [
         "http://www.espn.com/espn/rss/news",
         "http://www.espn.com/espn/rss/mlb/news",
@@ -360,34 +375,35 @@ module.exports = {
     },
     {
       "source": "bleacherreport.com",
+      "thumbnail": "https://lh3.ggpht.com/Ec00VEkeIysaYHRxwIpyyQPRXn86AcB3RNISJSuBoLQyzqG6cQk1j1U1KN2rF51hbLG-=w300",
       "links": [
         "http://bleacherreport.com/articles/feed"
       ]
     },
     {
       "source": "cbssports.com",
+      "thumbnail": "https://pbs.twimg.com/profile_images/696218981145772033/8mYnTpHm.png",
       "links": [
         "http://rss.cbssports.com/rss/headlines"
       ]
     },
     {
-      "source": "sciencedaily.com",
-      "links": []
-    },
-    {
       "source": "usatoday.com",
+      "thumbnail": "https://lh3.googleusercontent.com/2i2GvT7d5CxbPh9edK9PJXZDgLKsisFrAfRj90MubTAgY6EFRk0gAjGb1iIP4poB-k0=w300",
       "links": [
         "http://rssfeeds.usatoday.com/UsatodaycomTravel-TopStories"
       ]
     },
     {
       "source": "fodors.com",
+      "thumbnail": "https://pbs.twimg.com/profile_images/3079362282/5622e1cc818b5dfb738ffec6b4936d71_400x400.png",
       "links": [
         "http://www.fodors.com/wire/feedlimited.xml"
       ]
     },
     {
       "source": "travelpulse.com",
+      "thumbnail": "http://www.travelpulse.com/images/og_logo.gif",
       "links": [
         "http://www.travelpulse.com/rss/opinions.rss",
         "http://www.travelpulse.com/rss/videos.rss",
@@ -397,6 +413,7 @@ module.exports = {
     },
     {
       "source": "usnews.com",
+      "thumbnail": "http://www.usnews.com/static/images/store/college-compass/compass-badge.png",
       "links": [
         "http://www.usnews.com/rss/education",
         "http://www.usnews.com/rss/health",
@@ -426,6 +443,7 @@ module.exports = {
     },
     {
       "source": "bbc.com",
+      "thumbnail": "http://www.bbc.co.uk/news/special/2015/newsspec_10857/bbc_news_logo.png?cb=1",
       "links": [
         "http://feeds.bbci.co.uk/news/world/rss.xml",
         "http://feeds.bbci.co.uk/news/uk/rss.xml",
@@ -465,12 +483,14 @@ module.exports = {
     },
     {
       "source": "mashable.com",
+      "thumbnail": "http://bqware.com/wp-content/uploads/2015/01/mashable.jpg",
       "links": [
         "http://feeds.mashable.com/Mashable"
       ]
     },
     {
       "source": "si.com",
+      "thumbnail": "https://thebaseballcodes.files.wordpress.com/2012/06/si-logo.jpg",
       "links": [
         "http://www.si.com/rss/si_nfl.rss", 
         "http://www.si.com/rss/si_ncaaf.rss", 
@@ -492,6 +512,7 @@ module.exports = {
     },
     {
       "source": "howstuffworks.com",
+      "thumbnail": "http://www.userlogos.org/files/logos/Mafia_Penguin/HSW.png",
       "links": [
         "http://syndication.howstuffworks.com/rss/APL::Guides",
         "http://syndication.howstuffworks.com/rss/adventure",
@@ -517,12 +538,14 @@ module.exports = {
     },
     {
       "source": "livescience.com",
+      "thumbnail": "https://www.hamilton.edu/assets/mmlibrary/images/original/-m3iq7yt.png",
       "links": [
         "http://www.livescience.com/home/feed/site.xml"
       ]
     },
     {
       "source": "mtv.com",
+      "thumbnail": "http://fullhdpictures.com/wp-content/uploads/2016/06/MTV-Logo-HD.png",
       "links": [
         "http://www.mtv.com/news/movies/feed/",
         "http://www.mtv.com/rss/news/news_full.jhtml",
@@ -531,6 +554,7 @@ module.exports = {
     },
     {
       "source": "rollingstone.com",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Rolling_Stone_logo.svg",
       "links": [
         "http://www.rollingstone.com/rss",
         "http://www.rollingstone.com/movies/rss",
@@ -546,6 +570,7 @@ module.exports = {
     },
     {
       "source": "songkick.com",
+      "thumbnail": "http://blog.songkick.com/wp-content/uploads/2012/06/SK_badge.png",
       "links": [
         "http://acousti.co/feeds/user/mariomenti",
         "http://acousti.co/feeds/artist/Rolo",
@@ -560,6 +585,7 @@ module.exports = {
     },
     {
       "source": "tmz.com",
+      "thumbnail": "http://tmzdietkhloe.com/images/logo.png.jpeg",
       "links": [
         "http://www.tmz.com/category/celebrity-feuds/rss.xml",
         "http://www.tmz.com/category/celebrity-justice/rss.xml",
@@ -582,6 +608,7 @@ module.exports = {
     },
     {
       "source": "eonline.com",
+      "thumbnail": "http://www.standupforpits.us/wp-content/uploads/2013/05/eonline-logo.jpg",
       "links": [
         "http://syndication.eonline.com/syndication/feeds/rssfeeds/video/index.xml",
         "http://syndication.eonline.com/syndication/feeds/rssfeeds/topstories.xml",
@@ -594,6 +621,7 @@ module.exports = {
     },
     {
       "source": "people.com",
+      "thumbnail": "http://logonoid.com/images/people-logo.png",
       "links": [
         "http://people.com/comments/feed/",
         "http://people.com/feed/"
@@ -601,6 +629,7 @@ module.exports = {
     },
     {
       "source": "usmagazine.com",
+      "thumbnail": "http://assets.wennermedia.com/usweekly/img/social/default-usweekly.jpg",
       "links": [
         "http://www.usmagazine.com/celebrity-moms/rss",
         "http://www.usmagazine.com/celebrity-news/rss",
@@ -613,24 +642,28 @@ module.exports = {
     },
     {
       "source": "wonderwall.com",
+      "thumbnail": "http://d3izb2c22fwp6s.cloudfront.net/cache/img/ww-amp-logo_1467954582.png",
       "links": [
         "http://feeds.wonderwall.com/rss/wall.xml"
       ]
     },
     {
       "source": "dota.com",
+      "thumbnail": "https://exoexit.com/wp-content/uploads/2015/12/dota-2-logo.jpg?e595ba",
       "links": [
         "http://blog.dota2.com/feed/"
       ]
     },
     {
       "source": "ign.com",
+      "thumbnail": "http://static.tumblr.com/54e5cf4bfb89f3d0693e59ff99573ade/xhawh4f/dwLn3iu62/tumblr_static_ign_com_no_chrome-1.png",
       "links": [
         "http://feeds.ign.com/ign/all"
       ]
     },
     {
       "source": "gamespot.com",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Logo_of_GameSpot.svg/2000px-Logo_of_GameSpot.svg.png",
       "links": [
         "http://www.gamespot.com/feeds/new_releases",
         "http://www.gamespot.com/feeds/new-games",
@@ -643,12 +676,14 @@ module.exports = {
     },
     {
       "source": "cracked.com",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Cracked.com_logo.svg/800px-Cracked.com_logo.svg.png",
       "links": [
         "http://feeds.feedburner.com/CrackedRSS"
       ]
     },
     {
       "source": "theblaze.com",
+      "thumbnail": "http://www.theblaze.com/wp-content/uploads/2013/06/ScreenSnapz058.jpg",
       "links": [
         "http://www.theblaze.com/stories/feed/",
         "http://www.theblaze.com/feed/"
@@ -656,6 +691,7 @@ module.exports = {
     },
     {
       "source": "drudgereport.com",
+      "thumbnail": "https://pmcdeadline2.files.wordpress.com/2012/09/drudgereport__120926163950.jpg",
       "links": [
         "http://www.drudgereportfeed.com/rss.xml",
         "http://drudgereportfeed.com/rss.xml"
@@ -663,6 +699,7 @@ module.exports = {
     },
     {
       "source": "newsmax.com",
+      "thumbnail": "http://blog.operationhope.org/wp-content/uploads/2014/06/newsmax-logo.jpg",
       "links": [
         "http://nm.nmcdn.us/rss/US/18",
         "http://nm.nmcdn.us/rss/Newsfront/16",
@@ -693,6 +730,7 @@ module.exports = {
     },
     {
       "source": "politico.com",
+      "thumbnail": "https://foramerica.org/wp-content/uploads/2016/03/politico-logo.jpg",
       "links": [
         "http://www.politico.com/rss/congress.xml",
         "http://www.politico.com/rss/healthcare.xml",
@@ -726,6 +764,7 @@ module.exports = {
     },
     {
       "source": "salon.com",
+      "thumbnail": "http://jasonpatrickdeleon.com/wp-content/uploads/2015/10/Salon-logo.jpg",
       "links": [
         "http://www.salon.com/feed/",
         "http://www.salon.com/rss"
@@ -733,6 +772,7 @@ module.exports = {
     },
     {
       "source": "foodandwine.com",
+      "thumbnail": "http://www.elkcove.com/assets/FW-Logo-2011_09B5B358.jpg",
       "links": [
         "http://www.foodandwine.com/feeds/latest_recipes",
         "http://www.foodandwine.com/feeds/latest_articles"
@@ -740,6 +780,7 @@ module.exports = {
     },
     {
       "source": "nigms.nih.gov",
+      "thumbnail": "https://www.nih.gov/sites/default/files/styles/featured_media_breakpoint-large/public/about-nih/2012-logo.png",
       "links": [
         "http://publications.nigms.nih.gov/findings/rss/current.xml",
         "http://publications.nigms.nih.gov/chemhealth/rss/current.xml",
@@ -750,6 +791,7 @@ module.exports = {
     },
     {
       "source": "mayoclinic.org",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/en/7/76/Mayo-clinic-logo.png",
       "links": [
         "http://www.mayoclinic.org/rss/blogs",
         "http://www.mayoclinic.org/rss/alzheimers-blog",
@@ -774,6 +816,7 @@ module.exports = {
     },
     {
       "source": "medicinenet.com",
+      "thumbnail": "https://s9.postimg.org/5rs0t6tbz/Medicine_Net.jpg",
       "links": [
         "http://www.medicinenet.com/rss/dailyhealth.xml",
         "http://www.medicinenet.com/rss/medicinenet_slideshows.xml",
@@ -825,6 +868,7 @@ module.exports = {
     },
     {
       "source": "drugs.com",
+      "thumbnail": "https://www.drugs.com/img/social/ddc-facebook-icon.png",
       "links": [
         "https://www.drugs.com/feeds/fda_alerts.xml",
         "https://www.drugs.com/feeds/medical_news.xml",
@@ -837,6 +881,7 @@ module.exports = {
     },
     {
       "source": "instyle.com",
+      "thumbnail": "https://volition-prod.s3.amazonaws.com/uploads/article/picture/23/Instyle_magazine_logo.jpg",
       "links": [
         "http://www.instyle.com/feeds/newsfeed.xml",
         "http://www.instyle.com/feeds/yahoo/ins.rss/galleries/10",
@@ -845,12 +890,14 @@ module.exports = {
     },
     {
       "source": "glamour.com",
+      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/6/68/Glamour-Logo.svg",
       "links": [
         "http://www.glamour.com/services/rss/summary"
       ]
     },
     {
       "source": "elle.com",
+      "thumbnail": "http://www.imambaildi.com/wp-assets/uploads/2016/05/Elle-logo.jpg",
       "links": [
         "http://www.elle.com/rss/beauty.xml",
         "http://www.elle.com/rss/life-love.xml",
@@ -860,6 +907,7 @@ module.exports = {
     },
     {
       "source": "abcnews.com",
+      "thumbnail": "http://www.adweek.com/tvnewser/files/2010/11/abc_news_logo.jpg",
       "links": [
         "http://feeds2.feedburner.com/ABCNewsMostEmailed",
         "http://feeds.abcnews.com/abcnews/travelheadlines",
@@ -887,6 +935,7 @@ module.exports = {
     },
     {
       "source": "huffingtonpost.com",
+      "thumbnail": "http://the-when.com/wp-content/uploads/2014/06/huffington_post_logo-2.jpg",
       "links": [
         "http://www.huffingtonpost.com/feeds/verticals/black-voices/blog.xml",
         "http://www.huffingtonpost.com/feeds/verticals/business/index.xml",
@@ -1025,6 +1074,7 @@ module.exports = {
     },
     {
       "source": "foxnews.com",
+      "thumbnail": "http://global.fncstatic.com/static/v/all/img/og/og-fn-foxnews.jpg",
       "links": [
         "http://feeds.foxnews.com/foxnews/latest?format=xml"
       ]

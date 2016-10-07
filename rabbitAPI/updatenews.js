@@ -26,8 +26,10 @@ setInterval(function() {
 							console.log('Start loading ' + feed);
 							RSS.feedParse(feed, function(links) {
 								console.log('End loading ' + feed);
-								for (i in links)
+								for (i in links) {
 									links[i].source = feedList.source;
+									links[i].thumbnail = feedList.thumbnail;
+								}
 								cache = cache.concat(links);
 								// console.log(cache);
 								cb2();
@@ -62,6 +64,8 @@ setInterval(function() {
 							}
 
 							Extract.extractImage(cache[0].link, function(thumbnail) {
+								if (thumbnail === null)
+									thumbnail = cache[0].thumbnail;
 								Extract.extractContent(entities.decode(cache[0].title), cache[0].link,
 								function(err, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
 									if (err) {

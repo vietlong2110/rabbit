@@ -41,7 +41,7 @@ var searchFeed = function(query, callback) {
 				id: articles[i]._id,
 				url: articles[i].url,
 				title: articles[i].title,
-				source: Filter.niceTitle(articles[i].source),
+				source: articles[i].source.toUpperCase(),
 				thumbnail: articles[i].thumbnail,
 				publishedDate: articles[i].publishedDate
 			});

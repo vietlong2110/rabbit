@@ -81,17 +81,17 @@ module.exports.extractKeyword = extractKeyword;
 var extractImage = function(url, callback) { //extract thumbnail of an article url
 	request(url, {timeout: 5000}, function(err, res, html) {
 		if (!err && res.statusCode === 200) {
-			var boilerpipe = new Boilerpipe({
-				extractor: Boilerpipe.Extractor.Article,
-				html: html
-		 	});
-			boilerpipe.getImages(function(err, images) {
-				if (err)
-					return callback(err);
-				if (images.length > 0)
-					callback(images[0].src);
-				else callback(extractImageFromContent(html));
-			});
+		// 	var boilerpipe = new Boilerpipe({
+		// 		extractor: Boilerpipe.Extractor.Article,
+		// 		html: html
+		//  	});
+		// 	boilerpipe.getImages(function(err, images) {
+		// 		if (err)
+		// 			return callback(err);
+		// 		if (images.length > 0)
+		// 			callback(images[0].src);
+				callback(extractImageFromContent(html));
+		// 	});
 		}
 		else callback(null);
 	});

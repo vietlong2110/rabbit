@@ -116,4 +116,4 @@ setInterval(function() {
 		});
 	}
 	else console.log(cache.length);
-}, 20 * 1000);
+}, 60 * 1000);

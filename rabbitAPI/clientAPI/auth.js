@@ -74,10 +74,13 @@ router.post('/login', function(req, res) {
 				
 				if (isMatch) {
 					var token = jwt.encode(user, config.secret);
+					console.log('Login Token: ' + token);
 
 					res.json({
 						success: true,
 						token: 'JWT ' + token,
+						email: user.email,
+						name: user.name,
 						message: 'Logging in'
 					});
 				}
@@ -123,31 +126,38 @@ router.post('/fblogin', function(req, res) {
     						message: err
     					});
     				var token = jwt.encode(user, config.secret);
+    				console.log('FB Token: ' + accesstoken);
+    				console.log('Login Token: ' + token);
 
 					res.json({
 						success: true,
 						token: 'JWT ' + token,
+						email: user.email,
+						name: user.name,
 						message: 'Logging in'
 					});
     			});
     		}
     		else {
     			user.access_token = accesstoken;
+    			console.log('FB Token: ' + accesstoken);
     			user.save(function(err) {
     				if (err)
     					res.json({
     						success: false,
     						message: err
     					});
-    				var token = jwt.encode(user, config.secret);
-    				console.log(token);
-
-					res.json({
-						success: true,
-						token: 'JWT ' + token,
-						message: 'Logging in'
-					});
     			});
+    			var token = jwt.encode(user, config.secret);
+				console.log('Login Token: ' + token);
+
+				res.json({
+					success: true,
+					token: 'JWT ' + token,
+					email: user.email,
+					name: user.name,
+					message: 'Logging in'
+				});
     		}
     	});
 	});

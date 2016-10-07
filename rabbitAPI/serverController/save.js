@@ -141,6 +141,7 @@ var saveArticle = function(articles, callback) {
 			$set: {
 				title: article.title,
 				thumbnail: article.thumbnail,
+				source: article.source,
 				publishedDate: article.publishedDate,
 				titleKeywords: article.titleKeywords,
 				tfTitle: article.tfTitle,

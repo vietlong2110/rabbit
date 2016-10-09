@@ -426,14 +426,10 @@ module.exports = function(passport) {
 							success: false,
 							error: err
 						});
-					var FB = require('./clientController/fb.js');
-					console.log(user.access_token);
-					FB.getUserLikes(user.access_token, function(data) {
-						console.log(data);
-						res.json({
-							data: data
-						});
-					});
+					res.json({
+						success: true,
+						likes: user.suggest
+					})
 				});
 			}
 			else res.status(403).json({

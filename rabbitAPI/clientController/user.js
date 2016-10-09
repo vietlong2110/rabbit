@@ -17,7 +17,7 @@ var getUserId = function(headers, callback) {
 	if (token) {
 		var decoded = jwt.decode(token, config.secret);
 
-		User.findOne({email: decoded.email}).exec(function(err, user) {
+		User.findOne({email: decoded}).exec(function(err, user) {
 			if (!user || err)
 				callback(null);
 

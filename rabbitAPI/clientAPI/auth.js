@@ -73,7 +73,7 @@ router.post('/login', function(req, res) {
 					});
 				
 				if (isMatch) {
-					var token = jwt.encode(user, config.secret);
+					var token = jwt.encode(user.email, config.secret);
 					console.log('Login Token: ' + token);
 
 					res.json({
@@ -98,7 +98,7 @@ router.post('/fblogin', function(req, res) {
 	var FB = require('../clientController/fb.js');
 
 	FB.userInfo(accesstoken, function(data) {
-		FB.getUserLikes(token, function(likes) {
+		FB.getUserLikes(accesstoken, function(likes) {
 			var User = require('../models/users.js');
 
 	    	User.findOne({email: data.email}).exec(function(err, user) {
@@ -117,7 +117,7 @@ router.post('/fblogin', function(req, res) {
 	                        length: 32,
 	                        number: true
 	                    }),
-	                    access_token: accesstoken
+	                    access_token: accesstoken,
 	                    suggest: likes
 	    			});
 
@@ -127,7 +127,7 @@ router.post('/fblogin', function(req, res) {
 	    						success: false,
 	    						message: err
 	    					});
-	    				var token = jwt.encode(user, config.secret);
+	    				var token = jwt.encode(user.email, config.secret);
 	    				console.log('FB Token: ' + accesstoken);
 	    				console.log('Login Token: ' + token);
 
@@ -150,7 +150,7 @@ router.post('/fblogin', function(req, res) {
 	    						message: err
 	    					});
 	    			});
-	    			var token = jwt.encode(user, config.secret);
+	    			var token = jwt.encode(user.email, config.secret);
 					// console.log('Login Token: ' + token);
 
 					res.json({

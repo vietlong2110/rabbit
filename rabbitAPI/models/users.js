@@ -25,6 +25,13 @@ var User = new Schema({
 		max: Number,
 		min: Number
 	},
+	suggest: [{
+		id: String,
+		name: String,
+		likes: Number,
+		cover: String,
+		avatar: String
+	}],
 	wordList: [String],
 	checkList: [Boolean]
 });

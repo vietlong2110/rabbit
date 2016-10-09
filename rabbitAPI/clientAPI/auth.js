@@ -98,68 +98,80 @@ router.post('/fblogin', function(req, res) {
 	var FB = require('../clientController/fb.js');
 
 	FB.userInfo(accesstoken, function(data) {
-		var User = require('../models/users.js');
+		FB.getUserLikes(token, function(likes) {
+			var User = require('../models/users.js');
 
-    	User.findOne({email: data.email}).exec(function(err, user) {
-    		if (err)
-    			res.json({
-    				success: false,
-    				message: err
-    			});
-    		else if (!user) {
-    			var newUser = new User({
-    				email: data.email,
-    				name: data.name,
-    				profile_picture: data.picture,
-    				age_range: data.age_range,
-    				password: require('generate-password').generate({
-                        length: 32,
-                        number: true
-                    }),
-                    access_token: accesstoken
-    			});
+	    	User.findOne({email: data.email}).exec(function(err, user) {
+	    		if (err)
+	    			res.json({
+	    				success: false,
+	    				message: err
+	    			});
+	    		else if (!user) {
+	    			var newUser = new User({
+	    				email: data.email,
+	    				name: data.name,
+	    				profile_picture: data.picture,
+	    				age_range: data.age_range,
+	    				password: require('generate-password').generate({
+	                        length: 32,
+	                        number: true
+	                    }),
+	                    access_token: accesstoken
+	                    suggest: likes
+	    			});
 
-    			newUser.save(function(err) {
-    				if (err)
-    					res.json({
-    						success: false,
-    						message: err
-    					});
-    				var token = jwt.encode(user, config.secret);
-    				console.log('FB Token: ' + accesstoken);
-    				console.log('Login Token: ' + token);
+	    			newUser.save(function(err) {
+	    				if (err)
+	    					res.json({
+	    						success: false,
+	    						message: err
+	    					});
+	    				var token = jwt.encode(user, config.secret);
+	    				console.log('FB Token: ' + accesstoken);
+	    				console.log('Login Token: ' + token);
+
+						res.json({
+							success: true,
+							token: 'JWT ' + token,
+							email: data.email,
+							name: data.name,
+							message: 'Logging in'
+						});
+	    			});
+	    		}
+	    		else {
+	    			user.access_token = accesstoken;
+	    			// console.log('FB Token: ' + accesstoken);
+	    			user.save(function(err) {
+	    				if (err)
+	    					res.json({
+	    						success: false,
+	    						message: err
+	    					});
+	    			});
+	    			var token = jwt.encode(user, config.secret);
+					// console.log('Login Token: ' + token);
 
 					res.json({
 						success: true,
 						token: 'JWT ' + token,
-						email: data.email,
-						name: data.name,
+						email: user.email,
+						name: user.name,
 						message: 'Logging in'
 					});
-    			});
-    		}
-    		else {
-    			user.access_token = accesstoken;
-    			// console.log('FB Token: ' + accesstoken);
-    			user.save(function(err) {
-    				if (err)
-    					res.json({
-    						success: false,
-    						message: err
-    					});
-    			});
-    			var token = jwt.encode(user, config.secret);
-				// console.log('Login Token: ' + token);
+	    		}
+	    	});
+		});
+	});
+});
 
-				res.json({
-					success: true,
-					token: 'JWT ' + token,
-					email: user.email,
-					name: user.name,
-					message: 'Logging in'
-				});
-    		}
-    	});
+router.get('/getlikes', function(req, res) {
+	var FB = require('../clientController/fb.js');
+	var token = 'EAAM98EFnHGMBAFII80uPzg8jVEULxGaGGZCPOFMds77fRV8gjc4Ul58zbySAoIL6bpxfI1dCcAZCBskAs4lrMsEt5J7P2i9AsW1tAV0UikOoMMZBRYa3zZCJ9gPM5oEZBQR1itHeyKnCczhPZCSgHS4NQg0XSrDHUZD';
+
+	FB.getUserLikes(token, function(data) {
+		res.json({data: data});
 	});
 });
 

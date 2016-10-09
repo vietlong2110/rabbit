@@ -419,7 +419,6 @@ module.exports = function(passport) {
 
 	router.get('/getsuggestion', function(req, res) {
 		UserController.getUserId(req.headers, function(userId) {
-			console.log(user.access_token);
 			if (userId) {
 				User.findById(userId).exec(function(err, user) {
 					if (err)
@@ -428,6 +427,7 @@ module.exports = function(passport) {
 							error: err
 						});
 					var FB = require('./clientController/fb.js');
+					console.log(user.access_token);
 					FB.getUserLikes(user.access_token, function(data) {
 						console.log(data);
 						res.json({

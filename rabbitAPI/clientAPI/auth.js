@@ -127,7 +127,7 @@ router.post('/fblogin', function(req, res) {
 	    						success: false,
 	    						message: err
 	    					});
-	    				var token = jwt.encode(user.email, config.secret);
+	    				var token = jwt.encode(data.email, config.secret);
 	    				console.log('FB Token: ' + accesstoken);
 	    				console.log('Login Token: ' + token);
 

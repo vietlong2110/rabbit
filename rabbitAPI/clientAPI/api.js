@@ -184,7 +184,7 @@ module.exports = function(passport) {
 
 	//API router for loading the newsfeed
 	router.get('/getnewsfeed', function(req, res) {
-		console.log(req.headers);
+		// console.log(req.headers);
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId)
 				Feed.getNewsFeed(userId, parseInt(req.query.size),
@@ -419,7 +419,7 @@ module.exports = function(passport) {
 	});
 
 	router.get('/getsuggestion', function(req, res) {
-		console.log(req.headers);
+		// console.log(req.headers);
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
 				User.findById(userId).exec(function(err, user) {

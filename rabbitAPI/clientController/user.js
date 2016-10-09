@@ -19,7 +19,7 @@ var getUserId = function(headers, callback) {
 
 		User.findOne({email: decoded}).exec(function(err, user) {
 			if (!user || err)
-				callback(null);
+				return callback(null);
 
 			callback(user._id);
 		});

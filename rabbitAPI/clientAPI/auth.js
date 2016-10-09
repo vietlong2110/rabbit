@@ -152,7 +152,7 @@ router.post('/fblogin', function(req, res) {
     					});
     			});
     			var token = jwt.encode(user.email, config.secret);
-				console.log('Login Token: ' + token);
+				// console.log('Login Token: ' + token);
 
 				res.json({
 					success: true,

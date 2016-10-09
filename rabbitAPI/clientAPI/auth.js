@@ -98,16 +98,16 @@ router.post('/fblogin', function(req, res) {
 	var FB = require('../clientController/fb.js');
 
 	FB.userInfo(accesstoken, function(data) {
-		FB.getUserLikes(accesstoken, function(likes) {
-			var User = require('../models/users.js');
+		var User = require('../models/users.js');
 
-	    	User.findOne({email: data.email}).exec(function(err, user) {
-	    		if (err)
-	    			res.json({
-	    				success: false,
-	    				message: err
-	    			});
-	    		else if (!user) {
+    	User.findOne({email: data.email}).exec(function(err, user) {
+    		if (err)
+    			res.json({
+    				success: false,
+    				message: err
+    			});
+    		else if (!user) {
+    			FB.getUserLikes(accesstoken, function(likes) {
 	    			var newUser = new User({
 	    				email: data.email,
 	    				name: data.name,
@@ -139,30 +139,30 @@ router.post('/fblogin', function(req, res) {
 							message: 'Logging in'
 						});
 	    			});
-	    		}
-	    		else {
-	    			user.access_token = accesstoken;
-	    			// console.log('FB Token: ' + accesstoken);
-	    			user.save(function(err) {
-	    				if (err)
-	    					res.json({
-	    						success: false,
-	    						message: err
-	    					});
-	    			});
-	    			var token = jwt.encode(user.email, config.secret);
-					// console.log('Login Token: ' + token);
+    			});
+    		}
+    		else {
+    			user.access_token = accesstoken;
+    			// console.log('FB Token: ' + accesstoken);
+    			user.save(function(err) {
+    				if (err)
+    					res.json({
+    						success: false,
+    						message: err
+    					});
+    			});
+    			var token = jwt.encode(user.email, config.secret);
+				console.log('Login Token: ' + token);
 
-					res.json({
-						success: true,
-						token: 'JWT ' + token,
-						email: user.email,
-						name: user.name,
-						message: 'Logging in'
-					});
-	    		}
-	    	});
-		});
+				res.json({
+					success: true,
+					token: 'JWT ' + token,
+					email: user.email,
+					name: user.name,
+					message: 'Logging in'
+				});
+    		}
+    	});
 	});
 });
 

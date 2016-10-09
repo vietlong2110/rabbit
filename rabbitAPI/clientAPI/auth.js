@@ -140,7 +140,7 @@ router.post('/fblogin', function(req, res) {
     		}
     		else {
     			user.access_token = accesstoken;
-    			console.log('FB Token: ' + accesstoken);
+    			// console.log('FB Token: ' + accesstoken);
     			user.save(function(err) {
     				if (err)
     					res.json({
@@ -149,7 +149,7 @@ router.post('/fblogin', function(req, res) {
     					});
     			});
     			var token = jwt.encode(user, config.secret);
-				console.log('Login Token: ' + token);
+				// console.log('Login Token: ' + token);
 
 				res.json({
 					success: true,

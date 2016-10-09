@@ -9,6 +9,7 @@ var router = express.Router();
 var async = require('async');
 
 var Feed = require('../clientController/feed.js');
+var User = require('../models/users.js');
 var Favorite = require('../clientController/favorite.js');
 var Filter = require('../libs/filter.js');
 var UserController = require('../clientController/user.js');
@@ -184,7 +185,6 @@ module.exports = function(passport) {
 
 	//API router for loading the newsfeed
 	router.get('/getnewsfeed', function(req, res) {
-		// console.log(req.headers);
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId)
 				Feed.getNewsFeed(userId, parseInt(req.query.size),
@@ -419,7 +419,6 @@ module.exports = function(passport) {
 	});
 
 	router.get('/getsuggestion', function(req, res) {
-		// console.log(req.headers);
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
 				User.findById(userId).exec(function(err, user) {
@@ -428,6 +427,7 @@ module.exports = function(passport) {
 							success: false,
 							error: err
 						});
+					console.log(user.suggest);
 					res.json({
 						success: true,
 						likes: user.suggest

@@ -156,4 +156,4 @@ setInterval(function() {
 		]);
 	}
 	else console.log(cache.length);
-}, 60 * 1000);
+}, 60 * 20 * 1000);

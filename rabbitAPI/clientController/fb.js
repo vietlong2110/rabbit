@@ -1,10 +1,10 @@
 var async = require('async');
 var mongoose = require('mongoose');
 var FB = require('fb');
-var fb = new FB.Facebook({version: 'v2.7'});
+var fb = new FB.Facebook({version: 'v2.8'});
 
 var userInfo = function(token, callback) {
-	fb.api('me', {fields: ['name', 'email', 'cover', 'age_range'], access_token: token}, function (res) {
+	fb.api('4', {fields: ['name', 'email', 'cover', 'age_range'], access_token: token}, function (res) {
         if (!res || res.error)
             return callback(res.error);
 
@@ -16,7 +16,7 @@ var userInfo = function(token, callback) {
 			age_range: res.age_range
     	};
 
-    	fb.api('me/picture?redirect=0', {access_token: token}, function(response) {
+    	fb.api(res.id + '/picture?redirect=0', {access_token: token}, function(response) {
     		// console.log(response);
             if (!res || res.error)
                 return callback(res.error);
@@ -28,32 +28,36 @@ var userInfo = function(token, callback) {
 module.exports.userInfo = userInfo;
 
 var getUserLikes = function(token, callback) {
-    fb.api('me/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
-        if (!res || res.error)
-            return callback(res.error);
+    fb.api('4', {access_token: token}, function (r) {
+        if (!r || r.error)
+            return callback(r.error);
+        fb.api(r.id + '/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
+            if (!res || res.error)
+                return callback(res.error);
 
-        var data = res.data;
-        var next = res.paging.cursors.after;
+            var data = res.data;
+            var next = res.paging.cursors.after;
 
-        async.whilst(function() {return next !== undefined},
-        function(cb) {
-            fb.api('me/likes?after=' + next, {
-                fields: ['name', 'category', 'created_time'], 
-                access_token: token
-            },
-            function(response) {
-                if (!res || res.error)
-                    return callback(res.error);
-                if (response.paging) {
-                    data = data.concat(response.data);
-                    next = response.paging.cursors.after;
-                }
-                else next = undefined;
-                cb();
-            });
-        }, function() {
-            getSuggestionList(token, data, function(suggestList) {
-                callback(suggestList);
+            async.whilst(function() {return next !== undefined},
+            function(cb) {
+                fb.api('me/likes?after=' + next, {
+                    fields: ['name', 'category', 'created_time'], 
+                    access_token: token
+                },
+                function(response) {
+                    if (!res || res.error)
+                        return callback(res.error);
+                    if (response.paging) {
+                        data = data.concat(response.data);
+                        next = response.paging.cursors.after;
+                    }
+                    else next = undefined;
+                    cb();
+                });
+            }, function() {
+                getSuggestionList(token, data, function(suggestList) {
+                    callback(suggestList);
+                });
             });
         });
     });

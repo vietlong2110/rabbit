@@ -4,7 +4,7 @@ var FB = require('fb');
 var fb = new FB.Facebook({version: 'v2.8'});
 
 var userInfo = function(token, callback) {
-	fb.api('4', {fields: ['name', 'email', 'cover', 'age_range'], access_token: token}, function (res) {
+	fb.api('me', {fields: ['name', 'email', 'cover', 'age_range'], access_token: token}, function (res) {
         if (!res || res.error)
             return callback(res.error);
 
@@ -28,12 +28,8 @@ var userInfo = function(token, callback) {
 module.exports.userInfo = userInfo;
 
 var getUserLikes = function(token, callback) {
-    fb.api('4', {access_token: token}, function (r) {
-        if (!r || r.error)
-            return callback(r.error);
-        console.log(r.id);
-
-        fb.api(r.id + '/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
+        console.log(token);
+        fb.api('me/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
             if (!res || res.error)
                 return callback(res.error);
 
@@ -42,7 +38,7 @@ var getUserLikes = function(token, callback) {
 
             async.whilst(function() {return next !== undefined},
             function(cb) {
-                fb.api(r.id + '/likes?after=' + next, {
+                fb.api('me/likes?after=' + next, {
                     fields: ['name', 'category', 'created_time'], 
                     access_token: token
                 },
@@ -62,7 +58,6 @@ var getUserLikes = function(token, callback) {
                 });
             });
         });
-    });
 };
 module.exports.getUserLikes = getUserLikes;
 

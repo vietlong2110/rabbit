@@ -31,6 +31,8 @@ var getUserLikes = function(token, callback) {
         fb.api('me/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
             if (!res || res.error)
                 return callback(res.error);
+            if (res.data === null)
+                return callback(null);
 
             var data = res.data;
             var next = res.paging.cursors.after;

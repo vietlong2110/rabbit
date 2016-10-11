@@ -12,7 +12,6 @@ var userInfo = function(token, callback) {
 			email: res.email,
 			name: res.name,
 			picture: '',
-			cover: res.cover.source,
 			age_range: res.age_range
     	};
 

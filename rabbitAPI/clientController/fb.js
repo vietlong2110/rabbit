@@ -31,6 +31,8 @@ var getUserLikes = function(token, callback) {
     fb.api('4', {access_token: token}, function (r) {
         if (!r || r.error)
             return callback(r.error);
+        console.log(r.id);
+
         fb.api(r.id + '/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
             if (!res || res.error)
                 return callback(res.error);
@@ -40,7 +42,7 @@ var getUserLikes = function(token, callback) {
 
             async.whilst(function() {return next !== undefined},
             function(cb) {
-                fb.api('me/likes?after=' + next, {
+                fb.api(r.id + '/likes?after=' + next, {
                     fields: ['name', 'category', 'created_time'], 
                     access_token: token
                 },

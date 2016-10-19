@@ -34,7 +34,7 @@ var searchFeed = function(query, callback) {
 			todayArr.push(articles[i].publishedDate.getDate());
 			todayArr.push(articles[i].publishedDate.getMonth());
 			todayArr.push(articles[i].publishedDate.getFullYear());
-			dayScore = todayArr[0]*10 + todayArr[1]*50 + todayArr[2]*100;
+			dayScore = todayArr[0] + todayArr[1]*50 + todayArr[2]*100;
 			newsSearchResult.push({
 				evalScore: newsEvalScore[i],
 				dayScore: dayScore,
@@ -53,7 +53,7 @@ var searchFeed = function(query, callback) {
 			todayArr.push(media[i].publishedDate.getDate());
 			todayArr.push(media[i].publishedDate.getMonth());
 			todayArr.push(media[i].publishedDate.getFullYear());
-			dayScore = todayArr[0]*10 + todayArr[1]*50 + todayArr[2]*100;
+			dayScore = todayArr[0] + todayArr[1]*50 + todayArr[2]*100;
 			mediaSearchResult.push({
 				evalScore: mediaEvalScore[i],
 				dayScore: dayScore,

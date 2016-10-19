@@ -36,7 +36,7 @@ router.post('/register', function(req, res) {
 			if (!err)
 				res.json({
 					success: true,
-					message: 'Welcome to rabbit!'
+					message: 'Welcome to NewsHub!'
 				});
 			else if (err.code === 11000 || err.code === 11001)
 				res.json({

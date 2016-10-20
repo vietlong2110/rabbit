@@ -10,11 +10,11 @@ module.exports.Today = Today;
 
 var Yesterday = function(publishedDate) {
 	var today = new Date();
-	var yesterday = today.setDate(date.getDate() - 1);
-	if (publishedDate.getDate() === yesterday.getDate() 
-	&& publishedDate.getMonth() === yesterday.getMonth()
+	today.setDate(today.getDate() - 1);
+	var yesterday = new Date(today);
+	if (publishedDate.getDate() === yesterday.getDate() && publishedDate.getMonth() === yesterday.getMonth()
 	&& publishedDate.getFullYear() === yesterday.getFullYear())
-		return true;
+		return false;
 	else return false;
 };
 module.exports.Yesterday = Yesterday;

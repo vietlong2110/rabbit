@@ -377,7 +377,12 @@ var getNewsFeed = function(userId, size, callback) {
 			}
 			var D = require('../libs/date.js');
 			if (newsfeed.length > 0) {
-				newsfeed[0].timeline = true;
+				if (D.Today(newsfeed[0].publishedDate))
+					newsfeed[0].timeline = 'Today';
+				else if (D.Yesterday(newsfeed[0].publishedDate))
+					newsfeed[0].timeline = 'Yesterday';
+				else newsfeed[0].timeline = D.dateAbbr(newsfeed[0].publishedDate);
+				
 				for (i = 1; i < newsfeed.length; i++)
 					if (newsfeed[i].dayScore != newsfeed[i-1].dayScore) {
 						if (D.Today(newsfeed[i].publishedDate))

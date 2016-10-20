@@ -341,6 +341,36 @@ var updateFeed = function(userId, callback) {
 module.exports.updateFeed = updateFeed;
 
 var getNewsFeed = function(userId, size, callback) {
+
+	function Today(publishedDate) {
+		var today = new Date();
+		if (publishedDate.getDate() === today.getDate() 
+		&& publishedDate.getMonth() === today.getMonth()
+		&& publishedDate.getFullYear() === today.getFullYear())
+			return true;
+		else return false;
+	}
+
+	function Yesterday(publishedDate) {
+		var today = new Date();
+		var yesterday = today.setDate(date.getDate() - 1);
+		if (publishedDate.getDate() === yesterday.getDate() 
+		&& publishedDate.getMonth() === yesterday.getMonth()
+		&& publishedDate.getFullYear() === yesterday.getFullYear())
+			return true;
+		else return false;
+	}
+
+	function dateAbbr(publishedDate) {
+		var today = new Date();
+		var year = today.getFullYear();
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		if (year === publishedDate.getFullYear())
+			return months[publishedDate.getMonth()] + ' ' + publishedDate.getDate();
+		else return months[publishedDate.getMonth()] + ' ' + publishedDate.getDate() + ',' 
+		+ publishedDate.getFullYear();
+	}
+
 	User.findById(userId).exec(function(err, user) {
 		if (err)
 			return callback(err);
@@ -378,8 +408,13 @@ var getNewsFeed = function(userId, size, callback) {
 			if (newsfeed.length > 0) {
 				newsfeed[0].timeline = true;
 				for (i = 1; i < newsfeed.length; i++)
-					if (newsfeed[i].dayScore != newsfeed[i-1].dayScore)
-						newsfeed[i].timeline = true;
+					if (newsfeed[i].dayScore != newsfeed[i-1].dayScore) {
+						if (Today(newsfeed[i].publishedDate))
+							newsfeed[i].timeline = 'Today';
+						else if (Yesterday(newsfeed[i].publishedDate))
+							newsfeed[i].timeline = 'Yesterday';
+						else newsfeed[i].timeline = dateAbbr(newsfeed[i].publishedDate);
+					}
 			}
 			Pagination.paginate(newsfeed, size, function(newsFeedResult, moreDataNews) {
 				callback(null, newsFeedResult, moreDataNews);

@@ -15,7 +15,8 @@ var Search = function(query, callback) { //calculate document weight vector
 
 	async.parallel([
 		function(cb) {
-			var threshold = 5 * queryArr.length, eps = 1e-7;
+			var a = queryArr.length;
+			var threshold = 5 * a, eps = 1e-7;
 
 			Article.count({}, function(err, n) { //n documents
 				if (err)

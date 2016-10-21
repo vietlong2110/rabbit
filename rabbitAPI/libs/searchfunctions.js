@@ -15,7 +15,7 @@ var Search = function(query, callback) { //calculate document weight vector
 
 	async.parallel([
 		function(cb) {
-			var threshold = 5, eps = 1e-10;
+			var threshold = 5 * queryArr.length, eps = 1e-7;
 
 			Article.count({}, function(err, n) { //n documents
 				if (err)
@@ -31,12 +31,13 @@ var Search = function(query, callback) { //calculate document weight vector
 								var vector1 = docVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
 								var eval = cosEval(vector1, vector2);
-								if (queryArr.length === 1 || eval - threshold * queryArr.length >= eps) {
+								if (eval - threshold >= eps) {
+									// console.log(eval);
 									newsEvals.push(eval);
 									newsResult.push(article);
 								}
 							}
-							cb2();
+							return cb2();
 						}, function(err) {
 							if (err)
 								return cb(err);

@@ -27,8 +27,13 @@ var userInfo = function(token, callback) {
 module.exports.userInfo = userInfo;
 
 var getUserLikes = function(token, callback) {
-        console.log(token);
-        fb.api('me/likes', {fields: ['name', 'created_time'], access_token: token}, function(res) {
+    // console.log(token);
+    fb.api('me', {access_token: token}, function(result) {
+        if (!result || result.error)
+            return callback(result.error);
+
+        fb.api(result.id + '/likes', {fields: ['name', 'created_time'], access_token: token}, 
+        function(res) {
             if (!res || res.error)
                 return callback(res.error);
             if (res.paging === undefined)
@@ -59,6 +64,7 @@ var getUserLikes = function(token, callback) {
                 });
             });
         });
+    });
 };
 module.exports.getUserLikes = getUserLikes;
 

@@ -14,7 +14,7 @@ var Yesterday = function(publishedDate) {
 	var yesterday = new Date(today);
 	if (publishedDate.getDate() === yesterday.getDate() && publishedDate.getMonth() === yesterday.getMonth()
 	&& publishedDate.getFullYear() === yesterday.getFullYear())
-		return false;
+		return true;
 	else return false;
 };
 module.exports.Yesterday = Yesterday;

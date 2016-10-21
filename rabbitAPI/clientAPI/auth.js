@@ -74,7 +74,7 @@ router.post('/login', function(req, res) {
 				
 				if (isMatch) {
 					var token = jwt.encode(user.email, config.secret);
-					console.log('Login Token: ' + token);
+					// console.log('Login Token: ' + token);
 
 					res.json({
 						success: true,
@@ -129,7 +129,7 @@ router.post('/fblogin', function(req, res) {
 	    					});
 	    				var token = jwt.encode(data.email, config.secret);
 	    				console.log('FB Token: ' + accesstoken);
-	    				console.log('Login Token: ' + token);
+	    				// console.log('Login Token: ' + token);
 
 						res.json({
 							success: true,
@@ -156,7 +156,7 @@ router.post('/fblogin', function(req, res) {
 
 				res.json({
 					success: true,
-					token: 'JWT ' + token,
+					token: 'JWT` ' + token,
 					email: user.email,
 					name: user.name,
 					message: 'Logging in'
@@ -166,13 +166,13 @@ router.post('/fblogin', function(req, res) {
 	});
 });
 
-router.get('/getlikes', function(req, res) {
-	var FB = require('../clientController/fb.js');
-	var token = 'EAAM98EFnHGMBAFII80uPzg8jVEULxGaGGZCPOFMds77fRV8gjc4Ul58zbySAoIL6bpxfI1dCcAZCBskAs4lrMsEt5J7P2i9AsW1tAV0UikOoMMZBRYa3zZCJ9gPM5oEZBQR1itHeyKnCczhPZCSgHS4NQg0XSrDHUZD';
+// router.get('/getlikes', function(req, res) {
+// 	var FB = require('../clientController/fb.js');
+// 	var token = 'EAAM98EFnHGMBAFII80uPzg8jVEULxGaGGZCPOFMds77fRV8gjc4Ul58zbySAoIL6bpxfI1dCcAZCBskAs4lrMsEt5J7P2i9AsW1tAV0UikOoMMZBRYa3zZCJ9gPM5oEZBQR1itHeyKnCczhPZCSgHS4NQg0XSrDHUZD';
 
-	FB.getUserLikes(token, function(data) {
-		res.json({data: data});
-	});
-});
+// 	FB.getUserLikes(token, function(data) {
+// 		res.json({data: data});
+// 	});
+// });
 
 module.exports = router;

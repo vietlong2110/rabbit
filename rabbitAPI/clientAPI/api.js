@@ -427,7 +427,7 @@ module.exports = function(passport) {
 							success: false,
 							error: err
 						});
-					console.log(user.suggest);
+					// console.log(user.suggest);
 					res.json({
 						success: true,
 						likes: user.suggest

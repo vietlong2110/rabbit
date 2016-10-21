@@ -31,15 +31,13 @@ var Search = function(query, callback) { //calculate document weight vector
 								var vector1 = docVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
 								var eval = cosEval(vector1, vector2);
+								
 								if (eval - threshold >= eps) {
-									// console.log(eval);
 									newsEvals.push(eval);
 									newsResult.push(article);
-									cb2();
 								}
-								else cb2();
 							}
-							else cb2();
+							cb2();
 						}, function(err) {
 							if (err)
 								return cb(err);

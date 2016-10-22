@@ -36,6 +36,11 @@ var getNewsFavorite = function(userId, size, callback) {
 			var hashtag = '';
 			for (j = 0; j < hubs[i].userKeywordList.length; j++)
 				hashtag += Filter.keywordToHashtag(hubs[i].userKeywordList[j]) + ' ';
+			var todayArr = [];
+			todayArr.push(hubs[i].favoriteDate.getDate());
+			todayArr.push(hubs[i].favoriteDate.getMonth());
+			todayArr.push(hubs[i].favoriteDate.getFullYear());
+			dayScore = todayArr[0] + todayArr[1]*50 + todayArr[2]*100;
 			newsfeed.push({
 				id: hubs[i].articleId,
 				url: hubs[i].url,
@@ -43,7 +48,7 @@ var getNewsFavorite = function(userId, size, callback) {
 				thumbnail: hubs[i].thumbnail,
 				source: hubs[i].source,
 				publishedDate: hubs[i].favoriteDate,
-				dayScore: hubs[i].dayScore,
+				dayScore: dayScore,
 				hashtag: hashtag,
 				star: hubs[i].star,
 				timeline: false
@@ -105,6 +110,11 @@ var getMediaFavorite = function(userId, size, callback) {
 			var hashtag = '';
 			for (j = 0; j < hubs[i].userKeywordList.length; j++)
 				hashtag += Filter.keywordToHashtag(hubs[i].userKeywordList[j]) + ' ';
+			var todayArr = [];
+			todayArr.push(hubs[i].favoriteDate.getDate());
+			todayArr.push(hubs[i].favoriteDate.getMonth());
+			todayArr.push(hubs[i].favoriteDate.getFullYear());
+			dayScore = todayArr[0] + todayArr[1]*50 + todayArr[2]*100;
 			mediafeed.push({
 				id: hubs[i].articleId,
 				url: hubs[i].url,

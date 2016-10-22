@@ -123,7 +123,7 @@ var getMediaFavorite = function(userId, size, callback) {
 				source: hubs[i].source,
 				avatar: hubs[i].avatar,
 				publishedDate: hubs[i].favoriteDate,
-				dayScore: hubs[i].dayScore,
+				dayScore: dayScore,
 				hashtag: hashtag,
 				star: hubs[i].star,
 				timeline: false

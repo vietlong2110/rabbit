@@ -26,7 +26,7 @@ var Search = function(query, callback) { //calculate document weight vector
 					for (i = 0; i < keywords.length; i++)
 						articleIDs = articleIDs.concat(keywords[i].articleIDs);
 					Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
-						async.eachSeries(fullArticles, function(article, cb2) {
+						async.each(fullArticles, function(article, cb2) {
 							if (newsResult.indexOf(article) === -1) {
 								var vector1 = docVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
@@ -59,7 +59,7 @@ var Search = function(query, callback) { //calculate document weight vector
 					for (i = 0; i < keywords.length; i++)
 						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
 					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
-						async.eachSeries(fullArticles, function(article, cb2) {
+						async.each(fullArticles, function(article, cb2) {
 							if (mediaResult.indexOf(article) === -1) {
 								var vector1 = mediaDocVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);

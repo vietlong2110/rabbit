@@ -100,7 +100,7 @@ module.exports.extractImage = extractImage;
 
 var extractImageFromContent = function(content) {
 	// console.log(content);
-	var regex = /<img[^>]+src\s*=\s*['"](http[^'"]+)['"][^>]*>/g;
+	var regex = /.*og:image"\s*content="+(.*)+".*/g;
 	// console.log(regex.exec(content));
 	var image = regex.exec(content);
 	if (image === null || typeof(image[1]) === undefined)

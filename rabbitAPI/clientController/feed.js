@@ -48,8 +48,8 @@ var searchFeed = function(query, callback) {
 		}
 		for (i = 0; i < Math.min(maxCache, media.length); i++) {
 			var todayArr = [];
-			if (articles[i].publishedDate === null)
-				articles[i].publishedDate = new Date();
+			if (media[i].publishedDate === null)
+				media[i].publishedDate = new Date();
 			todayArr.push(media[i].publishedDate.getDate());
 			todayArr.push(media[i].publishedDate.getMonth());
 			todayArr.push(media[i].publishedDate.getFullYear());
@@ -425,10 +425,23 @@ var getNewsByKeyword = function(userId, keyword, size, callback) {
 					timeline: false
 				});
 			}
-		newsfeed[0].timeline = true;
-		for (i = 1; i < newsfeed.length; i++)
-			if (newsfeed[i].dayScore != newsfeed[i-1].dayScore)
-				newsfeed[i].timeline = true;
+		var D = require('../libs/date.js');
+		if (newsfeed.length > 0) {
+			if (D.Today(newsfeed[0].publishedDate))
+				newsfeed[0].timeline = 'Today';
+			else if (D.Yesterday(newsfeed[0].publishedDate))
+				newsfeed[0].timeline = 'Yesterday';
+			else newsfeed[0].timeline = D.dateAbbr(newsfeed[0].publishedDate);
+			
+			for (i = 1; i < newsfeed.length; i++)
+				if (newsfeed[i].dayScore != newsfeed[i-1].dayScore) {
+					if (D.Today(newsfeed[i].publishedDate))
+						newsfeed[i].timeline = 'Today';
+					else if (D.Yesterday(newsfeed[i].publishedDate))
+						newsfeed[i].timeline = 'Yesterday';
+					else newsfeed[i].timeline = D.dateAbbr(newsfeed[i].publishedDate);
+				}
+		}
 		Pagination.paginate(newsfeed, size, function(newsFeedResult, moreDataNews) {
 			callback(null, newsFeedResult, moreDataNews);
 		});
@@ -466,11 +479,22 @@ var getMediaFeed = function(userId, size, callback) {
 						timeline: false
 					});
 				}
+			var D = require('../libs/date.js');
 			if (mediafeed.length > 0) {
-				mediafeed[0].timeline = true;
+				if (D.Today(mediafeed[0].publishedDate))
+					mediafeed[0].timeline = 'Today';
+				else if (D.Yesterday(mediafeed[0].publishedDate))
+					mediafeed[0].timeline = 'Yesterday';
+				else mediafeed[0].timeline = D.dateAbbr(mediafeed[0].publishedDate);
+				
 				for (i = 1; i < mediafeed.length; i++)
-					if (mediafeed[i].dayScore != mediafeed[i-1].dayScore)
-						mediafeed[i].timeline = true;
+					if (mediafeed[i].dayScore != mediafeed[i-1].dayScore) {
+						if (D.Today(mediafeed[i].publishedDate))
+							mediafeed[i].timeline = 'Today';
+						else if (D.Yesterday(mediafeed[i].publishedDate))
+							mediafeed[i].timeline = 'Yesterday';
+						else mediafeed[i].timeline = D.dateAbbr(mediafeed[i].publishedDate);
+					}
 			}
 			Pagination.paginate(mediafeed, size, function(mediaFeedResult, moreDataMedia) {
 				callback(null, mediaFeedResult, moreDataMedia);
@@ -506,10 +530,23 @@ var getMediaByKeyword = function(userId, keyword, size, callback) {
 					timeline: false
 				});
 			}
-		mediafeed[0].timeline = true;
-		for (i = 1; i < mediafeed.length; i++)
-			if (mediafeed[i].dayScore != mediafeed[i-1].dayScore)
-				mediafeed[i].timeline = true;
+		var D = require('../libs/date.js');
+		if (mediafeed.length > 0) {
+			if (D.Today(mediafeed[0].publishedDate))
+				mediafeed[0].timeline = 'Today';
+			else if (D.Yesterday(mediafeed[0].publishedDate))
+				mediafeed[0].timeline = 'Yesterday';
+			else mediafeed[0].timeline = D.dateAbbr(mediafeed[0].publishedDate);
+			
+			for (i = 1; i < mediafeed.length; i++)
+				if (mediafeed[i].dayScore != mediafeed[i-1].dayScore) {
+					if (D.Today(mediafeed[i].publishedDate))
+						mediafeed[i].timeline = 'Today';
+					else if (D.Yesterday(mediafeed[i].publishedDate))
+						mediafeed[i].timeline = 'Yesterday';
+					else mediafeed[i].timeline = D.dateAbbr(mediafeed[i].publishedDate);
+				}
+		}
 		Pagination.paginate(mediafeed, size, function(mediaFeedResult, moreDataMedia) {
 			callback(null, mediaFeedResult, moreDataMedia);
 		});

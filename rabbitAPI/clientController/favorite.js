@@ -85,9 +85,9 @@ var updateMediaFavorite = function(userId, articleId, callback) {
 	}).exec(function(err, hub) {
 		if (err || hub === null)
 			return callback(false);
+		hub.star = !hub.star;
 		if (hub.star)
 			hub.favoriteDate = new Date();
-		hub.star = !hub.star;
 		hub.save(function(err) {
 			if (err)
 				return callback(false);

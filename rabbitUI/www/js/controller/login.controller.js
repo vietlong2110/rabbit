@@ -5,19 +5,23 @@ function($rootScope, $scope, $ionicPopup, $state, $ionicViewSwitcher, AuthServic
     $scope.token = '';
 
     $scope.fblogin = function() {
-        AuthService.fblogin().then(function(message) {
+        AuthService.fblogin().then(function(token) {
             // $scope.token = token;
             apiServices.getList();
+            apiServices.getInfo();
             apiServices.getNewsFeed(0, function() {
-                $ionicViewSwitcher.nextDirection('swap');
-                if ($rootScope.news.length === 0 && $rootScope.media.length === 0) {
+            //     $ionicViewSwitcher.nextDirection('swap');
+                if ($rootScope.news.length === 0) {
                     apiServices.getSuggestion();
-                    $state.go('discover');
+                    $rootScope.currentNewsfeedState = 'Discover';
+                    $rootScope.onDiscover = true;
+                    $state.go('tabs.discover');
                 }
                 else {
                     $rootScope.currentReadingState = $rootScope.news[0];
                     $rootScope.currentNewsfeedState = 'Newsfeed';
                     $rootScope.currentTab = 'News';
+                    $rootScope.onNewsfeed = true;
                     $state.go('tabs.news');
                 }
             });

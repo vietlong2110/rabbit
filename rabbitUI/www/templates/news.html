@@ -19,22 +19,24 @@
         <ion-refresher pulling-icon="" on-refresh="doRefresh()">
         </ion-refresher>
         
-        <div id="newsfeed" class="card" ng-repeat="item in news">
-            <!-- <p class="fancy"><span>Today</span></p> -->
-            <ion-item ng-class="{'star': item.star}"
-            class="item-thumbnail-left item-text-wrap item-icon-right" 
-            ng-click="assignCurrentReading(item)" href="#/tabs/reading">
-                <img src="{{item.thumbnail}}" alt="thumbnail">
-                <h2>{{item.title | limitTo: 55}}{{item.title.length > 55 ? '&hellip;' : ''}}</h2>
-                <!-- <h2>{{item.title}}</h2> -->
-                <p id="hashtag">
-                    {{item.hashtag | limitTo: 25}}{{item.hashtag.length > 25 ? '&hellip;' : ''}}
-                </p>
-                <i id="bookmark" class="icon ion-bookmark stable" 
-                ng-click="toggleStar($event, item)" ng-class="{'energized': item.star}"></i>
-                <i id="share-icon" ng-click="share($event, item)" 
-                class="icon ion-android-share stable"></i>
-            </ion-item>
+        <div id="newsfeed" ng-repeat="item in news">
+            <p class="fancy" ng-show="item.timeline"><span>{{item.timeline}}</span></p>
+            <div class="card newsfeed">
+                <ion-item ng-class="{'star': item.star}"
+                class="item-thumbnail-left item-text-wrap item-icon-right" 
+                ng-click="assignCurrentReading(item)" href="#/tabs/reading">
+                    <img src="{{item.thumbnail}}" alt="thumbnail">
+                    <h2>{{item.title | limitTo: 40}}{{item.title.length > 40 ? '&hellip;' : ''}}</h2>
+                    <p>{{item.source}}</p>
+                    <p id="hashtag">
+                        {{item.hashtag | limitTo: 25}}{{item.hashtag.length > 25 ? '&hellip;' : ''}}
+                    </p>
+                    <i id="bookmark" class="icon ion-bookmark stable" 
+                    ng-click="toggleStar($event, item)" ng-class="{'energized': item.star}"></i>
+                    <i id="share-icon" ng-click="share($event, item)" 
+                    class="icon ion-android-share stable"></i>
+                </ion-item>
+            </div>
         </div>
 
         <ion-infinite-scroll ng-if="moreDataNews" on-infinite="loadMore()" distance="1%">

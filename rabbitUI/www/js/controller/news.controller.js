@@ -2,7 +2,7 @@
 angular.module('news.controller', [])
 .controller('NewsController', 
 function($rootScope, $scope, apiServices, $state, $http, $ionicScrollDelegate,
-$ionicViewSwitcher, API_ENDPOINT, LOAD_SIZE) {
+$ionicViewSwitcher, $cordovaSocialSharing, API_ENDPOINT, LOAD_SIZE) {
     $rootScope.moreDataNews = false;
 
     $scope.onSearch = function() { // enter search part
@@ -41,7 +41,23 @@ $ionicViewSwitcher, API_ENDPOINT, LOAD_SIZE) {
     $scope.share = function(e, item) {
         e.preventDefault();
         e.stopPropagation();
+        var message = '';
+        var image = item.thumbnail;
+        var link = item.url;
+
+        // window.plugins.socialsharing.share(null, message, image, link);
         
+        $cordovaSocialSharing.shareViaFacebook(message, image, link).then(function(result) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'This link has shared on your newsfeed!',
+                template: result
+            });
+        }, function(err) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Failed to share!',
+                template: err
+            });
+        });
     };
 
     $scope.loadMore = function() {

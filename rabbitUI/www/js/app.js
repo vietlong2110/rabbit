@@ -1,5 +1,5 @@
 // Rabbit App
-angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.controller', 
+angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova', 'starter.services', 'app.controller', 
 'login.controller', 'register.controller', 'news.controller', 'socialmedia.controller',
 'suggest.controller', 'search.controller', 'socialsearch.controller', 'reading.controller',
 'socialreading.controller', 'favorites.controller', 'socialfavorites.controller',
@@ -11,10 +11,10 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'starter.services', 'app.c
 })
 
 .constant('API_ENDPOINT', {
-    // url: 'http://54.163.93.190:8080/auth',
-    // api: 'http://54.163.93.190:8080/clientapi'
-    url: 'http://localhost:8080/auth',
-    api: 'http://localhost:8080/clientapi'
+    url: 'http://54.163.93.190:8080/auth',
+    api: 'http://54.163.93.190:8080/clientapi'
+    // url: 'http://localhost:8080/auth',
+    // api: 'http://localhost:8080/clientapi'
 })
 
 .constant('FB', {

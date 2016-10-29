@@ -19,18 +19,21 @@
         <ion-refresher pulling-icon="" on-refresh="doRefresh()">
         </ion-refresher>
 
-        <div class="list card" ng-repeat="item in followingMedia">
-            <div class="item item-image item-icon-right social-image">
-                <i id="social-bookmark" class="icon ion-plus-round float-not-favorite" 
-                ng-click="toggleStar($event, item)" ng-hide="item.star"></i>
-                <i id="social-bookmark" class="icon ion-bookmark float-favorite" 
-                ng-click="toggleStar($event, item)" ng-show="item.star"></i>
-                <a ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
-                <img src="{{item.thumbnail}}">
-            </div>
-            <div class="item item-avatar">
-                <img src="{{item.avatar}}">
-                <h2>{{item.title}}</h2>
+        <div class="list" ng-repeat="item in followingMedia">
+            <p class="fancy" ng-show="item.timeline"><span>{{item.timeline}}</span></p>
+            <div class="card media">
+                <div class="item item-image item-icon-right social-image">
+                    <i id="social-bookmark" class="icon ion-plus-round float-not-favorite" 
+                    ng-click="toggleStar($event, item)" ng-hide="item.star"></i>
+                    <i id="social-bookmark" class="icon ion-bookmark float-favorite" 
+                    ng-click="toggleStar($event, item)" ng-show="item.star"></i>
+                    <a ng-click="assignCurrentReading(item)" href="#/tabs/socialreading">
+                    <img src="{{item.thumbnail}}">
+                </div>
+                <div class="item item-avatar">
+                    <img src="{{item.avatar}}">
+                    <h2>{{item.title}}</h2>
+                </div>
             </div>
         </div>
 

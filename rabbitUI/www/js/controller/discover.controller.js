@@ -6,13 +6,13 @@ angular.module('discover.controller', [])
         e.preventDefault(); 
         e.stopPropagation();
 
-            $rootScope.keywords.push({
-                keyword: item.name,
-                isChecked: true
-            });
-            apiServices.follow(item.name, item.name);
-            item.followed = true;
-            $rootScope.listCount++;
+        $rootScope.keywords.push({
+            keyword: item.name,
+            isChecked: true
+        });
+        apiServices.follow(item.name, item.name);
+        item.followed = true;
+        $rootScope.listCount++;
     };
 
     $scope.unfollow = function(e, item) {

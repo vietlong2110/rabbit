@@ -53,22 +53,20 @@ angular.module('starter.services', [])
 	return {
 		fblogin: function() {
 			return $q(function(resolve, reject) {
-				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile'], 
+				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile', 'user_friends', 'user_likes', 'user_birthday'], 
 				{redirect_uri: 'http://localhost/callback'}).then(function(result) {
-					if (result.access_token) {
-						$http.post(API_ENDPOINT.url + '/fblogin', {token: result.access_token})
-						.then(function(res) {
-							if (res.data.success) {
-								storeUserCredentials(res.data.token);
-								resolve(res.data.message);
-								// resolve(result.access_token);
-							}
-							else reject(res.data.message);
-						});
-					}
-					else reject('Facebook Login Error!');
+					// resolve(result.token);
+					$http.post(API_ENDPOINT.url + '/fblogin', {token: result.access_token})
+					.then(function(res) {
+						if (res.data.success) {
+							storeUserCredentials(res.data.token);
+							update();
+							resolve(res.data.message);
+						}
+						else reject(res.data.message);
+					});
 				}, function(err) {
-					console.log(err);
+					reject(err);
 				});
 			});
 		},
@@ -146,6 +144,8 @@ angular.module('starter.services', [])
 
 	var getSuggestionAPI = API_ENDPOINT.api + '/getsuggestion';
 
+	var getInfoAPI = API_ENDPOINT.api + '/getinfo';
+
 	return {
 		getNewsFeed: function(size, callback) {
 			$http.get(getNewsFeedAPI, {
@@ -201,8 +201,18 @@ angular.module('starter.services', [])
 		},
 		getSuggestion: function() {
 			$http.get(getSuggestionAPI).success(function(data) {
-				$rootScope.suggestKeywords = data.likes;
+				if (data.success)
+					$rootScope.suggestKeywords = data.likes;
 			});
+		},
+		getInfo: function() {
+			$http.get(getInfoAPI).success(function(data) {
+				if (data.success) {
+					$rootScope.email = data.email;
+					$rootScope.name = data.name;
+					$rootScope.avatar = data.avatar;
+				}
+			});	
 		},
 		getList: function() {
 			$http.get(getListAPI).success(function(data) {

@@ -15,10 +15,10 @@
         <div class="list card" ng-repeat="item in suggestKeywords">
             <!-- <p class="fancy"><span>Fill your hub with topics below</span></p> -->
             <ion-item ng-click="search(item.name)" class="item item-image item-icon-right social-image">
-                <i class="icon ion-plus-round float-not-favorite" 
+                <!-- <i class="icon ion-plus-round float-not-favorite" 
                 ng-click="follow($event, item)" ng-hide="item.followed"></i>
                 <i class="icon ion-checkmark float-favorite" 
-                ng-click="unfollow($event, item)" ng-show="item.followed"></i>
+                ng-click="unfollow($event, item)" ng-show="item.followed"></i> -->
                 <div class="layer">
                     <img src="{{item.cover}}">
                 </div>

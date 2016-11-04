@@ -46,11 +46,11 @@ var searchFeed = function(query, userId, callback) {
 				publishedDate: articles[i].publishedDate
 			});
 		}
-		console.log(media);
 		for (i = 0; i < Math.min(maxCache, media.length); i++) {
 			var todayArr = [];
 			if (media[i].publishedDate === null)
 				media[i].publishedDate = new Date();
+			console.log(media[i].publishedDate instanceof Date);
 			todayArr.push(media[i].publishedDate.getDate());
 			todayArr.push(media[i].publishedDate.getMonth());
 			todayArr.push(media[i].publishedDate.getFullYear());

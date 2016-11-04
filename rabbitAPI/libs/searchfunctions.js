@@ -8,6 +8,7 @@ var Article = require('../models/articles.js');
 var Media = require('../models/media.js');
 var Filter = require('../libs/filter.js');
 var User = require('../models/users.js');
+var stringFuncs = require('./stringfunctions.js');
 
 //Calculate vector tf-idf score of a document
 var Search = function(userId, q, callback) { //calculate document weight vector

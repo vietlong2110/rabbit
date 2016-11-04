@@ -14,6 +14,11 @@ var addList = function(keyword, userId, callback) {
 		if (user.wordList.indexOf(keyword) === -1) { //add keyword and its default setting is checked
 			user.wordList.push(keyword);
 			user.checkList.push(true);
+			for (i = 0; i < user.suggest.length; i++)
+				if (user.suggest[i].name === keyword) {
+					user.suggest[i].followed = true;
+					break;
+				}
 			user.save(function(err) {
 				if (err)
 					return callback(false);

@@ -20,7 +20,7 @@ var userInfo = function(token, callback) {
             if (!res || res.error)
                 return callback(res.error);
     		info.picture = response.data.url;
-    		callback(info);
+    		callback(null, info);
     	});
     });
 };
@@ -28,40 +28,36 @@ module.exports.userInfo = userInfo;
 
 var getUserLikes = function(token, callback) {
     // console.log(token);
-    fb.api('me', {access_token: token}, function(result) {
-        if (!result || result.error)
-            return callback(result.error);
+    fb.api('me/likes', {access_token: token}, function(res) {
+        if (!res || res.error)
+            return callback(res.error);
+        if (res.paging === undefined)
+            return callback();
 
-        fb.api(result.id + '/likes', {fields: ['name', 'created_time'], access_token: token}, 
-        function(res) {
-            if (!res || res.error)
-                return callback(res.error);
-            if (res.paging === undefined)
-                return callback(null);
+        var data = res.data;
+        var next = res.paging.cursors.after;
 
-            var data = res.data;
-            var next = res.paging.cursors.after;
-
-            async.whilst(function() {return next !== undefined},
-            function(cb) {
-                fb.api('me/likes?after=' + next, {
-                    fields: ['name', 'category', 'created_time'], 
-                    access_token: token
-                },
-                function(response) {
-                    if (!res || res.error)
-                        return callback(res.error);
-                    if (response.paging) {
-                        data = data.concat(response.data);
-                        next = response.paging.cursors.after;
-                    }
-                    else next = undefined;
-                    cb();
-                });
-            }, function() {
-                getSuggestionList(token, data, function(suggestList) {
-                    callback(suggestList);
-                });
+        async.whilst(function() {return next !== undefined},
+        function(cb) {
+            fb.api('me/likes?after=' + next, {
+                fields: ['name', 'category', 'created_time'], 
+                access_token: token
+            },
+            function(response) {
+                if (!res || res.error)
+                    return callback(res.error);
+                if (response.paging) {
+                    data = data.concat(response.data);
+                    next = response.paging.cursors.after;
+                }
+                else next = undefined;
+                cb();
+            });
+        }, function() {
+            getSuggestionList(token, data, function(err, suggestList, allLikes) {
+                if (err)
+                    return callback(err);
+                callback(null, suggestList);
             });
         });
     });
@@ -79,6 +75,8 @@ var getSuggestionList = function(token, data, callback) {
     engData.sort(function(a, b) {
         return b.created_time - a.created_time;
     });
+    var allLikes = engData;
+
     engData = engData.slice(0, 25);
     // callback(engData);
     var resultData = [];
@@ -105,7 +103,7 @@ var getSuggestionList = function(token, data, callback) {
         
         resultData.sort(function(a, b) {
             return b.likes - a.likes;
-        })
+        });
         resultData = resultData.slice(0, 10);
         async.each(resultData, function(result, cb2) {
             fb.api(result.id + '/picture?redirect=0', {access_token: token}, function(res) {
@@ -117,8 +115,42 @@ var getSuggestionList = function(token, data, callback) {
         }, function(err) {
             if (err)
                 return callback(err);
-            callback(resultData);
+            callback(null, resultData, allLikes);
         });
     });
 };
 module.exports.getSuggestionList = getSuggestionList;
+
+var pageFeed = function(token, pageList, callback) {
+    var resultData = [];
+
+    async.eachSeries(pageList, function(page, cb) {
+        fb.api(page.id + '/feed', {fields: ['picture', 'link', 'message', 'story', 'created_time'], 
+        access_token: token}, function(res) {
+            if (!res || res.error)
+                return callback(res.error);
+            var data = res.data;
+
+            for (i = 0; i < data.length; i++) {
+                var title = '';
+                if (data[i].message)
+                    title = data[i].message;
+                else if (data[i].story)
+                    title = data[i].story;
+                resultData.push({
+                    url: data[i].link,
+                    title: title,
+                    thumbnail: data[i].picture,
+                    source: page.name,
+                    publishedDate: data[i].created_time
+                });
+            }
+            cb();
+        });
+    }, function(err) {
+        if (err)
+            return callback(err);
+        callback(null, resultData);
+    });
+};
+module.exports.pageFeed = pageFeed;

@@ -97,7 +97,12 @@ router.post('/fblogin', function(req, res) {
 	var accesstoken = req.body.token;
 	var FB = require('../clientController/fb.js');
 
-	FB.userInfo(accesstoken, function(data) {
+	FB.userInfo(accesstoken, function(err, data) {
+		if (err)
+			res.json({
+				success: false,
+				message: err
+			});
 		var User = require('../models/users.js');
 
     	User.findOne({email: data.email}).exec(function(err, user) {
@@ -107,7 +112,13 @@ router.post('/fblogin', function(req, res) {
     				message: err
     			});
     		else if (!user) {
-    			FB.getUserLikes(accesstoken, function(likes) {
+    			FB.getUserLikes(accesstoken, function(err, likes) {
+    				if (err)
+    					res.json({
+    						success: false,
+    						message: err
+    					});
+
 	    			var newUser = new User({
 	    				email: data.email,
 	    				name: data.name,
@@ -127,23 +138,29 @@ router.post('/fblogin', function(req, res) {
 	    						success: false,
 	    						message: err
 	    					});
-	    				var token = jwt.encode(data.email, config.secret);
-	    				console.log('FB Token: ' + accesstoken);
-	    				// console.log('Login Token: ' + token);
+	    				User.findOne({email: data.emai}).exec(function(err, user) {
+	    					if (err)
+		    					res.json({
+		    						success: false,
+		    						message: err
+		    					});
 
-						res.json({
-							success: true,
-							token: 'JWT ' + token,
-							email: data.email,
-							name: data.name,
-							message: 'Logging in'
-						});
+		    				var token = jwt.encode(data.email, config.secret);
+		    				console.log(token);
+
+							res.json({
+								success: true,
+								token: 'JWT ' + token,
+								email: data.email,
+								name: data.name,
+								message: 'Logging in'
+							});
+	    				});
 	    			});
     			});
     		}
     		else {
     			user.access_token = accesstoken;
-    			// console.log('FB Token: ' + accesstoken);
     			user.save(function(err) {
     				if (err)
     					res.json({
@@ -152,7 +169,7 @@ router.post('/fblogin', function(req, res) {
     					});
     			});
     			var token = jwt.encode(user.email, config.secret);
-				// console.log('Login Token: ' + token);
+    			console.log(token);
 
 				res.json({
 					success: true,
@@ -165,14 +182,4 @@ router.post('/fblogin', function(req, res) {
     	});
 	});
 });
-
-// router.get('/getlikes', function(req, res) {
-// 	var FB = require('../clientController/fb.js');
-// 	var token = 'EAAM98EFnHGMBAFII80uPzg8jVEULxGaGGZCPOFMds77fRV8gjc4Ul58zbySAoIL6bpxfI1dCcAZCBskAs4lrMsEt5J7P2i9AsW1tAV0UikOoMMZBRYa3zZCJ9gPM5oEZBQR1itHeyKnCczhPZCSgHS4NQg0XSrDHUZD';
-
-// 	FB.getUserLikes(token, function(data) {
-// 		res.json({data: data});
-// 	});
-// });
-
 module.exports = router;

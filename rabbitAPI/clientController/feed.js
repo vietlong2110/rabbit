@@ -18,13 +18,13 @@ var Filter = require('../libs/filter.js');
 var searchFuncs = require('../libs/searchfunctions');
 
 //Search feed controller
-var searchFeed = function(query, callback) {
+var searchFeed = function(query, userId, callback) {
 	//preprocess query
 	var maxCache = 4000;
 
 	var newsSearchResult = [], mediaSearchResult = [];
 
-	searchFuncs.Search(query, function(err, articles, newsEvalScore, media, mediaEvalScore) {
+	searchFuncs.Search(userId, query, function(err, articles, newsEvalScore, media, mediaEvalScore) {
 		if (err)
 			return callback(err);
 		for (i = 0; i < Math.min(maxCache, articles.length); i++) {
@@ -103,13 +103,61 @@ var refreshFeed = function(userId, callback) {
 };
 module.exports.refreshFeed = refreshFeed;
 
+var updateSocialFeed = function(userId, callback) {
+	User.findById(userId).exec(function(err, user) {
+		if (err)
+			return callback(err);
+
+		var suggestPages = [];
+		for (i = 0; i < user.suggest.length; i++)
+			if (user.suggest[i].followed)
+				suggestPages.push(user.suggest[i]);
+
+		var FB = require('./fb.js');
+		FB.pageFeed(user.access_token, suggestPages, function(err, fbFeed) {
+			if (err)
+				return callback(err);
+			var Facebook = require('../models/facebook.js');
+			async.eachSeries(fbFeed, function(feed, cb) {
+				Facebook.findOne({url: feed.url}).exec(function(err, fb) {
+					if (err)
+						return callback(err);
+					if (fb === null) {
+						var newFB = new Facebook({
+							userId: userId,
+							access_token: user.access_token,
+							url: fb.url,
+							title: fb.title,
+							thumbnail: fb.thumbnail,
+							source: fb.source,
+							publishedDate: fb.publishedDate
+						});
+						newFB.save(function(err) {
+							if (err)
+								cb(err);
+							else cb();
+						});
+					}
+					else cb();
+				});
+			}, function(err) {
+				if (err)
+					return callback(err);
+				callback();
+			});
+		});
+	});
+};
+module.exports.updateSocialFeed = updateSocialFeed;
+
 var updateFeedByKeyword = function(userId, keyword, callback) {
 	var updatednews = false, updatedmedia = false;
+
 	var query = stringFuncs.preProcess(keyword);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
+	searchFeed(userId, query, function(err, newsFeedResult, mediaFeedResult) {
 		if (err)
 			return callback(err);
 		async.parallel([
@@ -220,7 +268,7 @@ var updateFeedByKeyword = function(userId, keyword, callback) {
 			}
 		], function(err) {
 			if (err)
-				return callback(err);
+				return cbb(err);
 			refreshFeed(userId, function(err, results) {
 				if (err)
 					return callback(err);

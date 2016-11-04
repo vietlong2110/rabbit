@@ -7,9 +7,10 @@ var Keyword = require('../models/keywords.js');
 var Article = require('../models/articles.js');
 var Media = require('../models/media.js');
 var Filter = require('../libs/filter.js');
+var User = require('../models/users.js');
 
 //Calculate vector tf-idf score of a document
-var Search = function(query, callback) { //calculate document weight vector
+var Search = function(userId, query, callback) { //calculate document weight vector
 	var newsEvals = [], newsResult = [], mediaEvals = [], mediaResult = [];
 	var queryArr = Filter.queryArr(query);
 
@@ -26,7 +27,7 @@ var Search = function(query, callback) { //calculate document weight vector
 					for (i = 0; i < keywords.length; i++)
 						articleIDs = articleIDs.concat(keywords[i].articleIDs);
 					Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
-						async.each(fullArticles, function(article, cb2) {
+						async.eachSeries(fullArticles, function(article, cb2) {
 							if (newsResult.indexOf(article) === -1) {
 								var vector1 = docVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
@@ -59,7 +60,7 @@ var Search = function(query, callback) { //calculate document weight vector
 					for (i = 0; i < keywords.length; i++)
 						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
 					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
-						async.each(fullArticles, function(article, cb2) {
+						async.eachSeries(fullArticles, function(article, cb2) {
 							if (mediaResult.indexOf(article) === -1) {
 								var vector1 = mediaDocVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
@@ -74,6 +75,37 @@ var Search = function(query, callback) { //calculate document weight vector
 						});
 					});
 				});
+			});
+		},
+		function(cb) {
+			User.findById(userId).exec(function(err, user) {
+				if (err)
+					return cb(err);
+
+				var ok = false;
+				for (i = 0; i < user.suggest.length; i++)
+					if (user.suggest[i].name === query) {
+						ok = true;
+						var FB = require('../clientController/fb.js');
+						var suggestPage = [];
+						suggestPage.push(user.suggest[i]);
+						FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
+							if (err)
+								return cb(err);
+							var vector2 = queryVector(queryArr);
+							async.eachSeries(fbFeed, function(article, cb3) {
+								mediaEvals.push(cosEval(vector2, vector2));
+								mediaResult.push(article);
+								cb3();
+							}, function(err) {
+								if (err)
+									return cb(err);
+								cb();
+							});
+						});
+					}
+				if (!ok)
+					cb();
 			});
 		}
 	], function(err) {

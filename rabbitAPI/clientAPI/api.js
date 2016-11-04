@@ -30,12 +30,7 @@ module.exports = function(passport) {
 	router.get('/search', function(req, res) { 
 		UserController.getUserId(req.headers, function(userId) {
 			if (userId) {
-				var querySanitized = Filter.querySanitize(req.query.q); //sanitize query before processing
-				var query = stringFuncs.preProcess(querySanitized);
-				query = stringFuncs.wordTokenize(query);
-				query = stringFuncs.stemArr(query);
-
-				Feed.searchFeed(query, userId, function(err, newsFeedResult, mediaFeedResult) {
+				Feed.searchFeed(req.query.q, userId, function(err, newsFeedResult, mediaFeedResult) {
 					if (err)
 						res.json({
 							success: false,

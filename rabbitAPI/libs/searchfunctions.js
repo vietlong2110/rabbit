@@ -10,8 +10,12 @@ var Filter = require('../libs/filter.js');
 var User = require('../models/users.js');
 
 //Calculate vector tf-idf score of a document
-var Search = function(userId, query, callback) { //calculate document weight vector
+var Search = function(userId, q, callback) { //calculate document weight vector
 	var newsEvals = [], newsResult = [], mediaEvals = [], mediaResult = [];
+	var querySanitized = Filter.querySanitize(q); //sanitize query before processing
+	var query = stringFuncs.preProcess(querySanitized);
+	query = stringFuncs.wordTokenize(query);
+	query = stringFuncs.stemArr(query);
 	var queryArr = Filter.queryArr(query);
 
 	async.parallel([
@@ -84,7 +88,7 @@ var Search = function(userId, query, callback) { //calculate document weight vec
 
 				var ok = false;
 				for (i = 0; i < user.suggest.length; i++)
-					if (user.suggest[i].name === query) {
+					if (user.suggest[i].name === q) {
 						ok = true;
 						var FB = require('../clientController/fb.js');
 						var suggestPage = [];

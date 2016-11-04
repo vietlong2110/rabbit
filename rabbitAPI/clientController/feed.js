@@ -46,6 +46,7 @@ var searchFeed = function(query, userId, callback) {
 				publishedDate: articles[i].publishedDate
 			});
 		}
+		console.log(media);
 		for (i = 0; i < Math.min(maxCache, media.length); i++) {
 			var todayArr = [];
 			if (media[i].publishedDate === null)

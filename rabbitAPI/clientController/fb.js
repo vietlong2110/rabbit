@@ -142,7 +142,7 @@ var pageFeed = function(token, pageList, callback) {
                     title: title,
                     thumbnail: data[i].picture,
                     source: page.name,
-                    publishedDate: data[i].created_time
+                    publishedDate: new Date(data[i].created_time)
                 });
             }
             cb();

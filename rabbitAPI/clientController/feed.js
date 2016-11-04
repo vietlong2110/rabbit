@@ -50,7 +50,6 @@ var searchFeed = function(query, userId, callback) {
 			var todayArr = [];
 			if (media[i].publishedDate === null)
 				media[i].publishedDate = new Date();
-			console.log(media[i].publishedDate instanceof Date);
 			todayArr.push(media[i].publishedDate.getDate());
 			todayArr.push(media[i].publishedDate.getMonth());
 			todayArr.push(media[i].publishedDate.getFullYear());

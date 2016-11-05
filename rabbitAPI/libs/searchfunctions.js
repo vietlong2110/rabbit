@@ -99,7 +99,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 						}).exec(function(err, fbs) {
 							if (err)
 								return cb(err);
-							if (fbs === null) {
+							if (fbs === null || fbs.length === 0) {
 								console.log('In here!');
 								var FB = require('../clientController/fb.js');
 								var suggestPage = [];

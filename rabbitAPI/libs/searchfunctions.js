@@ -106,11 +106,21 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 								FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 									if (err)
 										return cb(err);
-									var vector2 = queryVector(queryArr);
-									async.eachSeries(fbFeed, function(article, cb3) {
-										mediaEvals.push(cosEval(vector2, vector2));
-										mediaResult.push(article);
-										cb3();
+									async.eachSeries(fbFeed, function(fb, cb3) {
+										var newFB = new Facebook({
+											userId: userId,
+											access_token: user.access_token,
+											url: fb.url,
+											title: fb.title,
+											thumbnail: fb.thumbnail,
+											source: fb.source,
+											publishedDate: fb.publishedDate
+										});
+										newFB.save(function(err) {
+											if (err)
+												cb3(err);
+											else cb3();
+										});
 									}, function(err) {
 										if (err)
 											return cb(err);

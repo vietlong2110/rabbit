@@ -107,6 +107,10 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 									if (err)
 										return cb(err);
 									async.eachSeries(fbFeed, function(fb, cb3) {
+										var vector2 = queryVector(queryArr);
+										mediaEvals.push(cosEval(vector2, vector2));
+										mediaResult.push(article);
+
 										var newFB = new Facebook({
 											userId: userId,
 											access_token: user.access_token,
@@ -116,11 +120,8 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 											source: fb.source,
 											publishedDate: fb.publishedDate
 										});
-										newFB.save(function(err) {
-											if (err)
-												cb3(err);
-											else cb3();
-										});
+										newFB.save();
+										cb3();
 									}, function(err) {
 										if (err)
 											return cb(err);
@@ -130,6 +131,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 							}
 							else {
 								async.eachSeries(fbs, function(article, cb3) {
+									var vector2 = queryVector(queryArr);
 									mediaEvals.push(cosEval(vector2, vector2));
 									mediaResult.push(article);
 									cb3();

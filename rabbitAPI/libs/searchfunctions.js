@@ -91,7 +91,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 				for (i = 0; i < user.suggest.length; i++)
 					if (user.suggest[i].name.toLowerCase() === q.toLowerCase()) {
 						ok = true;
-						console.log('In here 1');
+
 						var Facebook = require('../models/facebook.js');
 						Facebook.find({
 							userId: userId,
@@ -99,8 +99,8 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 						}).exec(function(err, fbs) {
 							if (err)
 								return cb(err);
-							console.log('In here 2');
 							if (fbs === null) {
+								console.log('In here!');
 								var FB = require('../clientController/fb.js');
 								var suggestPage = [];
 								suggestPage.push(user.suggest[i]);

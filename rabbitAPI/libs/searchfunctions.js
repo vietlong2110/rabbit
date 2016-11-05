@@ -87,67 +87,66 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 				if (err)
 					return cb(err);
 
-				var ok = false;
+				var suggestPage = [];
 				for (i = 0; i < user.suggest.length; i++)
 					if (user.suggest[i].name.toLowerCase() === q.toLowerCase()) {
-						ok = true;
+						suggestPage.push(user.suggest[i]);
+						break;
+					}
+				if (suggestPage.length === 0)
+					return cb();
 
-						var Facebook = require('../models/facebook.js');
-						Facebook.find({
-							userId: userId,
-							source: user.suggest[i].name
-						}).exec(function(err, fbs) {
+				var Facebook = require('../models/facebook.js');
+				Facebook.find({
+					userId: userId,
+					source: suggestPage[0].name
+				}).exec(function(err, fbs) {
+					if (err)
+						return cb(err);
+					if (fbs === null || fbs.length === 0) {
+						var FB = require('../clientController/fb.js');
+						FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 							if (err)
 								return cb(err);
-							if (fbs === null || fbs.length === 0) {
-								var FB = require('../clientController/fb.js');
-								var suggestPage = [];
-								suggestPage.push(user.suggest[i]);
-								FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
-									if (err)
-										return cb(err);
-									async.eachSeries(fbFeed, function(fb, cb3) {
-										var vector2 = queryVector(queryArr);
-										mediaEvals.push(cosEval(vector2, vector2));
-										mediaResult.push(fb);
+							async.eachSeries(fbFeed, function(fb, cb3) {
+								var vector2 = queryVector(queryArr);
+								mediaEvals.push(cosEval(vector2, vector2));
+								mediaResult.push(fb);
 
-										var newFB = new Facebook({
-											userId: userId,
-											access_token: user.access_token,
-											url: fb.url,
-											title: fb.title,
-											thumbnail: fb.thumbnail,
-											source: fb.source,
-											publishedDate: fb.publishedDate
-										});
-										newFB.save(function(err) {
-											if (err)
-												return cb3(err);
-											cb3();
-										});
-									}, function(err) {
-										if (err)
-											return cb(err);
-										cb();
-									});
+								var newFB = new Facebook({
+									userId: userId,
+									access_token: user.access_token,
+									url: fb.url,
+									title: fb.title,
+									thumbnail: fb.thumbnail,
+									source: fb.source,
+									publishedDate: fb.publishedDate
 								});
-							}
-							else {
-								async.eachSeries(fbs, function(article, cb3) {
-									var vector2 = queryVector(queryArr);
-									mediaEvals.push(cosEval(vector2, vector2));
-									mediaResult.push(article);
-									cb3();
-								}, function(err) {
+								newFB.save(function(err) {
 									if (err)
-										return cb(err);
-									cb();
+										return cb3(err);
+									cb3();
 								});
-							}
+							}, function(err) {
+								if (err)
+									return cb(err);
+								cb();
+							});
 						});
 					}
-				if (!ok)
-					cb();
+					else {
+						async.eachSeries(fbs, function(article, cb3) {
+							var vector2 = queryVector(queryArr);
+							mediaEvals.push(cosEval(vector2, vector2));
+							mediaResult.push(article);
+							cb3();
+						}, function(err) {
+							if (err)
+								return cb(err);
+							cb();
+						});
+					}
+				});
 			});
 		}
 	], function(err) {

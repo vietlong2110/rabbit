@@ -32,7 +32,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 					for (i = 0; i < keywords.length; i++)
 						articleIDs = articleIDs.concat(keywords[i].articleIDs);
 					Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
-						async.eachSeries(fullArticles, function(article, cb2) {
+						async.each(fullArticles, function(article, cb2) {
 							if (newsResult.indexOf(article) === -1) {
 								var vector1 = docVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
@@ -65,7 +65,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 					for (i = 0; i < keywords.length; i++)
 						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
 					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
-						async.eachSeries(fullArticles, function(article, cb2) {
+						async.each(fullArticles, function(article, cb2) {
 							if (mediaResult.indexOf(article) === -1) {
 								var vector1 = mediaDocVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
@@ -108,7 +108,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 						FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 							if (err)
 								return cb(err);
-							async.eachSeries(fbFeed, function(fb, cb3) {
+							async.each(fbFeed, function(fb, cb3) {
 								var vector2 = queryVector(queryArr);
 								mediaEvals.push(cosEval(vector2, vector2));
 								mediaResult.push(fb);
@@ -136,7 +136,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 						});
 					}
 					else {
-						async.eachSeries(fbs, function(article, cb3) {
+						async.each(fbs, function(article, cb3) {
 							var vector2 = queryVector(queryArr);
 							mediaEvals.push(cosEval(vector2, vector2));
 							mediaResult.push(article);

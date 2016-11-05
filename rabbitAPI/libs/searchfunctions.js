@@ -100,7 +100,6 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 							if (err)
 								return cb(err);
 							if (fbs === null || fbs.length === 0) {
-								console.log('In here!');
 								var FB = require('../clientController/fb.js');
 								var suggestPage = [];
 								suggestPage.push(user.suggest[i]);
@@ -110,7 +109,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 									async.eachSeries(fbFeed, function(fb, cb3) {
 										var vector2 = queryVector(queryArr);
 										mediaEvals.push(cosEval(vector2, vector2));
-										mediaResult.push(article);
+										mediaResult.push(fb);
 
 										var newFB = new Facebook({
 											userId: userId,

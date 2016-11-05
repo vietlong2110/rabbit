@@ -120,6 +120,7 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 									title: fb.title,
 									thumbnail: fb.thumbnail,
 									source: fb.source,
+									avatar: fb.avatar,
 									publishedDate: fb.publishedDate
 								});
 								newFB.save(function(err) {

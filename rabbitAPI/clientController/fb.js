@@ -142,6 +142,7 @@ var pageFeed = function(token, pageList, callback) {
                     title: title,
                     thumbnail: data[i].picture,
                     source: page.name,
+                    avatar: page.avatar,
                     publishedDate: new Date(data[i].created_time)
                 });
             }

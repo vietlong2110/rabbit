@@ -11,6 +11,7 @@ var Facebook = new Schema({
 	title: String,
 	thumbnail: String,
 	source: String,
+	avatar: String,
 	publishedDate: {
 		type: Date,
 		default: Date.now()

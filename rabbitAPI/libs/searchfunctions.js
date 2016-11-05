@@ -89,24 +89,46 @@ var Search = function(userId, q, callback) { //calculate document weight vector
 
 				var ok = false;
 				for (i = 0; i < user.suggest.length; i++)
-					if (user.suggest[i].name === q) {
+					if (user.suggest[i].name.toLowerCase() === q.toLowerCase()) {
 						ok = true;
-						var FB = require('../clientController/fb.js');
-						var suggestPage = [];
-						suggestPage.push(user.suggest[i]);
-						FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
+
+						var Facebook = require('../models/facebook.js');
+						Facebook.find({
+							userId: userId,
+							source: user.suggest[i].name
+						}).exec(function(err, fbs) {
 							if (err)
 								return cb(err);
-							var vector2 = queryVector(queryArr);
-							async.eachSeries(fbFeed, function(article, cb3) {
-								mediaEvals.push(cosEval(vector2, vector2));
-								mediaResult.push(article);
-								cb3();
-							}, function(err) {
-								if (err)
-									return cb(err);
-								cb();
-							});
+							if (fbs === null) {
+								var FB = require('../clientController/fb.js');
+								var suggestPage = [];
+								suggestPage.push(user.suggest[i]);
+								FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
+									if (err)
+										return cb(err);
+									var vector2 = queryVector(queryArr);
+									async.eachSeries(fbFeed, function(article, cb3) {
+										mediaEvals.push(cosEval(vector2, vector2));
+										mediaResult.push(article);
+										cb3();
+									}, function(err) {
+										if (err)
+											return cb(err);
+										cb();
+									});
+								});
+							}
+							else {
+								async.eachSeries(fbs, function(article, cb3) {
+									mediaEvals.push(cosEval(vector2, vector2));
+									mediaResult.push(article);
+									cb3();
+								}, function(err) {
+									if (err)
+										return cb(err);
+									cb();
+								});
+							}
 						});
 					}
 				if (!ok)

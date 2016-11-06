@@ -9,7 +9,7 @@ var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var socialCache = [], saved = true;
 
-// setInterval(function() {
+setInterval(function() {
 	if (saved) {
 		saved = false;
 		var media = [];
@@ -44,7 +44,7 @@ var socialCache = [], saved = true;
 			},
 			function(cb) {
 				console.log(socialCache.length);
-				var maxComingArticle = Math.min(100, socialCache.length);
+				var maxComingArticle = Math.min(200, socialCache.length);
 				var i = 0;
 
 				async.whilst(function() { return i < maxComingArticle; },
@@ -52,6 +52,7 @@ var socialCache = [], saved = true;
 					Media.findOne({url: socialCache[0].url})
 					.exec(function(err, article) {
 						if (article === null) {
+							console.log('Start extracting ' + socialCache[0].url);
 							Extract.extractKeyword(null, socialCache[0].title,
 							function(originKeywordSet, keywordSet, tf) {
 								console.log('End extracting ' + socialCache[0].url);
@@ -96,4 +97,4 @@ var socialCache = [], saved = true;
 		]);
 	}
 	else console.log(socialCache.length);
-// }, 60 * 2 * 1000);
+}, 60 * 1000);

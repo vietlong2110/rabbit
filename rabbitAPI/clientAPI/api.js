@@ -28,46 +28,50 @@ module.exports = function(passport) {
 
 	//API router for searching a keyword/hashtag
 	router.get('/search', function(req, res) { 
-		var querySanitized = Filter.querySanitize(req.query.q); //sanitize query before processing
-		var query = stringFuncs.preProcess(querySanitized);
-		query = stringFuncs.wordTokenize(query);
-		query = stringFuncs.stemArr(query);
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
+				var querySanitized = Filter.querySanitize(req.query.q);
+				Feed.searchFeed(req.query.q, userId, function(err, newsFeedResult, mediaFeedResult) {
+					if (err)
+						res.json({
+							success: false,
+							err: err
+						});
 
-		Feed.searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
-			if (err)
-				res.json({
-					success: false,
-					err: err
-				});
+					newsFeedResult.sort(function(a,b) { 
+						if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
+							return b.publishedDate - a.publishedDate; //sort by published date
+						else return b.evalScore - a.evalScore; //otherwise sort by ranking score
+					});
 
-			newsFeedResult.sort(function(a,b) { 
-				if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
-					return b.publishedDate - a.publishedDate; //sort by published date
-				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
-			});
+					mediaFeedResult.sort(function(a,b) { 
+						if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
+							return b.publishedDate - a.publishedDate; //sort by published date
+						else return b.evalScore - a.evalScore; //otherwise sort by ranking score
+					});
 
-			mediaFeedResult.sort(function(a,b) { 
-				if (b.evalScore - a.evalScore === 0) //if 2 articles have the same score
-					return b.publishedDate - a.publishedDate; //sort by published date
-				else return b.evalScore - a.evalScore; //otherwise sort by ranking score
-			});
+					Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
+					function(newsFeedResult, moreDataNews) {
+						Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
+						function(mediaFeedResult, moreDataMedia) {
+							var queryTitle = Filter.niceTitle(querySanitized); 
 
-			Pagination.paginate(newsFeedResult, parseInt(req.query.sizenews),
-			function(newsFeedResult, moreDataNews) {
-				Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
-				function(mediaFeedResult, moreDataMedia) {
-					var queryTitle = Filter.niceTitle(querySanitized); 
-
-					res.json({
-						success: true,
-						newsFeedResult: newsFeedResult,
-						mediaFeedResult: mediaFeedResult,
-						keywordSearch: req.query.q, 
-						queryTitle: queryTitle, //title for search view
-						moreDataNews: moreDataNews,
-						moreDataMedia: moreDataMedia
+							res.json({
+								success: true,
+								newsFeedResult: newsFeedResult,
+								mediaFeedResult: mediaFeedResult,
+								keywordSearch: req.query.q, 
+								queryTitle: queryTitle, //title for search view
+								moreDataNews: moreDataNews,
+								moreDataMedia: moreDataMedia
+							});
+						});
 					});
 				});
+			}
+			else res.status(403).json({
+				success: false,
+				error: 'Invalid authentication!'
 			});
 		});
 	});

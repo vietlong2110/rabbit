@@ -208,8 +208,13 @@ var saveMediaArticle = function(articles, callback) {
 			article.publishedDate = new Date();
 		var update = {
 			$set: {
+				url: article.url,
 				title: article.title,
+				social_access: article.social_access,
 				source: article.source,
+				websource: article.websource,
+				video: article.video,
+				iframe: article.iframe,
 				avatar: article.avatar,
 				thumbnail: article.thumbnail,
 				publishedDate: article.publishedDate,

@@ -100,11 +100,12 @@ module.exports.extractImage = extractImage;
 
 var extractImageFromContent = function(content) {
 	// console.log(content);
-	var regex = /.*og:image"\s*content="+(.*)+".*/g;
+	var regex = /<meta(?=\s|>)(?=(?:[^>=]|='[^']*'|="[^"]*"|=[^'"][^\s>]*)*?\sproperty=(?:'og:image|"og:image"|og:image))(?=(?:[^>=]|='[^']*'|="[^"]*"|=[^'"][^\s>]*)*?\scontent=('[^']*'|"[^"]*"|[^'"][^\s>]*))(?:[^'">=]*|='[^']*'|="[^"]*"|=[^'"][^\s>]*)*>/g;
 	// console.log(regex.exec(content));
-	var image = regex.exec(content);
-	if (image === null || typeof(image[1]) === undefined)
+	var reg = regex.exec(content);
+	if (reg === null || typeof(reg[1]) === undefined)
 		return null;
-	return image[1];
+	var image = reg[1].substring(1, reg[1].length-1);
+	return image;
 };
 module.exports.extractImageFromContent = extractImageFromContent;

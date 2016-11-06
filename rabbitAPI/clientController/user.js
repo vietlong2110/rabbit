@@ -27,3 +27,19 @@ var getUserId = function(headers, callback) {
 	else callback(null);
 };
 module.exports.getUserId = getUserId;
+
+var getUser = function(headers, callback) {
+	var token = getToken(headers);
+	if (token) {
+		var decoded = jwt.decode(token, config.secret);
+
+		User.findOne({email: decoded}).exec(function(err, user) {
+			if (!user || err)
+				return callback(null);
+
+			callback(user);
+		});
+	}
+	else callback(null);
+};
+module.exports.getUser = getUser;

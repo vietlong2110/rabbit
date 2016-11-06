@@ -6,24 +6,29 @@ var Media = new Schema({
 		type: String,
 		unique: true
 	},
-	title: {
-		type: String,
-		unique: true
+	social_access: {
+		type: Boolean,
+		default: false
+	},
+	title: String,
+	video: {
+		type: Boolean,
+		default: false
+	},
+	iframe: {
+		type: Boolean,
+		default: true
 	},
 	thumbnail: String,
 	avatar: String,
 	source: String,
+	websource: String,
 	publishedDate: {
 		type: Date, 
 		default: Date.now()
 	},
 	keywords: [String],
-	tf: [Number],
-	user: [Schema.Types.ObjectId],
-	userKeywords: [{
-		keywords: [String]
-	}],
-	userStar: [Boolean]
+	tf: [Number]
 });
 
 module.exports = mongoose.model('medias', Media);

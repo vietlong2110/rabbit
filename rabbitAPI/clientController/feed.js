@@ -18,13 +18,13 @@ var Filter = require('../libs/filter.js');
 var searchFuncs = require('../libs/searchfunctions');
 
 //Search feed controller
-var searchFeed = function(query, callback) {
+var searchFeed = function(query, userId, callback) {
 	//preprocess query
 	var maxCache = 4000;
 
 	var newsSearchResult = [], mediaSearchResult = [];
 
-	searchFuncs.Search(query, function(err, articles, newsEvalScore, media, mediaEvalScore) {
+	searchFuncs.Search(userId, query, function(err, articles, newsEvalScore, media, mediaEvalScore) {
 		if (err)
 			return callback(err);
 		for (i = 0; i < Math.min(maxCache, articles.length); i++) {
@@ -105,11 +105,12 @@ module.exports.refreshFeed = refreshFeed;
 
 var updateFeedByKeyword = function(userId, keyword, callback) {
 	var updatednews = false, updatedmedia = false;
+
 	var query = stringFuncs.preProcess(keyword);
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	searchFeed(query, function(err, newsFeedResult, mediaFeedResult) {
+	searchFeed(userId, query, function(err, newsFeedResult, mediaFeedResult) {
 		if (err)
 			return callback(err);
 		async.parallel([
@@ -220,7 +221,7 @@ var updateFeedByKeyword = function(userId, keyword, callback) {
 			}
 		], function(err) {
 			if (err)
-				return callback(err);
+				return cbb(err);
 			refreshFeed(userId, function(err, results) {
 				if (err)
 					return callback(err);

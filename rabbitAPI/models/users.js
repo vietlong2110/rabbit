@@ -30,7 +30,11 @@ var User = new Schema({
 		name: String,
 		likes: Number,
 		cover: String,
-		avatar: String
+		avatar: String,
+		followed: {
+			type: Boolean,
+			default: false
+		}
 	}],
 	wordList: [String],
 	checkList: [Boolean]

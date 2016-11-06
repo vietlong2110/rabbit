@@ -7,10 +7,16 @@ var Keyword = require('../models/keywords.js');
 var Article = require('../models/articles.js');
 var Media = require('../models/media.js');
 var Filter = require('../libs/filter.js');
+var User = require('../models/users.js');
+var stringFuncs = require('./stringfunctions.js');
 
 //Calculate vector tf-idf score of a document
-var Search = function(query, callback) { //calculate document weight vector
+var Search = function(user, q, callback) { //calculate document weight vector
 	var newsEvals = [], newsResult = [], mediaEvals = [], mediaResult = [];
+	var querySanitized = Filter.querySanitize(q); //sanitize query before processing
+	var query = stringFuncs.preProcess(querySanitized);
+	query = stringFuncs.wordTokenize(query);
+	query = stringFuncs.stemArr(query);
 	var queryArr = Filter.queryArr(query);
 
 	async.parallel([
@@ -27,15 +33,13 @@ var Search = function(query, callback) { //calculate document weight vector
 						articleIDs = articleIDs.concat(keywords[i].articleIDs);
 					Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
 						async.each(fullArticles, function(article, cb2) {
-							if (newsResult.indexOf(article) === -1) {
-								var vector1 = docVector(n, keywords, article);
-								var vector2 = queryVector(queryArr);
-								var eval = cosEval(vector1, vector2);
-								
-								if (eval - threshold >= eps) {
-									newsEvals.push(eval);
-									newsResult.push(article);
-								}
+							var vector1 = docVector(n, keywords, article);
+							var vector2 = queryVector(queryArr);
+							var eval = cosEval(vector1, vector2);
+							
+							if (eval - threshold >= eps) {
+								newsEvals.push(eval);
+								newsResult.push(article);
 							}
 							cb2();
 						}, function(err) {
@@ -60,12 +64,18 @@ var Search = function(query, callback) { //calculate document weight vector
 						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
 					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
 						async.each(fullArticles, function(article, cb2) {
-							if (mediaResult.indexOf(article) === -1) {
-								var vector1 = mediaDocVector(n, keywords, article);
-								var vector2 = queryVector(queryArr);
-								mediaEvals.push(cosEval(vector1, vector2));
-								mediaResult.push(article);
+							if (article.social_access) {
+								var ok = false;
+								for (i = 0; i < user.suggest.length; i++)
+									if (user.suggest[i].name === article.source)
+										ok = true;
+								if (!ok)
+									return cb2();
 							}
+							var vector1 = mediaDocVector(n, keywords, article);
+							var vector2 = queryVector(queryArr);
+							mediaEvals.push(cosEval(vector1, vector2));
+							mediaResult.push(article);
 							cb2();
 						}, function(err) {
 							if (err)

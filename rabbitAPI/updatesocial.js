@@ -4,6 +4,7 @@ var async = require('async');
 var database = require('./database.js');
 
 var Media = require('./models/media.js');
+var User = require('./models/users.js');
 var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var socialCache = [], saved = true;

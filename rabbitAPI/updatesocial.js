@@ -22,11 +22,16 @@ var socialCache = [], saved = true;
 							return cb(err);
 						async.eachSeries(users, function(user, cb1) {
 							var suggestPage = user.suggest;
-							var FB = require('../clientController/fb.js');
+							if (user.suggest === null || user.suggest.length === 0)
+								return cb1();
+							console.log('Start extracting suggestion from ' + user.name);
+							var FB = require('./clientController/fb.js');
 							FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 								if (err)
-									return cb(err);
+									return cb1(err);
 								socialCache = socialCache.concat(fbFeed);
+								console.log('End extracting suggestion from ' + user.name);
+								cb1();
 							});
 						}, function(err) {
 							if (err)
@@ -35,7 +40,7 @@ var socialCache = [], saved = true;
 						});
 					});
 				}
-				else cb(null);
+				else cb();
 			},
 			function(cb) {
 				console.log(socialCache.length);

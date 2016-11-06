@@ -130,6 +130,7 @@ var pageFeed = function(token, pageList, callback) {
     var resultData = [];
 
     async.eachSeries(pageList, function(page, cb) {
+        console.log('Start extracting ' + page.name);
         fb.api(page.id + '/feed', {fields: ['picture', 'link', 'message', 'story', 'created_time'], 
         access_token: token}, function(res) {
             if (!res || res.error)
@@ -154,6 +155,7 @@ var pageFeed = function(token, pageList, callback) {
                     publishedDate: new Date(data[i].created_time)
                 });
             }
+            console.log('End extracting ' + page.name);
             cb();
         });
     }, function(err) {

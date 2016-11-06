@@ -151,6 +151,7 @@ var pageFeed = function(token, pageList, callback) {
                     video: false,
                     iframe: true,
                     source: page.name,
+                    websource: "facebook",
                     avatar: page.avatar,
                     publishedDate: new Date(data[i].created_time)
                 });

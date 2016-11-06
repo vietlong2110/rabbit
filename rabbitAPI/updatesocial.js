@@ -8,7 +8,7 @@ var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var socialCache = [], saved = true;
 
-setInterval(function() {
+// setInterval(function() {
 	if (saved) {
 		saved = false;
 		var media = [];
@@ -90,4 +90,4 @@ setInterval(function() {
 		]);
 	}
 	else console.log(socialCache.length);
-}, 60 * 20 * 1000);
+// }, 60 * 2 * 1000);

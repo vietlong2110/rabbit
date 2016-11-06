@@ -12,58 +12,7 @@ var Save = require('./serverController/save.js');
 var feed_link = require('./seed/feed_link.js');
 var feedList = feed_link.ninegag;
 var cache = [], instaCache = [], saved = true;
-	// instagram: function(callback) {
-	// 			var FollowKeyword = require('./models/followkeywords.js');
 
-	// 			if (instaCache.length === 0) {
-	// 				FollowKeyword.find({}).exec(function(err, queries) {
-	// 					if (err) {
-	// 						console.log(err);
-	// 						callback();
-	// 					}
-	// 					else {
-	// 						instaCache = queries;
-	// 						var limitQueries = Math.min(instaCache.length, 8);
-	// 						var queryList = instaCache.slice(0, limitQueries);
-
-	// 						async.each(queryList, function(keyword, cb) {
-	// 							var Feed = require('./clientController/feed.js');
-
-	// 							Feed.searchInstaFeed(keyword.query, function(mediaResult) {
-	// 								media = media.concat(mediaResult);
-	// 								instaCache.shift();
-	// 								cb();
-	// 							});
-	// 						}, function(err) {
-	// 							if (err)
-	// 								console.log(err);
-
-	// 							callback();
-	// 						});
-	// 					}
-	// 				});
-	// 			}
-	// 			else {
-	// 				var limitQueries = Math.min(instaCache.length, 8);
-	// 				var queryList = instaCache.slice(0, limitQueries);
-
-	// 				async.each(queryList, function(keyword, cb) {
-	// 					var Feed = require('./clientController/feed.js');
-
-	// 					Feed.searchInstaFeed(keyword.query, function(mediaResult) {
-	// 						media = media.concat(mediaResult);
-	// 						instaCache.shift();
-	// 						cb();
-	// 					});
-	// 				}, function(err) {
-	// 					if (err)
-	// 						console.log(err);
-
-	// 					callback();
-	// 				});
-	// 			}
-	// }
-	
 setInterval(function() {
 	if (saved) {
 		saved = false;
@@ -84,10 +33,10 @@ setInterval(function() {
 							console.log(err);
 							return cb(err);
 						}
-						cb(null);
+						cb();
 					});
 				}
-				else cb(null);
+				else cb();
 			},
 			function(cb) {
 				console.log(cache.length);
@@ -117,13 +66,16 @@ setInterval(function() {
 								Extract.extractKeyword(null, entities.decode(cache[0].title),
 								function(originKeywordSet, keywordSet, tf) {
 									console.log('End extracting ' + cache[0].link);
-									console.log(i);
 									if (cache[0].publishedDate === null)
 										cache[0].publishedDate = new Date();
 									media.push({
 										url: cache[0].link,
 										source: "9gag",
+										websource: "9gag",
 										avatar: avatar,
+										social_access: false,
+										video: false,
+										iframe: false,
 										title: entities.decode(cache[0].title),
 										thumbnail: image,
 										publishedDate: cache[0].publishedDate,

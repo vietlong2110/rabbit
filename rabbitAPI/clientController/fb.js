@@ -121,6 +121,11 @@ var getSuggestionList = function(token, data, callback) {
 };
 module.exports.getSuggestionList = getSuggestionList;
 
+var refreshSuggestion = function() {
+
+};
+module.exports.refreshSuggestion = refreshSuggestion;
+
 var pageFeed = function(token, pageList, callback) {
     var resultData = [];
 
@@ -141,6 +146,9 @@ var pageFeed = function(token, pageList, callback) {
                     url: data[i].link,
                     title: title,
                     thumbnail: data[i].picture,
+                    social_access: true,
+                    video: false,
+                    iframe: true,
                     source: page.name,
                     avatar: page.avatar,
                     publishedDate: new Date(data[i].created_time)

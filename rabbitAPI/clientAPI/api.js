@@ -28,8 +28,8 @@ module.exports = function(passport) {
 
 	//API router for searching a keyword/hashtag
 	router.get('/search', function(req, res) { 
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
 				var querySanitized = Filter.querySanitize(req.query.q);
 				Feed.searchFeed(req.query.q, userId, function(err, newsFeedResult, mediaFeedResult) {
 					if (err)

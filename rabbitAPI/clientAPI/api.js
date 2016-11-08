@@ -30,7 +30,6 @@ module.exports = function(passport) {
 	router.get('/search', function(req, res) { 
 		UserController.getUser(req.headers, function(user) {
 			if (user) {
-				var querySanitized = Filter.querySanitize(req.query.q);
 				Feed.searchFeed(user, req.query.q, function(err, newsFeedResult, mediaFeedResult) {
 					if (err)
 						res.json({
@@ -54,6 +53,7 @@ module.exports = function(passport) {
 					function(newsFeedResult, moreDataNews) {
 						Pagination.paginate(mediaFeedResult, parseInt(req.query.sizemedia),
 						function(mediaFeedResult, moreDataMedia) {
+							var querySanitized = Filter.querySanitize(req.query.q);
 							var queryTitle = Filter.niceTitle(querySanitized); 
 
 							res.json({

@@ -80,11 +80,9 @@ module.exports = function(passport) {
 	router.post('/follow', function(req, res) {
 		UserController.getUser(req.headers, function(user) {
 			if (user) {
-				var query = Filter.querySanitize(req.body.q);
-
 				List.addList(query, user, function(addedlist) { //add keyword/hashtag to following list
 					if (addedlist) //added keyword/hashtag successfully to database
-						Feed.updateFeedByKeyword(user, query, 
+						Feed.updateFeedByKeyword(user, req.body.q, 
 						function(err, results, updatednews, updatedmedia) {
 							if (err)
 								res.json({

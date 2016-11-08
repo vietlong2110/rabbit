@@ -31,7 +31,7 @@ module.exports = function(passport) {
 		UserController.getUser(req.headers, function(user) {
 			if (user) {
 				var querySanitized = Filter.querySanitize(req.query.q);
-				Feed.searchFeed(req.query.q, userId, function(err, newsFeedResult, mediaFeedResult) {
+				Feed.searchFeed(req.query.q, user._id, function(err, newsFeedResult, mediaFeedResult) {
 					if (err)
 						res.json({
 							success: false,

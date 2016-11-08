@@ -64,7 +64,8 @@ var Search = function(user, q, callback) { //calculate document weight vector
 						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
 					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
 						async.each(fullArticles, function(article, cb2) {
-							if (article.social_access) {
+							if (article.social_access && user.suggest !== null 
+							&& user.suggest !== undefined) {
 								var ok = false;
 								for (i = 0; i < user.suggest.length; i++)
 									if (user.suggest[i].name === article.source)

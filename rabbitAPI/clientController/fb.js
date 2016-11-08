@@ -143,6 +143,8 @@ var pageFeed = function(token, pageList, callback) {
                     title = data[i].message;
                 else if (data[i].story)
                     title = data[i].story;
+                if (title.length > 100)
+                    title = title.substring(0, 100);
                 resultData.push({
                     url: data[i].link,
                     title: title,

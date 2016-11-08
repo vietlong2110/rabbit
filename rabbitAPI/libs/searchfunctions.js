@@ -13,6 +13,7 @@ var stringFuncs = require('./stringfunctions.js');
 //Calculate vector tf-idf score of a document
 var Search = function(user, q, callback) { //calculate document weight vector
 	var newsEvals = [], newsResult = [], mediaEvals = [], mediaResult = [];
+	console.log(q);
 	var querySanitized = Filter.querySanitize(q); //sanitize query before processing
 	var query = stringFuncs.preProcess(querySanitized);
 	query = stringFuncs.wordTokenize(query);

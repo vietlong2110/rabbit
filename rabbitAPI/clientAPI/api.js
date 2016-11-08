@@ -31,7 +31,7 @@ module.exports = function(passport) {
 		UserController.getUser(req.headers, function(user) {
 			if (user) {
 				var querySanitized = Filter.querySanitize(req.query.q);
-				Feed.searchFeed(req.query.q, user._id, function(err, newsFeedResult, mediaFeedResult) {
+				Feed.searchFeed(user, req.query.q, function(err, newsFeedResult, mediaFeedResult) {
 					if (err)
 						res.json({
 							success: false,
@@ -78,13 +78,13 @@ module.exports = function(passport) {
 
 	//API router for following a keyword/hashtag
 	router.post('/follow', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
 				var query = Filter.querySanitize(req.body.q);
 
-				List.addList(query, userId, function(addedlist) { //add keyword/hashtag to following list
+				List.addList(query, user, function(addedlist) { //add keyword/hashtag to following list
 					if (addedlist) //added keyword/hashtag successfully to database
-						Feed.updateFeedByKeyword(userId, query, 
+						Feed.updateFeedByKeyword(user, query, 
 						function(err, results, updatednews, updatedmedia) {
 							if (err)
 								res.json({

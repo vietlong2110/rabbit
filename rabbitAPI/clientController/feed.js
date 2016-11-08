@@ -110,7 +110,7 @@ var updateFeedByKeyword = function(userId, keyword, callback) {
 	query = stringFuncs.wordTokenize(query);
 	query = stringFuncs.stemArr(query);
 
-	searchFeed(userId, query, function(err, newsFeedResult, mediaFeedResult) {
+	searchFeed(query, userId, function(err, newsFeedResult, mediaFeedResult) {
 		if (err)
 			return callback(err);
 		async.parallel([

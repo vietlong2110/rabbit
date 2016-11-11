@@ -396,9 +396,8 @@ module.exports = function(passport) {
 	});
 
 	router.post('/updatefeed', function(req, res) {
-		// console.log('Updating!');
 		UserController.getUser(req.headers, function(user) {
-			if (userId) {
+			if (user) {
 				Feed.updateFeed(user, function(err, updatednews, updatedmedia) {
 					if (err)
 						res.json({

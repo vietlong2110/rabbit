@@ -82,7 +82,7 @@ module.exports = function(passport) {
 			if (user) {
 				var query = req.body.q;
 				
-				List.addList(query, user, function(addedlist) { //add keyword/hashtag to following list
+				List.addList(user, query, function(addedlist) { //add keyword/hashtag to following list
 					if (addedlist) //added keyword/hashtag successfully to database
 						Feed.updateFeedByKeyword(user, query, 
 						function(err, results, updatednews, updatedmedia) {
@@ -115,13 +115,13 @@ module.exports = function(passport) {
 
 	//API router for unfollowing a keyword/hashtag
 	router.post('/unfollow', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
-				var query = Filter.querySanitize(req.body.q);
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
+				var query = req.body.q;
 
-				List.deleteList(query, userId, function(deletedList) {
+				List.deleteList(user, query, function(deletedList) {
 					if (deletedList) //deleted keyword/hashtag successfully from database
-						Feed.deleteFeedByKeyword(userId, query, function(err, results) {
+						Feed.deleteFeedByKeyword(user, query, function(err, results) {
 							if (err)
 								res.json({
 									success: false,
@@ -151,16 +151,16 @@ module.exports = function(passport) {
 
 	//API router for updating the following list
 	router.post('/updatelist', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
 				var checkList = [];
 
 				for (i in req.body.keywords)
 					checkList.push(req.body.keywords[i].isChecked);
 
-				List.updateList(userId, checkList, function(updated) {
+				List.updateList(user, checkList, function(updated) {
 					if (updated)
-						Feed.refreshFeed(userId, function(err, results) {
+						Feed.refreshFeed(user, function(err, results) {
 							if (err)
 								res.json({
 									success: false,
@@ -189,9 +189,9 @@ module.exports = function(passport) {
 
 	//API router for loading the newsfeed
 	router.get('/getnewsfeed', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId)
-				Feed.getNewsFeed(userId, parseInt(req.query.size),
+		UserController.getUser(req.headers, function(user) {
+			if (user)
+				Feed.getNewsFeed(user, parseInt(req.query.size),
 				function(err, newsfeed, moreDataNews) {
 					if (err)
 						res.json({
@@ -212,9 +212,9 @@ module.exports = function(passport) {
 	});
 
 	router.get('/getmediafeed', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId)
-				Feed.getMediaFeed(userId, parseInt(req.query.size),
+		UserController.getUser(req.headers, function(user) {
+			if (user)
+				Feed.getMediaFeed(user, parseInt(req.query.size),
 				function(err, mediafeed, moreDataMedia) {
 					if (err)
 						res.json({
@@ -236,9 +236,9 @@ module.exports = function(passport) {
 
 	//API router for loading the following list
 	router.get('/getlist', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId)
-				List.getList(userId, function(list) {
+		UserController.getUser(req.headers, function(user) {
+			if (user)
+				List.getList(user, function(list) {
 					res.json({
 						success: true,
 						keywords: list
@@ -397,9 +397,9 @@ module.exports = function(passport) {
 
 	router.post('/updatefeed', function(req, res) {
 		// console.log('Updating!');
-		UserController.getUserId(req.headers, function(userId) {
+		UserController.getUser(req.headers, function(user) {
 			if (userId) {
-				Feed.updateFeed(userId, function(err, updatednews, updatedmedia) {
+				Feed.updateFeed(user, function(err, updatednews, updatedmedia) {
 					if (err)
 						res.json({
 							success: false,
@@ -423,19 +423,11 @@ module.exports = function(passport) {
 	});
 
 	router.get('/getsuggestion', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
-				User.findById(userId).exec(function(err, user) {
-					if (err)
-						res.json({
-							success: false,
-							error: err
-						});
-					// console.log(user.suggest);
-					res.json({
-						success: true,
-						likes: user.suggest
-					})
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
+				res.json({
+					success: true,
+					likes: user.suggest
 				});
 			}
 			else res.status(403).json({
@@ -446,20 +438,13 @@ module.exports = function(passport) {
 	});
 
 	router.get('/getinfo', function(req, res) {
-		UserController.getUserId(req.headers, function(userId) {
-			if (userId) {
-				User.findById(userId).exec(function(err, user) {
-					if (err)
-						res.json({
-							success: false,
-							error: err
-						});
-					else res.json({
-						success: true,
-						email: user.email,
-						name: user.name,
-						avatar: user.profile_picture
-					});
+		UserController.getUser(req.headers, function(user) {
+			if (user) {
+				res.json({
+					success: true,
+					email: user.email,
+					name: user.name,
+					avatar: user.profile_picture
 				});
 			}
 			else res.status(403).json({

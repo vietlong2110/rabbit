@@ -353,6 +353,8 @@ var getNewsFeed = function(userId, size, callback) {
 		.exec(function(err, hubs) {
 			if (err)
 				return callback(err);
+			if (hubs === null || hubs.length === 0)
+				return callback(null, [], false);
 			var newsfeed = [];
 			for (i = 0; i < hubs.length; i++) {
 				var Intersection = _.intersection(wordList, hubs[i].userKeywordList);
@@ -405,6 +407,8 @@ var getNewsByKeyword = function(userId, keyword, size, callback) {
 	.exec(function(err, hubs) {
 		if (err)
 			return callback(err);
+		if (hubs === null || hubs.length === 0)
+			return callback(null, [], false);
 		var newsfeed = [];
 		for (i = 0; i < hubs.length; i++)
 			if (hubs[i].userKeywordList.indexOf(keyword) !== -1) {
@@ -462,6 +466,8 @@ var getMediaFeed = function(userId, size, callback) {
 		.exec(function(err, hubs) {
 			if (err)
 				return callback(err);
+			if (hubs === null || hubs.length === 0)
+				return callback(null, [], false);
 			var mediafeed = [];
 			for (i = 0; i < hubs.length; i++)
 				if (_.intersection(wordList, hubs[i].userKeywordList).length > 0) {
@@ -509,6 +515,8 @@ var getMediaByKeyword = function(userId, keyword, size, callback) {
 	.exec(function(err, hubs) {
 		if (err)
 			return callback(err);
+		if (hubs === null || hubs.length === 0)
+			return callback(null, [], false);
 		var mediafeed = [];
 		for (i = 0; i < hubs.length; i++)
 			if (hubs[i].userKeywordList.indexOf(keyword) !== -1) {

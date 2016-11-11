@@ -311,231 +311,231 @@ module.exports = {
     //     "http://www.economist.com/rss/books_and_arts_rss.xml"
     //   ]
     // },
-    {
-      "source": "cnbc.com",
-      "thumbnail": "http://fm.cnbc.com/applications/cnbc.com/staticcontent/img/cnbc_logo.gif",
-      "links": [
-        "http://www.cnbc.com/id/100727362/device/rss/rss.html",
-        "http://www.cnbc.com/id/100003114/device/rss/rss.html",
-        "http://www.cnbc.com/id/10001147/device/rss/rss.html",
-        "http://www.cnbc.com/id/19794221/device/rss/rss.html",
-        "http://www.cnbc.com/id/20910258/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000664/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000113/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000101/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000115/device/rss/rss.html",
-        "http://www.cnbc.com/id/19836768/device/rss/rss.html",
-        "http://www.cnbc.com/id/15839135/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000110/device/rss/rss.html",
-        "http://www.cnbc.com/id/10001054/device/rss/rss.html",
-        "http://www.cnbc.com/id/19832390/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000116/device/rss/rss.html",
-        "http://www.cnbc.com/id/15837362/device/rss/rss.html",
-        "http://www.cnbc.com/id/100370673/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000108/device/rss/rss.html",
-        "http://www.cnbc.com/id/44877279/device/rss/rss.html",
-        "http://www.cnbc.com/id/15839069/device/rss/rss.html",
-        "http://www.cnbc.com/id/19854910/device/rss/rss.html",
-        "http://www.cnbc.com/id/21324812/device/rss/rss.html",
-        "http://www.cnbc.com/id/20409666/device/rss/rss.html",
-        "http://www.cnbc.com/id/10000739/device/rss/rss.html",
-        "http://www.cnbc.com/id/20398120/device/rss/rss.html",
-        "http://www.cnbc.com/id/15839263/device/rss/rss.html",
-        "http://www.cnbc.com/id/100646281/device/rss/rss.html",
-        "http://www.cnbc.com/id/23103686/device/rss/rss.html",
-        "http://www.cnbc.com/id/17646093/device/rss/rss.html",
-        "http://www.cnbc.com/id/100616801/device/rss/rss.html",
-        "http://www.cnbc.com/id/38818154/device/rss/rss.html",
-        "http://www.cnbc.com/id/100004038/device/rss/rss.html",
-        "http://www.cnbc.com/id/19206666/device/rss/rss.html",
-        "http://www.cnbc.com/id/101014894/device/rss/rss.html"
-      ]
-    },
-    {
-      "source": "espn.com",
-      "thumbnail": "http://images.performgroup.com/di/library/sporting_news/57/9/espn-102215-ftrjpg_1x2ff5wf7ybvx1sg82exlvzoga.jpg?t=-1871569416",
-      "links": [
-        "http://www.espn.com/espn/rss/news",
-        "http://www.espn.com/espn/rss/mlb/news",
-        "http://www.espn.com/espn/rss/nfl/news",
-        "http://www.espn.com/espn/rss/nhl/news",
-        "http://www.espn.com/espn/rss/nba/news",
-        "http://www.espn.com/espn/rss/rpm/news",
-        "http://www.espn.com/espn/rss/espnu/news",
-        "http://www.espn.com/espn/rss/ncb/news",
-        "http://www.espn.com/espn/rss/ncf/news",
-        "http://www.espn.com/espn/rss/action/news",
-        "http://www.espn.com/espn/rss/poker/master",
-        "http://www.espn.com/espn/rss/recruiting/tamu/news",
-        "http://www.espn.com/espn/rss/recruiting/lsu/news",
-        "http://www.espn.com/espn/rss/recruiting/osu/news",
-        "http://www.espn.com/espn/rss/recruiting/texas/news",
-        "http://www.espn.com/espn/rss/recruiting/usc/news"
-      ]
-    },
-    {
-      "source": "bleacherreport.com",
-      "thumbnail": "https://lh3.ggpht.com/Ec00VEkeIysaYHRxwIpyyQPRXn86AcB3RNISJSuBoLQyzqG6cQk1j1U1KN2rF51hbLG-=w300",
-      "links": [
-        "http://bleacherreport.com/articles/feed"
-      ]
-    },
-    {
-      "source": "cbssports.com",
-      "thumbnail": "https://pbs.twimg.com/profile_images/696218981145772033/8mYnTpHm.png",
-      "links": [
-        "http://rss.cbssports.com/rss/headlines"
-      ]
-    },
-    {
-      "source": "usatoday.com",
-      "thumbnail": "https://lh3.googleusercontent.com/2i2GvT7d5CxbPh9edK9PJXZDgLKsisFrAfRj90MubTAgY6EFRk0gAjGb1iIP4poB-k0=w300",
-      "links": [
-        "http://rssfeeds.usatoday.com/UsatodaycomTravel-TopStories"
-      ]
-    },
-    {
-      "source": "fodors.com",
-      "thumbnail": "https://pbs.twimg.com/profile_images/3079362282/5622e1cc818b5dfb738ffec6b4936d71_400x400.png",
-      "links": [
-        "http://www.fodors.com/wire/feedlimited.xml"
-      ]
-    },
-    {
-      "source": "travelpulse.com",
-      "thumbnail": "http://www.travelpulse.com/images/og_logo.gif",
-      "links": [
-        "http://www.travelpulse.com/rss/opinions.rss",
-        "http://www.travelpulse.com/rss/videos.rss",
-        "http://www.travelpulse.com/rss/deals.rss",
-        "http://www.travelpulse.com/rss/news.rss"
-      ]
-    },
-    {
-      "source": "usnews.com",
-      "thumbnail": "http://www.usnews.com/static/images/store/college-compass/compass-badge.png",
-      "links": [
-        "http://www.usnews.com/rss/education",
-        "http://www.usnews.com/rss/health",
-        "http://www.usnews.com/rss/science",
-        "http://www.usnews.com/rss/money",
-        "http://www.usnews.com/rss/news",
-        "http://www.usnews.com/rss/opinion",
-        "http://www.usnews.com/blogrss/college-admissions-playbook",
-        "http://www.usnews.com/blogrss/international-student-counsel",
-        "http://www.usnews.com/blogrss/law-admissions-lowdown",
-        "http://www.usnews.com/blogrss/MBA-admissions-strictly-business",
-        "http://www.usnews.com/blogrss/medical-school-admissions-doctor",
-        "http://www.usnews.com/blogrss/college-rankings-blog",
-        "http://www.usnews.com/blogrss/student-loan-ranger",
-        "http://www.usnews.com/blogrss/eat-run",
-        "http://www.usnews.com/blogrss/the-scholarship-coach",
-        "http://www.usnews.com/blogrss/second-opinion",
-        "http://www.usnews.com/blogrss/my-money",
-        "http://www.usnews.com/blogrss/alpha-consumer",
-        "http://www.usnews.com/blogrss/planning-to-retire",
-        "http://www.usnews.com/blogrss/the-frugal-shopper",
-        "http://www.usnews.com/blogrss/outside-voices-careers",
-        "http://www.usnews.com/blogrss/the-smarter-mutual-fund-investor",
-        "http://www.usnews.com/rss/us-news-information",
-        "http://www.usnews.com/blogrss/high-school-notes"
-      ]
-    },
-    {
-      "source": "bbc.com",
-      "thumbnail": "http://www.bbc.co.uk/news/special/2015/newsspec_10857/bbc_news_logo.png?cb=1",
-      "links": [
-        "http://feeds.bbci.co.uk/news/world/rss.xml",
-        "http://feeds.bbci.co.uk/news/uk/rss.xml",
-        "http://feeds.bbci.co.uk/news/rss.xml",
-        "http://feeds.bbci.co.uk/news/business/rss.xml",
-        "http://feeds.bbci.co.uk/news/politics/rss.xml",
-        "http://feeds.bbci.co.uk/news/health/rss.xml",
-        "http://feeds.bbci.co.uk/news/education/rss.xml",
-        "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
-        "http://feeds.bbci.co.uk/news/technology/rss.xml",
-        "http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
-        "http://feeds.bbci.co.uk/news/world/europe/rss.xml",
-        "http://feeds.bbci.co.uk/news/world/latin_america/rss.xml",
-        "http://feeds.bbci.co.uk/news/world/africa/rss.xml",
-        "http://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
-        "http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
-        "http://feeds.bbci.co.uk/news/england/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/uk/rss.xml",
-        "http://feeds.bbci.co.uk/news/wales/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/business/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/health/rss.xml",
-        "http://feeds.bbci.co.uk/news/scotland/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/world/rss.xml",
-        "http://feeds.bbci.co.uk/news/world/asia/rss.xml",
-        "http://feeds.bbci.co.uk/news/northern_ireland/rss.xml",
-        "http://feeds.bbci.co.uk/news/also_in_the_news/rss.xml",
-        "http://feeds.bbci.co.uk/news/have_your_say/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/science_and_environment/rss.xml",
-        "http://feeds.bbci.co.uk/news/special_reports/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/politics/rss.xml",
-        "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/in_pictures/rss.xml",
-        "http://feeds.bbci.co.uk/news/video_and_audio/entertainment_and_arts/rss.xml",
-        "http://feeds.bbci.co.uk/news/magazine/rss.xml",
-        "http://www.bbc.co.uk/blogs/theeditors/rss.xml"
-      ]
-    },
-    {
-      "source": "mashable.com",
-      "thumbnail": "http://bqware.com/wp-content/uploads/2015/01/mashable.jpg",
-      "links": [
-        "http://feeds.mashable.com/Mashable"
-      ]
-    },
-    {
-      "source": "si.com",
-      "thumbnail": "https://thebaseballcodes.files.wordpress.com/2012/06/si-logo.jpg",
-      "links": [
-        "http://www.si.com/rss/si_nfl.rss", 
-        "http://www.si.com/rss/si_ncaaf.rss", 
-        "http://www.si.com/rss/si_nba.rss", 
-        "http://www.si.com/rss/si_mlb.rss", 
-        "http://www.si.com/rss/si_ncaab.rss", 
-        "http://www.si.com/rss/si_soccer.rss", 
-        "http://www.si.com/rss/si_tennis.rss", 
-        "http://www.si.com/rss/si_fantasy.rss", 
-        "http://www.si.com/rss/si_mma.rss", 
-        "http://www.si.com/rss/si_highschool.rss", 
-        "http://www.si.com/rss/si_edge.rss", 
-        "http://www.si.com/rss/si_topstories.rss", 
-        "http://www.si.com/rss/si_extra_mustard.rss", 
-        "http://www.si.com/rss/si_swim_daily.rss", 
-        "http://www.si.com/rss/si_video.rss", 
-        "http://www.si.com/rss/si_writers.rss"  
-      ]
-    },
-    {
-      "source": "howstuffworks.com",
-      "thumbnail": "http://www.userlogos.org/files/logos/Mafia_Penguin/HSW.png",
-      "links": [
-        "http://syndication.howstuffworks.com/rss/APL::Guides",
-        "http://syndication.howstuffworks.com/rss/adventure",
-        "http://syndication.howstuffworks.com/rss/HSW",
-        "http://syndication.howstuffworks.com/rss/auto",
-        "http://syndication.howstuffworks.com/rss/entertainment",
-        "http://now.howstuffworks.com/rssfeed.xml",
-        "http://syndication.howstuffworks.com/rss/lifestyle",
-        "http://syndication.howstuffworks.com/rss/money",
-        "http://syndication.howstuffworks.com/rss/science",
-        "http://www.howstuffworks.com/podcasts/carstuff.rss",
-        "http://syndication.howstuffworks.com/rss/tech",
-        "http://www.howstuffworks.com/podcasts/fwthinking.rss",
-        "http://www.howstuffworks.com/podcasts/stuff-they-dont-want-you-to-know.rss",
-        "http://www.howstuffworks.com/podcasts/stuff-mom-never-told-you.rss",
-        "http://www.howstuffworks.com/podcasts/stuff-to-blow-your-mind.rss",
-        "http://www.howstuffworks.com/podcasts/stuff-you-missed-in-history-class.rss",
-        "http://www.howstuffworks.com/podcasts/techstuff.rss",
-        "http://www.howstuffworks.com/podcasts/stuff-you-should-know.rss",
-        "http://syndication.howstuffworks.com/rss/culture",
-        "http://syndication.howstuffworks.com/rss/HSW::Health"
-      ]
-    },
+    // {
+    //   "source": "cnbc.com",
+    //   "thumbnail": "http://fm.cnbc.com/applications/cnbc.com/staticcontent/img/cnbc_logo.gif",
+    //   "links": [
+    //     "http://www.cnbc.com/id/100727362/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/100003114/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10001147/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/19794221/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/20910258/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000664/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000113/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000101/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000115/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/19836768/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/15839135/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000110/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10001054/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/19832390/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000116/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/15837362/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/100370673/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000108/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/44877279/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/15839069/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/19854910/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/21324812/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/20409666/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/10000739/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/20398120/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/15839263/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/100646281/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/23103686/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/17646093/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/100616801/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/38818154/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/100004038/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/19206666/device/rss/rss.html",
+    //     "http://www.cnbc.com/id/101014894/device/rss/rss.html"
+    //   ]
+    // },
+    // {
+    //   "source": "espn.com",
+    //   "thumbnail": "http://images.performgroup.com/di/library/sporting_news/57/9/espn-102215-ftrjpg_1x2ff5wf7ybvx1sg82exlvzoga.jpg?t=-1871569416",
+    //   "links": [
+    //     "http://www.espn.com/espn/rss/news",
+    //     "http://www.espn.com/espn/rss/mlb/news",
+    //     "http://www.espn.com/espn/rss/nfl/news",
+    //     "http://www.espn.com/espn/rss/nhl/news",
+    //     "http://www.espn.com/espn/rss/nba/news",
+    //     "http://www.espn.com/espn/rss/rpm/news",
+    //     "http://www.espn.com/espn/rss/espnu/news",
+    //     "http://www.espn.com/espn/rss/ncb/news",
+    //     "http://www.espn.com/espn/rss/ncf/news",
+    //     "http://www.espn.com/espn/rss/action/news",
+    //     "http://www.espn.com/espn/rss/poker/master",
+    //     "http://www.espn.com/espn/rss/recruiting/tamu/news",
+    //     "http://www.espn.com/espn/rss/recruiting/lsu/news",
+    //     "http://www.espn.com/espn/rss/recruiting/osu/news",
+    //     "http://www.espn.com/espn/rss/recruiting/texas/news",
+    //     "http://www.espn.com/espn/rss/recruiting/usc/news"
+    //   ]
+    // },
+    // {
+    //   "source": "bleacherreport.com",
+    //   "thumbnail": "https://lh3.ggpht.com/Ec00VEkeIysaYHRxwIpyyQPRXn86AcB3RNISJSuBoLQyzqG6cQk1j1U1KN2rF51hbLG-=w300",
+    //   "links": [
+    //     "http://bleacherreport.com/articles/feed"
+    //   ]
+    // },
+    // {
+    //   "source": "cbssports.com",
+    //   "thumbnail": "https://pbs.twimg.com/profile_images/696218981145772033/8mYnTpHm.png",
+    //   "links": [
+    //     "http://rss.cbssports.com/rss/headlines"
+    //   ]
+    // },
+    // {
+    //   "source": "usatoday.com",
+    //   "thumbnail": "https://lh3.googleusercontent.com/2i2GvT7d5CxbPh9edK9PJXZDgLKsisFrAfRj90MubTAgY6EFRk0gAjGb1iIP4poB-k0=w300",
+    //   "links": [
+    //     "http://rssfeeds.usatoday.com/UsatodaycomTravel-TopStories"
+    //   ]
+    // },
+    // {
+    //   "source": "fodors.com",
+    //   "thumbnail": "https://pbs.twimg.com/profile_images/3079362282/5622e1cc818b5dfb738ffec6b4936d71_400x400.png",
+    //   "links": [
+    //     "http://www.fodors.com/wire/feedlimited.xml"
+    //   ]
+    // },
+    // {
+    //   "source": "travelpulse.com",
+    //   "thumbnail": "http://www.travelpulse.com/images/og_logo.gif",
+    //   "links": [
+    //     "http://www.travelpulse.com/rss/opinions.rss",
+    //     "http://www.travelpulse.com/rss/videos.rss",
+    //     "http://www.travelpulse.com/rss/deals.rss",
+    //     "http://www.travelpulse.com/rss/news.rss"
+    //   ]
+    // },
+    // {
+    //   "source": "usnews.com",
+    //   "thumbnail": "http://www.usnews.com/static/images/store/college-compass/compass-badge.png",
+    //   "links": [
+    //     "http://www.usnews.com/rss/education",
+    //     "http://www.usnews.com/rss/health",
+    //     "http://www.usnews.com/rss/science",
+    //     "http://www.usnews.com/rss/money",
+    //     "http://www.usnews.com/rss/news",
+    //     "http://www.usnews.com/rss/opinion",
+    //     "http://www.usnews.com/blogrss/college-admissions-playbook",
+    //     "http://www.usnews.com/blogrss/international-student-counsel",
+    //     "http://www.usnews.com/blogrss/law-admissions-lowdown",
+    //     "http://www.usnews.com/blogrss/MBA-admissions-strictly-business",
+    //     "http://www.usnews.com/blogrss/medical-school-admissions-doctor",
+    //     "http://www.usnews.com/blogrss/college-rankings-blog",
+    //     "http://www.usnews.com/blogrss/student-loan-ranger",
+    //     "http://www.usnews.com/blogrss/eat-run",
+    //     "http://www.usnews.com/blogrss/the-scholarship-coach",
+    //     "http://www.usnews.com/blogrss/second-opinion",
+    //     "http://www.usnews.com/blogrss/my-money",
+    //     "http://www.usnews.com/blogrss/alpha-consumer",
+    //     "http://www.usnews.com/blogrss/planning-to-retire",
+    //     "http://www.usnews.com/blogrss/the-frugal-shopper",
+    //     "http://www.usnews.com/blogrss/outside-voices-careers",
+    //     "http://www.usnews.com/blogrss/the-smarter-mutual-fund-investor",
+    //     "http://www.usnews.com/rss/us-news-information",
+    //     "http://www.usnews.com/blogrss/high-school-notes"
+    //   ]
+    // },
+    // {
+    //   "source": "bbc.com",
+    //   "thumbnail": "http://www.bbc.co.uk/news/special/2015/newsspec_10857/bbc_news_logo.png?cb=1",
+    //   "links": [
+    //     "http://feeds.bbci.co.uk/news/world/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/uk/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/business/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/politics/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/health/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/education/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/technology/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/world/europe/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/world/latin_america/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/world/africa/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/world/middle_east/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/england/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/uk/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/wales/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/business/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/health/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/scotland/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/world/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/world/asia/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/northern_ireland/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/also_in_the_news/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/have_your_say/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/science_and_environment/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/special_reports/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/politics/rss.xml",
+    //     "http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/in_pictures/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/video_and_audio/entertainment_and_arts/rss.xml",
+    //     "http://feeds.bbci.co.uk/news/magazine/rss.xml",
+    //     "http://www.bbc.co.uk/blogs/theeditors/rss.xml"
+    //   ]
+    // },
+    // {
+    //   "source": "mashable.com",
+    //   "thumbnail": "http://bqware.com/wp-content/uploads/2015/01/mashable.jpg",
+    //   "links": [
+    //     "http://feeds.mashable.com/Mashable"
+    //   ]
+    // },
+    // {
+    //   "source": "si.com",
+    //   "thumbnail": "https://thebaseballcodes.files.wordpress.com/2012/06/si-logo.jpg",
+    //   "links": [
+    //     "http://www.si.com/rss/si_nfl.rss", 
+    //     "http://www.si.com/rss/si_ncaaf.rss", 
+    //     "http://www.si.com/rss/si_nba.rss", 
+    //     "http://www.si.com/rss/si_mlb.rss", 
+    //     "http://www.si.com/rss/si_ncaab.rss", 
+    //     "http://www.si.com/rss/si_soccer.rss", 
+    //     "http://www.si.com/rss/si_tennis.rss", 
+    //     "http://www.si.com/rss/si_fantasy.rss", 
+    //     "http://www.si.com/rss/si_mma.rss", 
+    //     "http://www.si.com/rss/si_highschool.rss", 
+    //     "http://www.si.com/rss/si_edge.rss", 
+    //     "http://www.si.com/rss/si_topstories.rss", 
+    //     "http://www.si.com/rss/si_extra_mustard.rss", 
+    //     "http://www.si.com/rss/si_swim_daily.rss", 
+    //     "http://www.si.com/rss/si_video.rss", 
+    //     "http://www.si.com/rss/si_writers.rss"  
+    //   ]
+    // },
+    // {
+    //   "source": "howstuffworks.com",
+    //   "thumbnail": "http://www.userlogos.org/files/logos/Mafia_Penguin/HSW.png",
+    //   "links": [
+    //     "http://syndication.howstuffworks.com/rss/APL::Guides",
+    //     "http://syndication.howstuffworks.com/rss/adventure",
+    //     "http://syndication.howstuffworks.com/rss/HSW",
+    //     "http://syndication.howstuffworks.com/rss/auto",
+    //     "http://syndication.howstuffworks.com/rss/entertainment",
+    //     "http://now.howstuffworks.com/rssfeed.xml",
+    //     "http://syndication.howstuffworks.com/rss/lifestyle",
+    //     "http://syndication.howstuffworks.com/rss/money",
+    //     "http://syndication.howstuffworks.com/rss/science",
+    //     "http://www.howstuffworks.com/podcasts/carstuff.rss",
+    //     "http://syndication.howstuffworks.com/rss/tech",
+    //     "http://www.howstuffworks.com/podcasts/fwthinking.rss",
+    //     "http://www.howstuffworks.com/podcasts/stuff-they-dont-want-you-to-know.rss",
+    //     "http://www.howstuffworks.com/podcasts/stuff-mom-never-told-you.rss",
+    //     "http://www.howstuffworks.com/podcasts/stuff-to-blow-your-mind.rss",
+    //     "http://www.howstuffworks.com/podcasts/stuff-you-missed-in-history-class.rss",
+    //     "http://www.howstuffworks.com/podcasts/techstuff.rss",
+    //     "http://www.howstuffworks.com/podcasts/stuff-you-should-know.rss",
+    //     "http://syndication.howstuffworks.com/rss/culture",
+    //     "http://syndication.howstuffworks.com/rss/HSW::Health"
+    //   ]
+    // },
     {
       "source": "livescience.com",
       "thumbnail": "https://www.hamilton.edu/assets/mmlibrary/images/original/-m3iq7yt.png",

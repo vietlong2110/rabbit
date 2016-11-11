@@ -23,7 +23,6 @@ var searchFeed = function(user, query, callback) {
 	var maxCache = 4000;
 
 	var newsSearchResult = [], mediaSearchResult = [];
-	console.log(query);
 
 	searchFuncs.Search(user, query, function(err, articles, newsEvalScore, media, mediaEvalScore) {
 		if (err)

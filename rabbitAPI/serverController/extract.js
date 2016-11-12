@@ -73,7 +73,7 @@ var extractKeyword = function(title, content, callback) { //extract keyword from
 		for (i in originKeywords)
 			if (originKeywordSet.indexOf(originKeywords[i]) === -1)
 				originKeywordSet.push(originKeywords[i]);
-		callback(originKeywordSet, keywordSet, tf);
+		callback(originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle);
 	});
 };
 module.exports.extractKeyword = extractKeyword;

@@ -1,39 +1,39 @@
 module.exports = {
   "data": [
-    {
-      "source": "nasa.gov",
-      "thumbnail": "http://www.nasa.gov/sites/default/files/images/nasaLogo-570x450.png",
-      "links": [
-        "https://www.nasa.gov/rss/dyn/breaking_news.rss"
-      ]
-    },
-    {
-      "source": "webmd.com",
-      "thumbnail": "http://blog.drugs.com/wp-content/uploads/2009/12/webmd.jpg",
-      "links": [
-        "http://rssfeeds.webmd.com/rss/rss.aspx?RSSSource=RSS_PUBLIC"
-      ]
-    },
-    {
-      "source": "cnn.com",
-      "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Cnn.svg/2000px-Cnn.svg.png",
-      "links": [
-        "http://rss.cnn.com/services/podcasting/studentnews/rss.xml",
-        "http://rss.cnn.com/rss/cnn_allpolitics.rss",
-        "http://rss.cnn.com/rss/money_latest.rss",
-        "http://rss.cnn.com/rss/cnn_world.rss",
-        "http://rss.cnn.com/rss/cnn_health.rss",
-        "http://rss.cnn.com/rss/cnn_studentnews.rss",
-        "http://rss.cnn.com/rss/cnn_travel.rss",
-        "http://rss.cnn.com/rss/cnn_tech.rss",
-        "http://rss.cnn.com/rss/cnn_us.rss",
-        "http://rss.cnn.com/rss/cnn_showbiz.rss",
-        "http://rss.cnn.com/rss/cnn_topstories.rss",
-        "http://rss.cnn.com/rss/cnn_latest.rss",
-        "http://rss.cnn.com/rss/cnn_living.rss",
-        "http://rss.cnn.com/rss/cnn_freevideo.rss"
-      ]
-    },
+    // {
+    //   "source": "nasa.gov",
+    //   "thumbnail": "http://www.nasa.gov/sites/default/files/images/nasaLogo-570x450.png",
+    //   "links": [
+    //     "https://www.nasa.gov/rss/dyn/breaking_news.rss"
+    //   ]
+    // },
+    // {
+    //   "source": "webmd.com",
+    //   "thumbnail": "http://blog.drugs.com/wp-content/uploads/2009/12/webmd.jpg",
+    //   "links": [
+    //     "http://rssfeeds.webmd.com/rss/rss.aspx?RSSSource=RSS_PUBLIC"
+    //   ]
+    // },
+    // {
+    //   "source": "cnn.com",
+    //   "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Cnn.svg/2000px-Cnn.svg.png",
+    //   "links": [
+    //     "http://rss.cnn.com/services/podcasting/studentnews/rss.xml",
+    //     "http://rss.cnn.com/rss/cnn_allpolitics.rss",
+    //     "http://rss.cnn.com/rss/money_latest.rss",
+    //     "http://rss.cnn.com/rss/cnn_world.rss",
+    //     "http://rss.cnn.com/rss/cnn_health.rss",
+    //     "http://rss.cnn.com/rss/cnn_studentnews.rss",
+    //     "http://rss.cnn.com/rss/cnn_travel.rss",
+    //     "http://rss.cnn.com/rss/cnn_tech.rss",
+    //     "http://rss.cnn.com/rss/cnn_us.rss",
+    //     "http://rss.cnn.com/rss/cnn_showbiz.rss",
+    //     "http://rss.cnn.com/rss/cnn_topstories.rss",
+    //     "http://rss.cnn.com/rss/cnn_latest.rss",
+    //     "http://rss.cnn.com/rss/cnn_living.rss",
+    //     "http://rss.cnn.com/rss/cnn_freevideo.rss"
+    //   ]
+    // },
     // {
     //   "source": "nytimes.com",
     //   "thumbnail": "http://static.peabodyawards.com/user_images/Times1.jpg",
@@ -94,26 +94,26 @@ module.exports = {
     //     "http://www.nytimes.com/services/xml/rss/nyt/Books.xml"
     //   ]
     // },
-    {
-      "source": "nbcnews.com",
-      "thumbnail": "http://www.thewrap.com/wp-content/uploads/2013/10/nbc-news-logo.jpg",
-      "links": [
-        "http://rss.nbcnews.com/id/3058960/displaymode/1026/eventType/1/rss/rss.xml",
-        "http://feeds.nbcnews.com/feeds/topstories"
-      ]
-    },
-    {
-      "source": "telegraph.co.uk",
-      "thumbnail": "http://www.peopletree.co.uk/Configuration/PeopleTree/Downloads/images/the%20telegraph.co.uk.png",
-      "links": [
-        "http://www.telegraph.co.uk/foodanddrink/rssfeeds/rss",
-        "http://www.telegraph.co.uk/foodanddrink/beer/rss",
-        "http://www.telegraph.co.uk/foodanddrink/coffee/rss",
-        "http://www.telegraph.co.uk/foodanddrink/cake-recipes/rss",
-        "http://www.telegraph.co.uk/foodanddrink/foodanddrinkbooks/rss",
-        "http://www.telegraph.co.uk/foodanddrink/foodanddrinkvideo/five-minute-food/rss"
-      ]
-    },
+    // {
+    //   "source": "nbcnews.com",
+    //   "thumbnail": "http://www.thewrap.com/wp-content/uploads/2013/10/nbc-news-logo.jpg",
+    //   "links": [
+    //     "http://rss.nbcnews.com/id/3058960/displaymode/1026/eventType/1/rss/rss.xml",
+    //     "http://feeds.nbcnews.com/feeds/topstories"
+    //   ]
+    // },
+    // {
+    //   "source": "telegraph.co.uk",
+    //   "thumbnail": "http://www.peopletree.co.uk/Configuration/PeopleTree/Downloads/images/the%20telegraph.co.uk.png",
+    //   "links": [
+    //     "http://www.telegraph.co.uk/foodanddrink/rssfeeds/rss",
+    //     "http://www.telegraph.co.uk/foodanddrink/beer/rss",
+    //     "http://www.telegraph.co.uk/foodanddrink/coffee/rss",
+    //     "http://www.telegraph.co.uk/foodanddrink/cake-recipes/rss",
+    //     "http://www.telegraph.co.uk/foodanddrink/foodanddrinkbooks/rss",
+    //     "http://www.telegraph.co.uk/foodanddrink/foodanddrinkvideo/five-minute-food/rss"
+    //   ]
+    // },
     {
       "source": "wired.com",
       "thumbnail": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Wired_logo.svg/2000px-Wired_logo.svg.png",

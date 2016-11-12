@@ -54,6 +54,12 @@ setInterval(function() {
 
 				async.whilst(function() { return i < maxComingArticle; },
 				function(cb2) {
+					if (cache[0].title === null || cache[0].title === undefined) {
+						cache.shift();
+						i++;
+						return cb2();
+					}
+
 					Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
 						if (article === null) {
 							console.log('Start extracting ' + cache[0].link);

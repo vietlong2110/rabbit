@@ -317,10 +317,9 @@ module.exports.deleteFeedByKeyword = deleteFeedByKeyword;
 
 var updateFeed = function(user, callback) {
 	var updatedNewsFeed = false, updatedMediaFeed = false;
-	var userId = user._id;
 
 	async.eachSeries(user.wordList, function(word, cb) {
-		updateFeedByKeyword(userId, word, function(err, results, updatednews, updatedmedia) {
+		updateFeedByKeyword(user, word, function(err, results, updatednews, updatedmedia) {
 			if (err)
 				return cb(err);
 			if (updatednews)

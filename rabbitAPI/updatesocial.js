@@ -44,7 +44,7 @@ setInterval(function() {
 			},
 			function(cb) {
 				console.log(socialCache.length);
-				var maxComingArticle = Math.min(200, socialCache.length);
+				var maxComingArticle = Math.min(100, socialCache.length);
 				var i = 0;
 
 				async.whilst(function() { return i < maxComingArticle; },
@@ -97,4 +97,4 @@ setInterval(function() {
 		]);
 	}
 	else console.log(socialCache.length);
-}, 60 * 1000);
+}, 30 * 1000);

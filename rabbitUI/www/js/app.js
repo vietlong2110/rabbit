@@ -11,8 +11,8 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova', 'starter.serv
 })
 
 .constant('API_ENDPOINT', {
-    url: 'http://54.163.93.190:8080/auth',
-    api: 'http://54.163.93.190:8080/clientapi'
+    url: 'http://54.159.29.138:8080/auth',
+    api: 'http://54.159.29.138:8080/clientapi'
     // url: 'http://localhost:8080/auth',
     // api: 'http://localhost:8080/clientapi'
 })

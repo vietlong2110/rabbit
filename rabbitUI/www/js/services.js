@@ -48,15 +48,22 @@ angular.module('starter.services', [])
 		window.localStorage.removeItem(LOCAL_TOKEN_KEY);
 	}
 
+	function fbLoginSuccess(userData) {
+	  	console.log("UserInfo: ", userData);
+	  	facebookConnectPlugin.getAccessToken(function(token) {
+	    	console.log("Token: " + token);
+	  	});
+	}
+
 	loadUserCredentials();
 
 	return {
 		fblogin: function() {
 			return $q(function(resolve, reject) {
-				$cordovaOauth.facebook(FB.AppID, ['email', 'public_profile', 'user_friends', 'user_likes', 'user_birthday'], 
-				{redirect_uri: 'http://localhost/callback'}).then(function(result) {
-					// resolve(result.token);
-					$http.post(API_ENDPOINT.url + '/fblogin', {token: result.access_token})
+				facebookConnectPlugin.login(['email', 'public_profile', 'user_friends', 'user_likes', 'user_birthday'],
+				function(data) {
+					console.log(data);
+					$http.post(API_ENDPOINT.url + '/fblogin', {token: data.authResponse.accessToken})
 					.then(function(res) {
 						if (res.data.success) {
 							storeUserCredentials(res.data.token);
@@ -66,6 +73,7 @@ angular.module('starter.services', [])
 						else reject(res.data.message);
 					});
 				}, function(err) {
+					console.log(err);
 					reject(err);
 				});
 			});

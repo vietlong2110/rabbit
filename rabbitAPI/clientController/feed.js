@@ -471,6 +471,9 @@ var getMediaFeed = function(user, size, callback) {
 					title: hubs[i].title,
 					thumbnail: hubs[i].thumbnail,
 					source: hubs[i].source,
+					websource: hubs[i].websource,
+					iframe: hubs[i].iframe,
+					video: hubs[i].video,
 					avatar: hubs[i].avatar,
 					publishedDate: hubs[i].publishedDate,
 					dayScore: hubs[i].dayScore,
@@ -513,19 +516,22 @@ var getMediaByKeyword = function(userId, keyword, size, callback) {
 		var mediafeed = [];
 		for (i = 0; i < hubs.length; i++)
 			if (hubs[i].userKeywordList.indexOf(keyword) !== -1) {
-				var hashtag = '';
-				for (j = 0; j < hubs[i].userKeywordList.length; j++)
-					hashtag += Filter.keywordToHashtag(hubs[i].userKeywordList[j]) + ' ';
+				// var hashtag = '';
+				// for (j = 0; j < hubs[i].userKeywordList.length; j++)
+				// 	hashtag += Filter.keywordToHashtag(hubs[i].userKeywordList[j]) + ' ';
 				mediafeed.push({
 					id: hubs[i].articleId,
 					url: hubs[i].url,
 					title: hubs[i].title,
 					thumbnail: hubs[i].thumbnail,
 					source: hubs[i].source,
+					websource: hubs[i].websource,
+					iframe: hubs[i].iframe,
+					video: hubs[i].video,
 					avatar: hubs[i].avatar,
 					publishedDate: hubs[i].publishedDate,
 					dayScore: hubs[i].dayScore,
-					hashtag: hashtag,
+					// hashtag: hashtag,
 					star: hubs[i].star,
 					timeline: false
 				});

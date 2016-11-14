@@ -7,6 +7,15 @@ var MediaHub = new Schema({
 	url: String,
 	title: String,
 	thumbnail: String,
+	websource: String,
+	iframe: {
+		type: Boolean,
+		default: true
+	},
+	video: {
+		type: Boolean,
+		default: false
+	}
 	source: String,
 	avatar: String,
 	userKeywordList: [String],

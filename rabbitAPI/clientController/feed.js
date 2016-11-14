@@ -61,7 +61,7 @@ var searchFeed = function(user, query, callback) {
 				url: media[i].url,
 				title: media[i].title,
 				source: media[i].source.toUpperCase(),
-				websource: media[i].websource,
+				websource: media[i].websource.toUpperCase(),
 				iframe: media[i].iframe,
 				video: media[i].video,
 				avatar: media[i].avatar,

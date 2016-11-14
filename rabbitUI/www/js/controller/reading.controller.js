@@ -3,6 +3,7 @@ angular.module('reading.controller', [])
 .controller('ReadingController',
 function($rootScope, $scope, $sce, $ionicSideMenuDelegate, $ionicPopup, apiServices, LOAD_SIZE) {
     $scope.url = $rootScope.currentReadingState.url;
+    $scope.title = $rootScope.currentReadingState.source;
     $scope.favorite = $rootScope.currentReadingState.star;
 
     $scope.slide = function(e) {

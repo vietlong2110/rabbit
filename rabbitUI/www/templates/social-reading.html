@@ -1,4 +1,4 @@
-<ion-view view-title="Reading">
+<ion-view view-title={{source}}>
 	<ion-nav-bar class="bar bar-calm">
 		<ion-nav-back-button>
 			Back
@@ -10,9 +10,16 @@
 	</ion-nav-bar>
 
 	<ion-content>
-		<h4 class="padding-top padding-left media-title">{{title}}</h4>
-		<div class="item-image padding-left padding-right padding-bottom">
-			<img id="reading-image" src="{{image}}">
+		<div ng-hide="iframe">
+			<h4 class="padding-top padding-left media-title">{{title}}</h4>
+			<div class="item-image padding-left padding-right padding-bottom">
+				<img id="reading-image" src="{{image}}">
+			</div>
+		</div>
+		<div ng-show="iframe">
+			<ion-content scroll="false">
+				<iframe src="{{trustSrc(url)}}" frameborder="0" width="100%" height="100%"></iframe>	
+			</ion-content>
 		</div>
 	</ion-content>
 </ion-view>

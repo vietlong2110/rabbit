@@ -1,4 +1,4 @@
-<ion-view view-title="Reading">
+<ion-view view-title={{title}}>
 	<ion-nav-bar class="bar bar-calm">
 		<ion-nav-back-button>
 			Back
@@ -10,6 +10,6 @@
 	</ion-nav-bar>
 
 	<ion-content scroll="false">
-		<iframe src="{{trustSrc(url)}}" width="100%" height="100%"></iframe>	
+		<iframe src="{{trustSrc(url)}}" frameborder="0" width="100%" height="100%"></iframe>	
 	</ion-content>
 </ion-view>

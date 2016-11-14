@@ -2,7 +2,9 @@
 angular.module('socialreading.controller', [])
 .controller('SocialReadingController',
 function($rootScope, $scope, $sce, $ionicSideMenuDelegate, $ionicPopup, apiServices, LOAD_SIZE) {
+    $scope.iframe = $rootScope.currentSocialReadingState.iframe;
     $scope.title = $rootScope.currentSocialReadingState.title;
+    $scope.source = $rootScope.currentSocialReadingState.websource;
     $scope.image = $rootScope.currentSocialReadingState.thumbnail;
     $scope.favorite = $rootScope.currentSocialReadingState.star;
 

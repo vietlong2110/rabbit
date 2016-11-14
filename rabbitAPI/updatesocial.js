@@ -49,9 +49,13 @@ setInterval(function() {
 
 				async.whilst(function() { return i < maxComingArticle; },
 				function(cb2) {
-					Media.findOne({url: socialCache[0].url})
-					.exec(function(err, article) {
-						if (article === null) {
+					Media.findOne({url: socialCache[0].url}).exec(function(err, article) {
+						if (err) {
+							socialCache.shift();
+							i++;
+							return cb2();
+						}
+						if (article === null || article === undefined) {
 							console.log('Start extracting ' + socialCache[0].url);
 							Extract.extractKeyword(null, socialCache[0].title,
 							function(originKeywordSet, keywordSet, tf) {
@@ -75,14 +79,14 @@ setInterval(function() {
 								});
 								socialCache.shift();
 								i++;
-								cb2();
+								return cb2();
 							});
 						}
 						else {
 							console.log('This article was saved');
 							socialCache.shift();
 							i++;
-							cb2();
+							return cb2();
 						}
 					});
 				}, function() {
@@ -90,7 +94,7 @@ setInterval(function() {
 					Save.saveMediaArticle(media, function() {
 						saved = true;
 						console.log('All news articles are saved!');
-						cb();
+						return cb();
 					});
 				});
 			}

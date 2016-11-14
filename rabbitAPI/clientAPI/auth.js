@@ -7,6 +7,7 @@ var User = require('../models/users.js');
 var config = require('../clientController/auth/config.js');
 var jwt = require('jwt-simple');
 
+
 //API router for registering a new account
 router.post('/register', function(req, res) {
 	if (!req.body.email)

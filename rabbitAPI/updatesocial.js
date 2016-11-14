@@ -1,4 +1,4 @@
-console.log('Update Social is running!');
+console.log('Update Social is running!!');
 
 var async = require('async');
 var database = require('./database.js');

@@ -60,7 +60,10 @@ var searchFeed = function(user, query, callback) {
 				id: media[i]._id,
 				url: media[i].url,
 				title: media[i].title,
-				source: media[i].source,
+				source: media[i].source.toUpperCase(),
+				websource: media[i].websource,
+				iframe: media[i].iframe,
+				video: media[i].video,
 				avatar: media[i].avatar,
 				thumbnail: media[i].thumbnail,
 				publishedDate: media[i].publishedDate

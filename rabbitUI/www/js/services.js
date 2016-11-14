@@ -60,20 +60,39 @@ angular.module('starter.services', [])
 	return {
 		fblogin: function() {
 			return $q(function(resolve, reject) {
-				facebookConnectPlugin.login(['email', 'public_profile', 'user_friends', 'user_likes', 'user_birthday'],
-				function(data) {
-					console.log(data);
-					$http.post(API_ENDPOINT.url + '/fblogin', {token: data.authResponse.accessToken})
-					.then(function(res) {
-						if (res.data.success) {
-							storeUserCredentials(res.data.token);
-							update();
-							resolve(res.data.message);
-						}
-						else reject(res.data.message);
-					});
+				facebookConnectPlugin.getLoginStatus(function(response) {
+					console.log(response);
+					if (response.status === 'connected') {
+						$http.post(API_ENDPOINT.url + '/fblogin', {token: response.authResponse.accessToken})
+						.then(function(res) {
+							if (res.data.success) {
+								storeUserCredentials(res.data.token);
+								update();
+								resolve(res.data.message);
+							}
+							else reject(res.data.message);
+						});
+					}
+					else {
+						facebookConnectPlugin.login(['email', 'public_profile', 'user_friends', 'user_likes', 'user_birthday'],
+						function(data) {
+							console.log(data);
+							$http.post(API_ENDPOINT.url + '/fblogin', {token: data.authResponse.accessToken})
+							.then(function(res) {
+								if (res.data.success) {
+									storeUserCredentials(res.data.token);
+									update();
+									resolve(res.data.message);
+								}
+								else reject(res.data.message);
+							});
+						}, function(err) {
+							console.log('Error: ' + err);
+							reject(err);
+						});
+					}
 				}, function(err) {
-					console.log(err);
+					console.log('Error login status: ' + err);
 					reject(err);
 				});
 			});
@@ -100,6 +119,7 @@ angular.module('starter.services', [])
 			});
 		},
 		logout: function(callback) {
+			facebookConnectPlugin.logout();
 			stopUpdate();
 			destroyUserCredentials();
 			callback();

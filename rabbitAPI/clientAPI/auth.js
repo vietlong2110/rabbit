@@ -111,7 +111,7 @@ router.post('/fblogin', function(req, res) {
     				success: false,
     				message: err
     			});
-    		else if (!user) {
+    		if (user === null) {
     			FB.getUserLikes(accesstoken, function(err, likes) {
     				if (err)
     					res.json({

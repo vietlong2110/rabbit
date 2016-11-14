@@ -131,7 +131,7 @@ var pageFeed = function(token, pageList, callback) {
 
     async.eachSeries(pageList, function(page, cb) {
         console.log('Start extracting ' + page.name);
-        fb.api(page.id + '/feed', {fields: ['picture', 'link', 'message', 'story', 'created_time'], 
+        fb.api(page.id + '/feed', {fields: ['full_picture', 'link', 'message', 'story', 'created_time'], 
         access_token: token}, function(res) {
             if (!res || res.error)
                 return callback(res.error);
@@ -148,7 +148,7 @@ var pageFeed = function(token, pageList, callback) {
                 resultData.push({
                     url: data[i].link,
                     title: title,
-                    thumbnail: data[i].picture,
+                    thumbnail: data[i].full_picture,
                     social_access: true,
                     video: false,
                     iframe: true,

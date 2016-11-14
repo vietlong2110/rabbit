@@ -306,7 +306,7 @@ var deleteFeedByKeyword = function(user, keyword, callback) {
 	], function(err) {
 		if (err)
 			return callback(err);
-		refreshFeed(userId, function(err, results) {
+		refreshFeed(user, function(err, results) {
 			if (err)
 				return callback(err);
 			callback(null, results);

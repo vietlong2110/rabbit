@@ -15,7 +15,7 @@ var MediaHub = new Schema({
 	video: {
 		type: Boolean,
 		default: false
-	}
+	},
 	source: String,
 	avatar: String,
 	userKeywordList: [String],

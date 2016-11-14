@@ -93,7 +93,7 @@ setInterval(function() {
 					console.log(socialCache.length);
 					Save.saveMediaArticle(media, function() {
 						saved = true;
-						console.log('All news articles are saved!');
+						console.log('All social articles are saved!');
 						return cb();
 					});
 				});
@@ -101,4 +101,4 @@ setInterval(function() {
 		]);
 	}
 	else console.log(socialCache.length);
-}, 30 * 1000);
+}, 30 * 10 * 1000);

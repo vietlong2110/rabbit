@@ -11,7 +11,7 @@ var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
 var feed_link = require('./seed/feed_link.js');
 var feedList = feed_link.ninegag;
-var cache = [], instaCache = [], saved = true;
+var cache = [], saved = true;
 
 setInterval(function() {
 	if (saved) {
@@ -100,7 +100,7 @@ setInterval(function() {
 					console.log(cache.length);
 					Save.saveMediaArticle(media, function() {
 						saved = true;
-						console.log('All news articles are saved!');
+						console.log('All media articles are saved!');
 						cb();
 					});
 				});

@@ -145,6 +145,7 @@ var pageFeed = function(token, pageList, callback) {
                 var reg = regex.exec(url);
                 if (reg !== null)
                     url = 'https://www.facebook.com/plugins/post.php?href=' + encodeURIComponent(url) + '&show_text=true&appId=492416160797294';
+                console.log(url);
                 var title = '';
                 if (data[i].message)
                     title = data[i].message;

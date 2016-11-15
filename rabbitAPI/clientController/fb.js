@@ -154,7 +154,6 @@ var pageFeed = function(token, pageList, callback) {
                 else continue;
                 if (title.length > 100)
                     title = title.substring(0, 100);
-                console.log(data[i].full_picture);
                 resultData.push({
                     url: url,
                     title: title,

@@ -76,7 +76,7 @@ setInterval(function() {
 									websource: socialCache[0].websource,
 									avatar: socialCache[0].avatar,
 									title: socialCache[0].title,
-									thumbnail: socialCache[0].image,
+									thumbnail: socialCache[0].thumbnail,
 									publishedDate: socialCache[0].publishedDate,
 									keywords: keywordSet,
 									originkeywords: originKeywordSet,

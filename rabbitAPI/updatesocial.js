@@ -49,7 +49,7 @@ setInterval(function() {
 
 				async.whilst(function() { return i < maxComingArticle; },
 				function(cb2) {
-					if (socialCace[0].url === null || socialCache[0].url === undefined) {
+					if (socialCache[0].url === null || socialCache[0].url === undefined) {
 						socialCache.shift();
 						i++;
 						return cb2();

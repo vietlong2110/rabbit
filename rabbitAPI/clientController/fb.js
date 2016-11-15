@@ -138,11 +138,19 @@ var pageFeed = function(token, pageList, callback) {
             var data = res.data;
 
             for (i = 0; i < data.length; i++) {
+                if (data[i].link === undefined || data[i].link === null)
+                    continue;
+                var regex = /facebook.com/g;
+                var url = data[i].link;
+                var reg = regex.exec(url);
+                if (reg !== null)
+                    url = 'https://www.facebook.com/plugins/post.php?href=' + encodeURIComponent(url) + '&show_text=true&appId=492416160797294';
                 var title = '';
                 if (data[i].message)
                     title = data[i].message;
                 else if (data[i].story)
                     title = data[i].story;
+                else continue;
                 if (title.length > 100)
                     title = title.substring(0, 100);
                 resultData.push({

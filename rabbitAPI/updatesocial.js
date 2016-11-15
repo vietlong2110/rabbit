@@ -1,4 +1,4 @@
-console.log('Update Social is running!!');
+console.log('Update Social is running!');
 
 var async = require('async');
 var database = require('./database.js');
@@ -49,6 +49,11 @@ setInterval(function() {
 
 				async.whilst(function() { return i < maxComingArticle; },
 				function(cb2) {
+					if (socialCace[0].url === null || socialCache[0].url === undefined) {
+						socialCache.shift();
+						i++;
+						return cb2();
+					}
 					Media.findOne({url: socialCache[0].url}).exec(function(err, article) {
 						if (err) {
 							socialCache.shift();
@@ -101,4 +106,4 @@ setInterval(function() {
 		]);
 	}
 	else console.log(socialCache.length);
-}, 30 * 10 * 1000);
+}, 60 * 5 * 1000);

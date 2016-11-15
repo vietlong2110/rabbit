@@ -16,81 +16,84 @@ var Search = function(user, q, callback) { //calculate document weight vector
 	var querySanitized = Filter.querySanitize(q); //sanitize query before processing
 	var query = stringFuncs.preProcess(querySanitized);
 	query = stringFuncs.wordTokenize(query);
-	query = stringFuncs.stemArr(query);
-	var queryArr = Filter.queryArr(query);
+	stringFuncs.removeStopWords(query, function(queryThreshold) {
+		console.log(queryThreshold);
+		query = stringFuncs.stemArr(query);
+		var queryArr = Filter.queryArr(query);
 
-	async.parallel([
-		function(cb) {
-			var threshold = 4 * queryArr.length, eps = 1e-7;
+		async.parallel([
+			function(cb) {
+				var threshold = 4 * queryThreshold.length, eps = 1e-7;
 
-			Article.count({}, function(err, n) { //n documents
-				if (err)
-					return cb(err);
+				Article.count({}, function(err, n) { //n documents
+					if (err)
+						return cb(err);
 
-				Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-					var articleIDs = [];
-					for (i = 0; i < keywords.length; i++)
-						articleIDs = articleIDs.concat(keywords[i].articleIDs);
-					Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
-						async.each(fullArticles, function(article, cb2) {
-							var vector1 = docVector(n, keywords, article);
-							var vector2 = queryVector(queryArr);
-							var eval = cosEval(vector1, vector2);
-							
-							if (eval - threshold >= eps) {
-								newsEvals.push(eval);
-								newsResult.push(article);
-							}
-							cb2();
-						}, function(err) {
-							if (err)
-								return cb(err);
-							cb();
+					Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+						var articleIDs = [];
+						for (i = 0; i < keywords.length; i++)
+							articleIDs = articleIDs.concat(keywords[i].articleIDs);
+						Article.find({ _id: {"$in": articleIDs} }).exec(function(err, fullArticles) {
+							async.each(fullArticles, function(article, cb2) {
+								var vector1 = docVector(n, keywords, article);
+								var vector2 = queryVector(queryArr);
+								var eval = cosEval(vector1, vector2);
+								
+								if (eval - threshold >= eps) {
+									newsEvals.push(eval);
+									newsResult.push(article);
+								}
+								cb2();
+							}, function(err) {
+								if (err)
+									return cb(err);
+								cb();
+							});
 						});
 					});
 				});
-			});
-		},
-		function(cb) {
-			Media.count({}, function(err, n) { //n documents
-				if (err) {
-					console.log(err);
-					return callback(mediaResult, mediaEvals);
-				}
+			},
+			function(cb) {
+				Media.count({}, function(err, n) { //n documents
+					if (err) {
+						console.log(err);
+						return callback(mediaResult, mediaEvals);
+					}
 
-				Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-					var mediaIDs = [];
-					for (i = 0; i < keywords.length; i++)
-						mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
-					Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
-						async.each(fullArticles, function(article, cb2) {
-							if (article.social_access && user.suggest !== null 
-							&& user.suggest !== undefined) {
-								var ok = false;
-								for (i = 0; i < user.suggest.length; i++)
-									if (user.suggest[i].name === article.source)
-										ok = true;
-								if (!ok)
-									return cb2();
-							}
-							var vector1 = mediaDocVector(n, keywords, article);
-							var vector2 = queryVector(queryArr);
-							mediaEvals.push(cosEval(vector1, vector2));
-							mediaResult.push(article);
-							cb2();
-						}, function(err) {
-							if (err)
-								return cb(err);
-							cb();
+					Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+						var mediaIDs = [];
+						for (i = 0; i < keywords.length; i++)
+							mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
+						Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
+							async.each(fullArticles, function(article, cb2) {
+								if (article.social_access && user.suggest !== null 
+								&& user.suggest !== undefined) {
+									var ok = false;
+									for (i = 0; i < user.suggest.length; i++)
+										if (user.suggest[i].name === article.source)
+											ok = true;
+									if (!ok)
+										return cb2();
+								}
+								var vector1 = mediaDocVector(n, keywords, article);
+								var vector2 = queryVector(queryArr);
+								mediaEvals.push(cosEval(vector1, vector2));
+								mediaResult.push(article);
+								cb2();
+							}, function(err) {
+								if (err)
+									return cb(err);
+								cb();
+							});
 						});
 					});
 				});
-			});
-		}
-	], function(err) {
-		if (err)
-			return callback(err);
-		callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
+			}
+		], function(err) {
+			if (err)
+				return callback(err);
+			callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
+		});
 	});
 };
 module.exports.Search = Search;

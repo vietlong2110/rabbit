@@ -144,7 +144,7 @@ var pageFeed = function(token, pageList, callback) {
                 var url = data[i].link;
                 var reg = regex.exec(url);
                 if (reg !== null)
-                    url = 'https://www.facebook.com/plugins/post.php?href=' + encodeURIComponent(url) + '&show_text=true&appId=492416160797294';
+                    url = 'https://www.facebook.com/plugins/post.php?href=' + encodeURIComponent(url) + '&show_text=true&appId=912527028853859';
                 //console.log(url);
                 var title = '';
                 if (data[i].message)

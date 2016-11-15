@@ -7,6 +7,7 @@ function($rootScope, $scope, $sce, $ionicSideMenuDelegate, $ionicPopup, apiServi
     $scope.source = $rootScope.currentSocialReadingState.websource;
     $scope.image = $rootScope.currentSocialReadingState.thumbnail;
     $scope.favorite = $rootScope.currentSocialReadingState.star;
+    $scope.url = $rootScope.currentSocialReadingState.url;
 
     $scope.slide = function(e) {
         e.preventDefault();
@@ -29,6 +30,10 @@ function($rootScope, $scope, $sce, $ionicSideMenuDelegate, $ionicPopup, apiServi
     $scope.$on("$ionicSlides.sliderInitialized", function(event, data) {
         $scope.slider = data.slider;
     });
+
+    $scope.trustSrc = function(src) {
+        return $sce.trustAsResourceUrl(src);
+    };
 
     $scope.toggleStar = function() {
         if ($scope.favorite) {

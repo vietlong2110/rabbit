@@ -17,7 +17,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 	var query = stringFuncs.preProcess(querySanitized);
 	query = stringFuncs.wordTokenize(query);
 	stringFuncs.removeStopWords(query, function(queryThreshold) {
-		console.log(queryThreshold);
+		// console.log(queryThreshold);
 		query = stringFuncs.stemArr(query);
 		var queryArr = Filter.queryArr(query);
 

@@ -17,8 +17,8 @@ var Article = require('../models/articles.js');
 var Extract = require('../serverController/extract.js');
 var Save = require('../serverController/save.js');
 
-router.post('/extractimg', function(req, res) {
-	var url = req.body.url;
+router.get('/extractimg', function(req, res) {
+	var url = 'http://vnexpress.net/tin-tuc/the-gioi/bau-cu-tong-thong-my-2016/dieu-gi-xay-ra-neu-clinton-va-trump-khong-dat-qua-ban-phieu-dai-cu-tri-3494495.html';
 	Extract.extractImage(url, function(img) {
 		res.json({img: img});
 	});
@@ -89,20 +89,36 @@ router.get('/lemma', function(req, res) {
 	})
 });
 
-router.get('/rss', function(req, res) {
-	var Site = require('../models/sites.js');
+router.get('/getpagefeed', function(req, res) {
+	var FB = require('../clientController/fb.js');
+	var token = 'EAAM98EFnHGMBAAVus7AeE1KN6NDSeZCMTbS9QYPOGsTPpiC03JI3ipVVS2uf8WjJSA3AmWdRa6oJ8XrbjMNgZAZAsio85sWdTaIDEbNxWOap3xBlI362MJSuV68QXqnqHLxG6s8LB0rDBCR9RcbduF7do7M2PMZD';
 
-	Site.find({}).exec(function(err, sites) {
+	FB.getUserLikes(token, function(err, likes) {
 		if (err)
 			res.json({error: err});
-		var results = [];
-		
-		for (i in sites)
-			results.push({
-				source: sites[i].source,
-				links: sites[i].links
-			});
-		res.json({data: results});
+		var a = [];
+		a.push(likes[5]);
+		FB.pageFeed(token, a, function(err, data) {
+			if (err)
+				res.json({error: err});
+			res.json({data: data});
+		});
+	});
+});
+
+router.get('/extract', function(req, res) {
+	var link = 'http://vnexpress.net/tin-tuc/the-gioi/bau-cu-tong-thong-my-2016/dieu-gi-xay-ra-neu-clinton-va-trump-khong-dat-qua-ban-phieu-dai-cu-tri-3494495.html';
+	Extract.extractContent(null, link, 
+	function(err, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
+		if (err)
+			res.json({error : err});
+		else res.json({
+			originKeywordSet: originKeywordSet,
+			keywordSet: keywordSet,
+			tf: tf,
+			titleKeywordSet: titleKeywordSet,
+			tfTitle: tfTitle
+		});
 	});
 });
 

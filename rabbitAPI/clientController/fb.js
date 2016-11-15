@@ -145,7 +145,7 @@ var pageFeed = function(token, pageList, callback) {
                 var reg = regex.exec(url);
                 if (reg !== null)
                     url = 'https://www.facebook.com/plugins/post.php?href=' + encodeURIComponent(url) + '&show_text=true&appId=492416160797294';
-                console.log(url);
+                //console.log(url);
                 var title = '';
                 if (data[i].message)
                     title = data[i].message;
@@ -154,8 +154,9 @@ var pageFeed = function(token, pageList, callback) {
                 else continue;
                 if (title.length > 100)
                     title = title.substring(0, 100);
+                console.log(data[i].full_picture);
                 resultData.push({
-                    url: data[i].link,
+                    url: url,
                     title: title,
                     thumbnail: data[i].full_picture,
                     social_access: true,

@@ -98,6 +98,11 @@ var Search = function(user, q, callback) { //calculate document weight vector
 };
 module.exports.Search = Search;
 
+var searchMedia = function() {
+
+};
+module.exports.searchMedia = searchMedia;
+
 var docVector = function(n, keywords, article) {
 	var vector = [];
 

@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var async = require('async');
 var database = require('./database.js');
 var Media = require('./models/media.js');
 

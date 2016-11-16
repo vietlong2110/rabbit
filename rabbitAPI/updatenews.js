@@ -78,7 +78,7 @@ setInterval(function() {
 					// Article.findOne({title: entities.decode(cache[0].title)})
 					// .exec(function(err, article) {
 					// 	if (article === null) {
-					// 		console.log('Start extracting ' + cache[0].link);
+							console.log('Start extracting ' + cache[0].link);
 							if (cache[0].link.substr(cache[0].link.length-4, 4) === ".mp4") {
 								cache.shift();
 								i++;

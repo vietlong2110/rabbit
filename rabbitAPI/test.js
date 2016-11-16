@@ -12,10 +12,10 @@ var async = require('async');
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 var fs = require('fs');
-var RSS = require('../serverController/rss.js');
-var Article = require('../models/articles.js');
-var Extract = require('../serverController/extract.js');
-var Save = require('../serverController/save.js');
+var RSS = require('./serverController/rss.js');
+var Article = require('./models/articles.js');
+var Extract = require('./serverController/extract.js');
+var Save = require('./serverController/save.js');
 
 router.get('/extractimg', function(req, res) {
 	var url = 'http://vnexpress.net/tin-tuc/the-gioi/bau-cu-tong-thong-my-2016/dieu-gi-xay-ra-neu-clinton-va-trump-khong-dat-qua-ban-phieu-dai-cu-tri-3494495.html';
@@ -27,39 +27,29 @@ router.get('/extractimg', function(req, res) {
 router.post('/rss', function(req, res) { //test rss reader
 	// var url = 'http://feeds.feedburner.com/TechCrunch/fundings-exits';
 	var url = req.body.url;
-	var RSS = require('../serverController/rss.js');
 	RSS.feedParse(urlencode(url), function(data) {
 		res.json(data);
 	});
 });
 
-router.get('/searchimagesinsta', function(req, res) {
-	var Insta = require('../serverController/instagram.js');
-	Insta.searchUser(req.query.q, function(data) {
-		// Insta.searchMediaTags(req.query.q, function(images) {
-		// 	images = images.concat(data);
-			res.json({images: data});
-		// });
-	});
-});
 
 router.post('/9gag', function(req, res) {
 	var url = req.body.url;
-	var nineGag = require('../serverController/9gag.js');
+	var nineGag = require('./serverController/9gag.js');
 	nineGag.feedParse(urlencode(url), function(data) {
 		res.json(data);
 	});
 });
 
 router.get('/compute', function(req, res) {
-	var Compute = require('../serverController/compute.js');
+	var Compute = require('./serverController/compute.js');
 	Compute.computeKeywordsWeight(function() {
 		res.json({updated: true});
 	})
 });
 
 router.get('/checkduplicatekeyword', function(req, res) {
-	var OriginKeyword = require('../models/keywords.js');
+	var OriginKeyword = require('./models/keywords.js');
 
 	OriginKeyword.find({}).exec(function(err, originkeywords) {
 		for (i = 0; i < originkeywords.length; i++)
@@ -71,7 +61,7 @@ router.get('/checkduplicatekeyword', function(req, res) {
 });
 
 router.get('/anyzero', function(req, res) {
-	var OriginKeyword = require('../models/originkeywords.js');
+	var OriginKeyword = require('./models/originkeywords.js');
 
 	OriginKeyword.find({}).exec(function(err, originkeywords) {
 		for (i = 0; i < originkeywords.length; i++)
@@ -82,7 +72,7 @@ router.get('/anyzero', function(req, res) {
 });
 
 router.get('/lemma', function(req, res) {
-	var stringFuncs = require('../libs/stringfunctions.js');
+	var stringFuncs = require('./libs/stringfunctions.js');
 
 	stringFuncs.lemma(req.query.q, function(results) {
 		res.json({lemma: results});
@@ -90,7 +80,7 @@ router.get('/lemma', function(req, res) {
 });
 
 router.get('/getpagefeed', function(req, res) {
-	var FB = require('../clientController/fb.js');
+	var FB = require('./clientController/fb.js');
 	var token = 'EAAM98EFnHGMBAAVus7AeE1KN6NDSeZCMTbS9QYPOGsTPpiC03JI3ipVVS2uf8WjJSA3AmWdRa6oJ8XrbjMNgZAZAsio85sWdTaIDEbNxWOap3xBlI362MJSuV68QXqnqHLxG6s8LB0rDBCR9RcbduF7do7M2PMZD';
 
 	FB.getUserLikes(token, function(err, likes) {

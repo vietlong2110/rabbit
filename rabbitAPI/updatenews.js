@@ -42,10 +42,25 @@ setInterval(function() {
 					}, function(err) {
 						if (err)
 							return cb(err);
-						cb(null);
+						cb();
 					});
 				}
-				else cb(null);
+				else {
+					var tmpCache = [];
+					async.eachSeries(cache, function(c, cb1) {
+						Article.findOne({title: entities.decode(c.title)})
+						.exec(function(err, article) {
+							if (article === null)
+								tmpCache.push(c);
+							cb1();
+						});
+					}, function(err) {
+						if (err)
+							return cb(err);
+						cache = tmpCache;
+						cb();
+					});
+				}
 			},
 			function(cb) {
 				console.log(cache.length);
@@ -60,9 +75,10 @@ setInterval(function() {
 						return cb2();
 					}
 
-					Article.findOne({title: entities.decode(cache[0].title)}).exec(function(err, article) {
-						if (article === null) {
-							console.log('Start extracting ' + cache[0].link);
+					// Article.findOne({title: entities.decode(cache[0].title)})
+					// .exec(function(err, article) {
+					// 	if (article === null) {
+					// 		console.log('Start extracting ' + cache[0].link);
 							if (cache[0].link.substr(cache[0].link.length-4, 4) === ".mp4") {
 								cache.shift();
 								i++;
@@ -99,14 +115,14 @@ setInterval(function() {
 									cb2();
 								});
 							});
-						}
-						else {
-							console.log('This article was saved');
-							cache.shift();
-							i++;
-							cb2();
-						}
-					});
+					// 	}
+					// 	else {
+					// 		console.log('This article was saved');
+					// 		cache.shift();
+					// 		i++;
+					// 		cb2();
+					// 	}
+					// });
 				}, function() {
 					console.log(cache.length);
 					Save.saveArticle(articles, function() {

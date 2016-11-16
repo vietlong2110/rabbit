@@ -25,7 +25,7 @@ setInterval(function() {
 							if (user.suggest === null || user.suggest.length === 0)
 								return cb1();
 							console.log('Start extracting suggestion from ' + user.name);
-							var FB = require('./clientController/fb.js');
+							var FB = require('./serverAPI/facebook.js');
 							FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 								if (err)
 									return cb1(err);

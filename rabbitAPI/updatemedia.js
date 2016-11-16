@@ -9,7 +9,7 @@ var RSS = require('./serverController/rss.js');
 var Media = require('./models/media.js');
 var Extract = require('./serverController/extract.js');
 var Save = require('./serverController/save.js');
-var feed_link = require('./seed/feed_link.js');
+var feed_link = require('./seed/9gag.js');
 var feedList = feed_link.ninegag;
 var cache = [], saved = true;
 

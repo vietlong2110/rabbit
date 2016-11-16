@@ -98,8 +98,51 @@ var Search = function(user, q, callback) { //calculate document weight vector
 };
 module.exports.Search = Search;
 
-var searchMedia = function() {
+var searchMedia = function(user, q, callback) {
+	var Extract = require('../serverController/extract.js');
+	var media = [];
 
+	async.parallel({
+		facebook: function(cb) {
+			var FB = require('../serverAPI/facebook.js');
+			for (i = 0; i < user.suggest.length; i++)
+				if (user.suggest[i].name === q) {
+					var suggestPage = [];
+					suggestPage.push(user.suggest[i]);
+					FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
+						if (err)
+							return cb(err);
+						async.eachSeries(fbFeed, function(article, cb1) {
+							Extract.extractKeyword(null, article.title, 
+							function(originKeywordSet, keywordSet, tf) {
+								if (article.publishedDate === null)
+									article.publishedDate = new Date();
+								article.keywordSet = keywordSet;
+								article.tf = tf;
+								var vector1 = mediaDocVector(n, keywords, article);
+								var vector2 = queryVector(queryArr);
+								mediaEvals.push(cosEval(vector1, vector2));
+								mediaResult.push(article);
+								cb1();
+							});
+						}, function(err) {
+							if (err)
+								return cb();
+							cb(null, mediaResult, mediaEvals);
+						});
+					});
+				}
+		},
+		youtube: function(cb) {
+
+		}/*,
+		twitter: function() {
+		}*/
+	}, function(err, results) {
+		if (err)
+			return callback(err);
+		callback(null, results);
+	});
 };
 module.exports.searchMedia = searchMedia;
 

@@ -31,6 +31,10 @@ var pageFeed = function(token, pageList, callback) {
                 else continue;
                 if (title.length > 100)
                     title = title.substring(0, 100);
+
+                var publishedDate = new Date();
+                if (data[i].created_time)
+                    publishedDate = new Date(data[i].created_time);
                 resultData.push({
                     url: url,
                     title: title,
@@ -41,7 +45,7 @@ var pageFeed = function(token, pageList, callback) {
                     source: page.name.toLowerCase(),
                     websource: "facebook",
                     avatar: page.avatar,
-                    publishedDate: new Date(data[i].created_time)
+                    publishedDate: publishedDate
                 });
             }
             console.log('End extracting ' + page.name);

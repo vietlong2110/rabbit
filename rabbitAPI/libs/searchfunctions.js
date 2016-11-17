@@ -72,7 +72,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 					num = n;
 
 					Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
-						k = keywords;
+						k = k.concat(keywords);
 						var mediaIDs = [];
 						for (i = 0; i < keywords.length; i++)
 							mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);

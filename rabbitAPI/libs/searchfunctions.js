@@ -104,6 +104,8 @@ var Search = function(user, q, callback) { //calculate document weight vector
 			if (err)
 				return callback(err);
 			searchMedia(user, q, hadArticles, num, k, queryArr, function(err, mResult, mEvals) {
+				if (err)
+					return callback(err);
 				mediaResult = mediaResult.concat(mResult);
 				mediaEvals = mediaEvals.concat(mEvals);
 				callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
@@ -132,8 +134,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 						async.each(fbFeed, function(article, cb1) {
 							Extract.extractKeyword(null, article.title, 
 							function(originKeywordSet, keywordSet, tf) {
-								if (article.publishedDate === null)
-									article.publishedDate = new Date();
+								console.log(article.source);
 								article.keywords = keywordSet;
 								article.tf = tf;
 								var vector1 = mediaDocVector(n + fbFeed.length, keywords, article);

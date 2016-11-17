@@ -48,7 +48,7 @@ var searchFeed = function(user, query, callback) {
 		}
 		for (i = 0; i < Math.min(maxCache, media.length); i++) {
 			var todayArr = [];
-			if (media[i].publishedDate === null)
+			if (media[i].publishedDate === null || media[i].publishedDate === undefined)
 				media[i].publishedDate = new Date();
 			todayArr.push(media[i].publishedDate.getDate());
 			todayArr.push(media[i].publishedDate.getMonth());

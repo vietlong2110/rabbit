@@ -75,7 +75,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 								&& user.suggest !== undefined) {
 									var ok = false;
 									for (i = 0; i < user.suggest.length; i++)
-										if (user.suggest[i].name === article.source)
+										if (user.suggest[i].name.toLowerCase() === article.source)
 											ok = true;
 									if (!ok)
 										return cb2();

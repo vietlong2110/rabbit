@@ -134,7 +134,6 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 						async.each(fbFeed, function(article, cb1) {
 							Extract.extractKeyword(null, article.title, 
 							function(originKeywordSet, keywordSet, tf) {
-								console.log(article.source);
 								article.keywords = keywordSet;
 								article.tf = tf;
 								var vector1 = mediaDocVector(n + fbFeed.length, keywords, article);
@@ -160,6 +159,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 	}, function(err, mediaResult, mediaEvals) {
 		if (err)
 			return callback(err);
+		console.log(mediaResult);
 		callback(null, mediaResult, mediaEvals);
 	});
 };

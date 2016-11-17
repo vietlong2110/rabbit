@@ -20,6 +20,11 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		// console.log(queryThreshold);
 		query = stringFuncs.stemArr(query);
 		var queryArr = Filter.queryArr(query);
+		var hadArticles = {
+			facebook: false,
+			youtube: false,
+			twitter: false
+		};
 
 		async.parallel([
 			function(cb) {
@@ -75,6 +80,10 @@ var Search = function(user, q, callback) { //calculate document weight vector
 									if (!ok)
 										return cb2();
 								}
+								if (article.websource === 'facebook')
+									hadArticles.facebook = true;
+								else if (article.websource === 'youtube')
+									hadArticles.youtube = true;
 								var vector1 = mediaDocVector(n, keywords, article);
 								var vector2 = queryVector(queryArr);
 								mediaEvals.push(cosEval(vector1, vector2));
@@ -92,7 +101,11 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		], function(err) {
 			if (err)
 				return callback(err);
-			callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
+			searchMedia(user, q, function(err, mResult, mEvals) {
+				mediaResult = mediaResult.concat(mResult);
+				mediaEvals = mediaEvals.concat(mEvals);
+				callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
+			});
 		});
 	});
 };
@@ -100,10 +113,12 @@ module.exports.Search = Search;
 
 var searchMedia = function(user, q, callback) {
 	var Extract = require('../serverController/extract.js');
-	var media = [];
+	var mediaResult = [], mediaEvals = [];
 
 	async.parallel({
 		facebook: function(cb) {
+			if (!hadArticles.facebook)
+				return cb();
 			var FB = require('../serverAPI/facebook.js');
 			for (i = 0; i < user.suggest.length; i++)
 				if (user.suggest[i].name === q) {
@@ -112,7 +127,7 @@ var searchMedia = function(user, q, callback) {
 					FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 						if (err)
 							return cb(err);
-						async.eachSeries(fbFeed, function(article, cb1) {
+						async.each(fbFeed, function(article, cb1) {
 							Extract.extractKeyword(null, article.title, 
 							function(originKeywordSet, keywordSet, tf) {
 								if (article.publishedDate === null)
@@ -134,14 +149,15 @@ var searchMedia = function(user, q, callback) {
 				}
 		},
 		youtube: function(cb) {
-
+			if (!hadArticles.youtube)
+				return cb();
 		}/*,
 		twitter: function() {
 		}*/
-	}, function(err, results) {
+	}, function(err, mediaResult, mediaEvals) {
 		if (err)
 			return callback(err);
-		callback(null, results);
+		callback(null, mediaResult, mediaEvals);
 	});
 };
 module.exports.searchMedia = searchMedia;

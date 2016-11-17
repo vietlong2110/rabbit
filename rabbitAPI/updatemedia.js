@@ -63,7 +63,7 @@ setInterval(function() {
 								image = images[1];
 								if (image.substr(image.length-4, 4) === ".gif")
 									image = image.replace("a.gif", ".jpg");
-								Extract.extractKeyword(null, entities.decode(cache[0].title),
+								Extract.extractKeyword(null, entities.decode(cache[0].title) + ' 9gag',
 								function(originKeywordSet, keywordSet, tf) {
 									console.log('End extracting ' + cache[0].link);
 									if (cache[0].publishedDate === null)

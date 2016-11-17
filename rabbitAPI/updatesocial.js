@@ -62,7 +62,8 @@ setInterval(function() {
 						}
 						if (article === null || article === undefined) {
 							console.log('Start extracting ' + socialCache[0].url);
-							Extract.extractKeyword(null, socialCache[0].title,
+							Extract.extractKeyword(null, socialCache[0].title + ' ' 
+							+ socialCache[0].source + ' ' + socialCache[0].websource, 
 							function(originKeywordSet, keywordSet, tf) {
 								console.log('End extracting ' + socialCache[0].url);
 								if (socialCache[0].publishedDate === null)

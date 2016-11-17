@@ -168,6 +168,8 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 				});
 			}, function(cb) {
 				async.eachSeries(mediaFeedResult, function(mediafeed, cb1) {
+					if (mediafeed.id === null || mediafeed.id === undefined)
+						return cb1();
 					MediaHub.findOne({
 						userId: userId,
 						articleId: mediafeed.id

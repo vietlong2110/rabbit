@@ -25,6 +25,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 			youtube: false,
 			twitter: false
 		};
+		var num = 0;
 
 		async.parallel([
 			function(cb) {
@@ -64,12 +65,13 @@ var Search = function(user, q, callback) { //calculate document weight vector
 						console.log(err);
 						return callback(mediaResult, mediaEvals);
 					}
+					num = n;
 
 					Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
 						var mediaIDs = [];
 						for (i = 0; i < keywords.length; i++)
 							mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
-						Media.find({ _id: {"$in": mediaIDs} }).exec(function(err, fullArticles) {
+						Media.find({ _id: {"$in"	: mediaIDs} }).exec(function(err, fullArticles) {
 							async.each(fullArticles, function(article, cb2) {
 								if (article.social_access && user.suggest !== null 
 								&& user.suggest !== undefined) {
@@ -101,7 +103,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		], function(err) {
 			if (err)
 				return callback(err);
-			searchMedia(user, q, hadArticles, function(err, mResult, mEvals) {
+			searchMedia(user, q, hadArticles, num, function(err, mResult, mEvals) {
 				mediaResult = mediaResult.concat(mResult);
 				mediaEvals = mediaEvals.concat(mEvals);
 				callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
@@ -111,7 +113,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 };
 module.exports.Search = Search;
 
-var searchMedia = function(user, q, hadArticles, callback) {
+var searchMedia = function(user, q, hadArticles, n, callback) {
 	var Extract = require('../serverController/extract.js');
 	var mediaResult = [], mediaEvals = [];
 
@@ -134,7 +136,7 @@ var searchMedia = function(user, q, hadArticles, callback) {
 									article.publishedDate = new Date();
 								article.keywordSet = keywordSet;
 								article.tf = tf;
-								var vector1 = mediaDocVector(n, keywords, article);
+								var vector1 = mediaDocVector(n + fbFeed.length, keywords, article);
 								var vector2 = queryVector(queryArr);
 								mediaEvals.push(cosEval(vector1, vector2));
 								mediaResult.push(article);

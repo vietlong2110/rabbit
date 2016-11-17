@@ -125,14 +125,15 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 				return cb();
 			var FB = require('../serverAPI/facebook.js');
 			for (i = 0; i < user.suggest.length; i++)
-				if (user.suggest[i].name === q) {
+				if (user.suggest[i].name.toLowerCase() === q.toLowerCase()) {
+					ok = true;
 					var suggestPage = [];
 					suggestPage.push(user.suggest[i]);
 					FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
 						if (err)
 							return cb(err);
 						async.each(fbFeed, function(article, cb1) {
-							Extract.extractKeyword(null, article.title, 
+							Extract.extractKeyword(null, article.title + ' ' + article.source, 
 							function(originKeywordSet, keywordSet, tf) {
 								article.keywords = keywordSet;
 								article.tf = tf;
@@ -148,7 +149,10 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 							cb();
 						});
 					});
+					break;
 				}
+			if (!ok)
+				return cb();
 		},
 		youtube: function(cb) {
 			if (!hadArticles.youtube)
@@ -159,7 +163,6 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 	}, function(err) {
 		if (err)
 			return callback(err);
-		console.log(mediaResult);
 		callback(null, mediaResult, mediaEvals);
 	});
 };

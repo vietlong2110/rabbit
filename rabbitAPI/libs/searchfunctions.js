@@ -114,7 +114,6 @@ var Search = function(user, q, callback) { //calculate document weight vector
 module.exports.Search = Search;
 
 var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback) {
-	console.log(keywords);
 	var Extract = require('../serverController/extract.js');
 	var mediaResult = [], mediaEvals = [];
 

@@ -144,8 +144,8 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 							});
 						}, function(err) {
 							if (err)
-								return cb();
-							cb(null, mediaResult, mediaEvals);
+								return cb(err);
+							cb();
 						});
 					});
 				}
@@ -156,7 +156,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 		}/*,
 		twitter: function() {
 		}*/
-	}, function(err, mediaResult, mediaEvals) {
+	}, function(err) {
 		if (err)
 			return callback(err);
 		console.log(mediaResult);

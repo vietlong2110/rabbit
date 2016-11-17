@@ -135,7 +135,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 							function(originKeywordSet, keywordSet, tf) {
 								if (article.publishedDate === null)
 									article.publishedDate = new Date();
-								article.keywordSet = keywordSet;
+								article.keywords = keywordSet;
 								article.tf = tf;
 								var vector1 = mediaDocVector(n + fbFeed.length, keywords, article);
 								var vector2 = queryVector(queryArr);

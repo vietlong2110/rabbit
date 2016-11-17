@@ -73,7 +73,6 @@ var Search = function(user, q, callback) { //calculate document weight vector
 
 					Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
 						k = k.concat(keywords);
-						console.log(k);
 						var mediaIDs = [];
 						for (i = 0; i < keywords.length; i++)
 							mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
@@ -104,7 +103,6 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		], function(err) {
 			if (err)
 				return callback(err);
-			console.log(k);
 			searchMedia(user, q, hadArticles, num, k, queryArr, function(err, mResult, mEvals) {
 				mediaResult = mediaResult.concat(mResult);
 				mediaEvals = mediaEvals.concat(mEvals);
@@ -116,6 +114,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 module.exports.Search = Search;
 
 var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback) {
+	console.log(keywords);
 	var Extract = require('../serverController/extract.js');
 	var mediaResult = [], mediaEvals = [];
 

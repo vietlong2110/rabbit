@@ -26,6 +26,10 @@ var Search = function(user, q, callback) { //calculate document weight vector
 			twitter: false
 		};
 		var num = 0;
+		var k = [];
+		var suggestPage = [];
+		for (i = 0; i < user.suggest.length; i++)
+			suggestPage.push(user.suggest[i].name.toLowerCase());
 
 		async.parallel([
 			function(cb) {
@@ -68,20 +72,16 @@ var Search = function(user, q, callback) { //calculate document weight vector
 					num = n;
 
 					Keyword.find({ word: {"$in": query} }).exec(function(err, keywords) {
+						k = keywords;
 						var mediaIDs = [];
 						for (i = 0; i < keywords.length; i++)
 							mediaIDs = mediaIDs.concat(keywords[i].mediaIDs);
-						Media.find({ _id: {"$in"	: mediaIDs} }).exec(function(err, fullArticles) {
+						Media.find({ _id: {"$in" : mediaIDs} }).exec(function(err, fullArticles) {
 							async.each(fullArticles, function(article, cb2) {
 								if (article.social_access && user.suggest !== null 
-								&& user.suggest !== undefined) {
-									var ok = false;
-									for (i = 0; i < user.suggest.length; i++)
-										if (user.suggest[i].name.toLowerCase() === article.source)
-											ok = true;
-									if (!ok)
+								&& user.suggest !== undefined && 
+								suggestPage.indexOf(article.source) === -1)
 										return cb2();
-								}
 								if (article.websource === 'facebook')
 									hadArticles.facebook = true;
 								else if (article.websource === 'youtube')
@@ -103,7 +103,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		], function(err) {
 			if (err)
 				return callback(err);
-			searchMedia(user, q, hadArticles, num, function(err, mResult, mEvals) {
+			searchMedia(user, q, hadArticles, num, k, queryArr, function(err, mResult, mEvals) {
 				mediaResult = mediaResult.concat(mResult);
 				mediaEvals = mediaEvals.concat(mEvals);
 				callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
@@ -113,7 +113,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 };
 module.exports.Search = Search;
 
-var searchMedia = function(user, q, hadArticles, n, callback) {
+var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback) {
 	var Extract = require('../serverController/extract.js');
 	var mediaResult = [], mediaEvals = [];
 

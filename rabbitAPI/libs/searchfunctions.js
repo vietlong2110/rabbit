@@ -101,7 +101,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		], function(err) {
 			if (err)
 				return callback(err);
-			searchMedia(user, q, function(err, mResult, mEvals) {
+			searchMedia(user, q, hadArticles, function(err, mResult, mEvals) {
 				mediaResult = mediaResult.concat(mResult);
 				mediaEvals = mediaEvals.concat(mEvals);
 				callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
@@ -111,7 +111,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 };
 module.exports.Search = Search;
 
-var searchMedia = function(user, q, callback) {
+var searchMedia = function(user, q, hadArticles, callback) {
 	var Extract = require('../serverController/extract.js');
 	var mediaResult = [], mediaEvals = [];
 

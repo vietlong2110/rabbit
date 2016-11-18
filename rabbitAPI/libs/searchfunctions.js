@@ -136,6 +136,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 							Extract.extractKeyword(null, article.title + ' ' + article.source, 
 							function(originKeywordSet, keywordSet, tf) {
 								article.keywords = keywordSet;
+								article.originkeywords = originKeywordSet;
 								article.tf = tf;
 								var vector1 = mediaDocVector(n + fbFeed.length, keywords, article);
 								var vector2 = queryVector(queryArr);

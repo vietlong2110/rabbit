@@ -7,6 +7,7 @@ var _ = require('lodash');
 var mongoose = require('mongoose');
 var Article = require('../models/articles.js');
 var Media = require('../models/media.js');
+var Save = require('../serverController/save.js');
 var Keyword = require('../models/keywords.js');
 var List = require('./list.js');
 var User = require('../models/users.js');
@@ -169,55 +170,96 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 			}, function(cb) {
 				async.eachSeries(mediaFeedResult, function(mediafeed, cb1) {
 					if (mediafeed.id === null || mediafeed.id === undefined)
-						return cb1();
-					MediaHub.findOne({
-						userId: userId,
-						articleId: mediafeed.id
-					}).exec(function(err, hub) {
-						if (err)
-							return cb1(err);
-						if (hub === null) {
-							Media.findById(mediafeed.id).exec(function(err, media) {
-								var mediaHub = new MediaHub({
+						Save.saveMediaArticle(mediafeed, function() {
+							Media.findOne({url: media.url}).exec(function(err, media) {
+								if (err)
+									return cb1(err);
+								MediaHub.findOne({
 									userId: userId,
-									articleId: mediafeed.id,
-									url: media.url,
-									title: media.title,
-									thumbnail: media.thumbnail,
-									source: media.source,
-									websource: media.websource,
-									iframe: media.iframe,
-									video: media.video,
-									avatar: media.avatar,
-									userKeywordList: [keyword],
-									evalScoreList: [mediafeed.evalScore],
-									evalScore: mediafeed.evalScore,
-									publishedDate: mediafeed.publishedDate,
-									dayScore: mediafeed.dayScore,
-									star: false
+									articleId: media.id
+								}).exec(function(err, hub) {
+									if (err)
+										return cb1(err);
+									if (hub === null) {
+										var mediaHub = new MediaHub({
+											userId: userId,
+											articleId: media.id,
+											url: media.url,
+											title: media.title,
+											thumbnail: media.thumbnail,
+											source: media.source,
+											websource: media.websource,
+											iframe: media.iframe,
+											video: media.video,
+											avatar: media.avatar,
+											userKeywordList: [keyword],
+											evalScoreList: [mediafeed.evalScore],
+											evalScore: mediafeed.evalScore,
+											publishedDate: mediafeed.publishedDate,
+											dayScore: mediafeed.dayScore,
+											star: false
+										});
+										mediaHub.save(function(err) {
+											if (err)
+												return cb1(err);
+											updatedmedia = true;
+											cb1();
+										});
+									}
+									else cb1();
 								});
-								mediaHub.save(function(err) {
+							});
+						});
+					else {
+						MediaHub.findOne({
+							userId: userId,
+							articleId: mediafeed.id
+						}).exec(function(err, hub) {
+							if (err)
+								return cb1(err);
+							if (hub === null) {
+								Media.findById(mediafeed.id).exec(function(err, media) {
+									var mediaHub = new MediaHub({
+										userId: userId,
+										articleId: mediafeed.id,
+										url: media.url,
+										title: media.title,
+										thumbnail: media.thumbnail,
+										source: media.source,
+										websource: media.websource,
+										iframe: media.iframe,
+										video: media.video,
+										avatar: media.avatar,
+										userKeywordList: [keyword],
+										evalScoreList: [mediafeed.evalScore],
+										evalScore: mediafeed.evalScore,
+										publishedDate: mediafeed.publishedDate,
+										dayScore: mediafeed.dayScore,
+										star: false
+									});
+									mediaHub.save(function(err) {
+										if (err)
+											return cb1(err);
+										updatedmedia = true;
+										cb1();
+									});
+								});
+							}
+							else {
+								if (hub.userKeywordList.indexOf(keyword) !== -1)
+									return cb1();
+								hub.userKeywordList.push(keyword);
+								hub.evalScoreList.push(mediafeed.evalScore);
+								hub.evalScore += mediafeed.evalScore;
+								hub.save(function(err) {
 									if (err)
 										return cb1(err);
 									updatedmedia = true;
 									cb1();
 								});
-							});
-						}
-						else {
-							if (hub.userKeywordList.indexOf(keyword) !== -1)
-								return cb1();
-							hub.userKeywordList.push(keyword);
-							hub.evalScoreList.push(mediafeed.evalScore);
-							hub.evalScore += mediafeed.evalScore;
-							hub.save(function(err) {
-								if (err)
-									return cb1(err);
-								updatedmedia = true;
-								cb1();
-							});
-						}
-					});
+							}
+						});
+					}
 				}, function(err) {
 					if (err)
 						return cb(err);

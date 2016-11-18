@@ -41,17 +41,17 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova', 'starter.serv
   });
 })
 
-// .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
-//     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-//         if (!AuthService.isAuthenticated()) {
-//             // console.log(next.name);
-//             if (next.name !== 'login' && next.name !== 'register') {
-//                 event.preventDefault();
-//                 $state.go('login');
-//             }
-//         }
-//     });
-// })
+.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+        if (AuthService.isAuthenticated()) {
+            // console.log(next.name);
+            if (next.name === 'login' || next.name === 'register' || next.name === 'login-ui') {
+                event.preventDefault();
+                $state.go('tabs.news');
+            }
+        }
+    });
+})
 
 .directive('focus', function($timeout) {
     return {

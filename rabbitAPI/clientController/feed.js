@@ -169,8 +169,10 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 				});
 			}, function(cb) {
 				async.eachSeries(mediaFeedResult, function(mediafeed, cb1) {
-					if (mediafeed.id === null || mediafeed.id === undefined)
-						Save.saveMediaArticle(mediafeed, function() {
+					if (mediafeed.id === null || mediafeed.id === undefined) {
+						var tmp = [];
+						tmp.push(mediafeed);
+						Save.saveMediaArticle(tmp, function() {
 							Media.findOne({url: media.url}).exec(function(err, media) {
 								if (err)
 									return cb1(err);
@@ -210,6 +212,7 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 								});
 							});
 						});
+					}
 					else {
 						MediaHub.findOne({
 							userId: userId,

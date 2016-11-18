@@ -41,16 +41,10 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova', 'starter.serv
   });
 })
 
-.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
-    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-        if (AuthService.isAuthenticated()) {
-            // console.log(next.name);
-            if (next.name === 'login' || next.name === 'register' || next.name === 'login-ui') {
-                event.preventDefault();
-                $state.go('tabs.news');
-            }
-        }
-    });
+.run(function (AuthService) {
+    if (AuthService.isAuthenticated())
+        $state.go('tabs.news');
+    else $state.go('login');
 })
 
 .directive('focus', function($timeout) {

@@ -173,7 +173,7 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 						var tmp = [];
 						tmp.push(mediafeed);
 						Save.saveMediaArticle(tmp, function() {
-							Media.findOne({url: media.url}).exec(function(err, media) {
+							Media.findOne({url: mediafeed.url}).exec(function(err, media) {
 								if (err)
 									return cb1(err);
 								MediaHub.findOne({

@@ -41,7 +41,7 @@ angular.module('starter', ['ionic', 'ngCordovaOauth', 'ngCordova', 'starter.serv
   });
 })
 
-.run(function (AuthService) {
+.run(function ($state, AuthService) {
     if (AuthService.isAuthenticated())
         $state.go('tabs.news');
     else $state.go('login');

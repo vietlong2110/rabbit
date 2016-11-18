@@ -67,6 +67,9 @@ var searchFeed = function(user, query, callback) {
 				video: media[i].video,
 				avatar: media[i].avatar,
 				thumbnail: media[i].thumbnail,
+				keywords: media[i].keywords,
+				tf: media[i].tf,
+				originkeywords: media[i].originkeywords,
 				publishedDate: media[i].publishedDate
 			});
 		}
@@ -176,16 +179,20 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 							Media.findOne({url: mediafeed.url}).exec(function(err, media) {
 								if (err)
 									return cb1(err);
+								if (media === null) {
+									console.log('Still have null mediafeed!');
+									return cb1();
+								}
 								MediaHub.findOne({
 									userId: userId,
-									articleId: media.id
+									articleId: media._id
 								}).exec(function(err, hub) {
 									if (err)
 										return cb1(err);
 									if (hub === null) {
 										var mediaHub = new MediaHub({
 											userId: userId,
-											articleId: media.id,
+											articleId: media._id,
 											url: media.url,
 											title: media.title,
 											thumbnail: media.thumbnail,

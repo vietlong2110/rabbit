@@ -16,7 +16,7 @@ var Search = function(user, q, callback) { //calculate document weight vector
 	var querySanitized = Filter.querySanitize(q); //sanitize query before processing
 	var query = stringFuncs.preProcess(querySanitized);
 	query = stringFuncs.wordTokenize(query);
-	console.log(q);
+	// console.log(q);
 	stringFuncs.removeStopWords(query, function(queryThreshold) {
 		query = stringFuncs.stemArr(query);
 		var queryArr = Filter.queryArr(query);
@@ -158,6 +158,28 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 		youtube: function(cb) {
 			if (!hadArticles.youtube)
 				return cb();
+			var Youtube = require('../serverAPI/youtube.js');
+			Youtube.youtubeSearchAPI(keyword, function(err, youtubeFeed) {
+				if (err)
+					return cb(err);
+				async.each(youtubeFeed, function(article, cb1) {
+					Extract.extractKeyword(null, article.title,
+					function(originKeywordSet, keywordSet, tf) {
+						article.keywords = keywordSet;
+						article.originkeywords = originKeywordSet;
+						article.tf = tf;
+						var vector1 = mediaDocVector(n + youtubeFeed.length, keywords, article);
+						var vector2 = queryVector(queryArr);
+						mediaEvals.push(cosEval(vector1, vector2));
+						mediaResult.push(article);
+						cb1();
+					});
+				}, function(err) {
+					if (err)
+						return cb(err);
+					cb();
+				});
+			});
 		}/*,
 		twitter: function() {
 		}*/

@@ -2,7 +2,8 @@ var request = require('request');
 
 var youtubeSearchAPI = function(keyword, callback) {
 	var api_key = 'AIzaSyC_BWUjhlDW2oEbUTdmf1kOjsMdYPPPvEg';
-	var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=' + keyword + '&key=' + api_key;
+	var url = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=' + keyword 
+	+ '&key=' + api_key;
 	var videoList = [];
     var youtubeava = require('../seed/icon_link.js').youtube;
 
@@ -18,7 +19,7 @@ var youtubeSearchAPI = function(keyword, callback) {
 						title: items[i].snippet.title,
 						thumbnail: items[i].snippet.thumbnails.high.url,
 						publishedDate: new Date(items[i].snippet.publishedAt),
-						source: 'youtube',
+						source: '',
 						websource: 'youtube',
 						iframe: true,
 						video: true,

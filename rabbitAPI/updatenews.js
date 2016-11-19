@@ -74,55 +74,43 @@ setInterval(function() {
 						i++;
 						return cb2();
 					}
+					console.log('Start extracting ' + cache[0].link);
+					if (cache[0].link.substr(cache[0].link.length-4, 4) === ".mp4") {
+						cache.shift();
+						i++;
+						return cb2();
+					}
 
-					// Article.findOne({title: entities.decode(cache[0].title)})
-					// .exec(function(err, article) {
-					// 	if (article === null) {
-							console.log('Start extracting ' + cache[0].link);
-							if (cache[0].link.substr(cache[0].link.length-4, 4) === ".mp4") {
+					Extract.extractImage(cache[0].link, function(thumbnail) {
+						if (thumbnail === null)
+							thumbnail = cache[0].thumbnail;
+						Extract.extractContent(entities.decode(cache[0].title), cache[0].link,
+						function(err, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
+							if (err) {
 								cache.shift();
 								i++;
 								return cb2();
 							}
-
-							Extract.extractImage(cache[0].link, function(thumbnail) {
-								if (thumbnail === null)
-									thumbnail = cache[0].thumbnail;
-								Extract.extractContent(entities.decode(cache[0].title), cache[0].link,
-								function(err, originKeywordSet, keywordSet, tf, titleKeywordSet, tfTitle) {
-									if (err) {
-										cache.shift();
-										i++;
-										return cb2();
-									}
-									console.log('End extracting ' + cache[0].link);
-									if (cache[0].publishedDate === null)
-										cache[0].publishedDate = new Date();
-									articles.push({
-										url: cache[0].link,
-										title: entities.decode(cache[0].title),
-										thumbnail: thumbnail,
-										source: cache[0].source,
-										publishedDate: cache[0].publishedDate,
-										titleKeywords: titleKeywordSet,
-										tfTitle: tfTitle,
-										keywords: keywordSet,
-										originkeywords: originKeywordSet,
-										tf: tf
-									});
-									cache.shift();
-									i++;
-									cb2();
-								});
+							console.log('End extracting ' + cache[0].link);
+							if (cache[0].publishedDate === null)
+								cache[0].publishedDate = new Date();
+							articles.push({
+								url: cache[0].link,
+								title: entities.decode(cache[0].title),
+								thumbnail: thumbnail,
+								source: cache[0].source,
+								publishedDate: cache[0].publishedDate,
+								titleKeywords: titleKeywordSet,
+								tfTitle: tfTitle,
+								keywords: keywordSet,
+								originkeywords: originKeywordSet,
+								tf: tf
 							});
-					// 	}
-					// 	else {
-					// 		console.log('This article was saved');
-					// 		cache.shift();
-					// 		i++;
-					// 		cb2();
-					// 	}
-					// });
+							cache.shift();
+							i++;
+							cb2();
+						});
+					});
 				}, function() {
 					console.log(cache.length);
 					Save.saveArticle(articles, function() {

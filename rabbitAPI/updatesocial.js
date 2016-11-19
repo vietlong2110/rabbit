@@ -39,12 +39,12 @@ setInterval(function() {
 								youtube: function(cb2) {
 									var Youtube = require('./serverAPI/youtube.js');
 									async.eachSeries(user.wordList, function(keyword, cb3) {
-										console('Start extracting youtube search about ' + keyword);
+										console.log('Start extracting youtube search about ' + keyword);
 										Youtube.youtubeSearchAPI(keyword, function(err, youtubeFeed) {
 											if (err)
 												return cb3(err);
 											socialCache = socialCache.concat(youtubeFeed);
-											console('End extracting youtube search about ' + keyword);
+											console.log('End extracting youtube search about ' + keyword);
 											cb3();
 										});
 									}, function(err) {

@@ -30,11 +30,12 @@ module.exports.binarySearchRange = binarySearchRange;
 
 var initializeSegmentTree = function(array) {
 	var segmentTree = [];
-	for (i = 0; i < array.length * 5; i++)
-		segmentTree[i] = {
+	for (i = 0; i < array.length * 10; i++)
+		segmentTree.push({
 			weight: 0, 
 			index: 0
-		};
+		});
+	console.log('Established array successfully!');
 
 	function initialize(index, l, r) {
 		if (l === r)
@@ -53,6 +54,7 @@ var initializeSegmentTree = function(array) {
 	}
 
 	initialize(1, 0, array.length-1);
+	console.log('Recursively initialize successfully!');
 	return segmentTree;
 };
 module.exports.initializeSegmentTree = initializeSegmentTree;

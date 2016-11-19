@@ -30,7 +30,7 @@ module.exports.binarySearchRange = binarySearchRange;
 
 var initializeSegmentTree = function(array) {
 	var segmentTree = [];
-	for (i = 0; i < array.length * 4; i++)
+	for (i = 0; i < array.length * 5; i++)
 		segmentTree[i] = {
 			weight: 0, 
 			index: 0

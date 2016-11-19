@@ -8,5 +8,6 @@ module.exports = {
 	"huffingtonpost": "https://pbs.twimg.com/profile_images/720642862551928832/I58EQMCH.jpg",
 	"foxnews": "https://ftp.heanet.ie/mirrors/xbmc/addons/eden/plugin.video.fox.news/icon.png",
 	"tmz": "http://www.adweek.com/fishbowldc/wp-content/uploads/sites/10/2015/01/8eb717d4253dc896def467911c7dc773.png",
-	"ninegag": "https://pbs.twimg.com/profile_images/616147175987265536/EQm39fW7.png"
+	"ninegag": "https://pbs.twimg.com/profile_images/616147175987265536/EQm39fW7.png",
+	"youtube": "http://icons.veryicon.com/ico/Application/iOS7%20Style%20Metro%20UI/MetroUI%20YouTube.ico"
 };

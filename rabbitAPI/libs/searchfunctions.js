@@ -159,7 +159,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 			if (hadArticles.youtube)
 				return cb();
 			var Youtube = require('../serverAPI/youtube.js');
-			Youtube.youtubeSearchAPI(keyword, function(err, youtubeFeed) {
+			Youtube.youtubeSearchAPI(q, function(err, youtubeFeed) {
 				if (err)
 					return cb(err);
 				async.each(youtubeFeed, function(article, cb1) {

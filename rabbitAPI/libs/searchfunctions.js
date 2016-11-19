@@ -121,7 +121,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 
 	async.parallel({
 		facebook: function(cb) {
-			if (!hadArticles.facebook)
+			if (hadArticles.facebook)
 				return cb();
 			var FB = require('../serverAPI/facebook.js');
 			for (i = 0; i < user.suggest.length; i++)
@@ -156,7 +156,7 @@ var searchMedia = function(user, q, hadArticles, n, keywords, queryArr, callback
 				return cb();
 		},
 		youtube: function(cb) {
-			if (!hadArticles.youtube)
+			if (hadArticles.youtube)
 				return cb();
 			var Youtube = require('../serverAPI/youtube.js');
 			Youtube.youtubeSearchAPI(keyword, function(err, youtubeFeed) {

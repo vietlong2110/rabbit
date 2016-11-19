@@ -278,7 +278,7 @@ var updateFeedByKeyword = function(user, keyword, callback) {
 			}
 		], function(err) {
 			if (err)
-				return cbb(err);
+				return callback(err);
 			refreshFeed(user, function(err, results) {
 				if (err)
 					return callback(err);

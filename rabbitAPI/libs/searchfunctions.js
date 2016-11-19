@@ -10,13 +10,21 @@ var Filter = require('../libs/filter.js');
 var User = require('../models/users.js');
 var stringFuncs = require('./stringfunctions.js');
 
+const NodeCache = require('node-cache');
+const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
+
 //Calculate vector tf-idf score of a document
 var Search = function(user, q, callback) { //calculate document weight vector
 	var newsEvals = [], newsResult = [], mediaEvals = [], mediaResult = [];
 	var querySanitized = Filter.querySanitize(q); //sanitize query before processing
-	var query = stringFuncs.preProcess(querySanitized);
-	query = stringFuncs.wordTokenize(query);
-	// console.log(q);
+	var key = user.email + querySanitized;
+	var value = myCache.get(key);
+	if (value !== undefined && value !== null) {
+		console.log('Search results came from cache!');
+		return callback(null, value.newsResult, value.newsEvals, value.mediaResult, value.mediaEvals);
+	}
+	
+	var query = stringFuncs.wordTokenize(querySanitized);	
 	stringFuncs.removeStopWords(query, function(queryThreshold) {
 		query = stringFuncs.stemArr(query);
 		var queryArr = Filter.queryArr(query);
@@ -103,11 +111,18 @@ var Search = function(user, q, callback) { //calculate document weight vector
 		], function(err) {
 			if (err)
 				return callback(err);
-			searchMedia(user, q, hadArticles, num, k, queryArr, function(err, mResult, mEvals) {
+			searchMedia(user, querySanitized, hadArticles, num, k, queryArr,
+			function(err, mResult, mEvals) {
 				if (err)
 					return callback(err);
 				mediaResult = mediaResult.concat(mResult);
 				mediaEvals = mediaEvals.concat(mEvals);
+				myCache.set(key, {
+					newsResult: newsResult,
+					newsEvals: newsEvals,
+					mediaResult: mediaResult,
+					mediaEvals: mediaEvals
+				}, 3600);
 				callback(null, newsResult, newsEvals, mediaResult, mediaEvals);
 			});
 		});

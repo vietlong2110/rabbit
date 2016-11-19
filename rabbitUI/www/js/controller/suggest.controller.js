@@ -21,7 +21,7 @@ function($rootScope, $scope, apiServices, $state, $ionicViewSwitcher, navService
             var found = false;
     
             for (i in $rootScope.keywords)
-                if ($rootScope.keywords[i].keyword === value) {
+                if ($rootScope.keywords[i].keyword.toLowerCase() === value.toLowerCase()) {
                     found = true;
                     break;
                 }

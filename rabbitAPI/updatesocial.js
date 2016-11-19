@@ -21,16 +21,41 @@ setInterval(function() {
 						if (err)
 							return cb(err);
 						async.eachSeries(users, function(user, cb1) {
-							var suggestPage = user.suggest;
-							if (user.suggest === null || user.suggest.length === 0)
-								return cb1();
-							console.log('Start extracting suggestion from ' + user.name);
-							var FB = require('./serverAPI/facebook.js');
-							FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
+							async.parallel({
+								facebook: function(cb2) {
+									var suggestPage = user.suggest;
+									if (user.suggest === null || user.suggest.length === 0)
+										return cb2();
+									console.log('Start extracting suggestion from ' + user.name);
+									var FB = require('./serverAPI/facebook.js');
+									FB.pageFeed(user.access_token, suggestPage, function(err, fbFeed) {
+										if (err)
+											return cb2(err);
+										socialCache = socialCache.concat(fbFeed);
+										console.log('End extracting suggestion from ' + user.name);
+										cb2();
+									});
+								},
+								youtube: function(cb2) {
+									var Youtube = require('./serverAPI/youtube.js');
+									async.eachSeries(user.wordList, function(keyword, cb3) {
+										console('Start extracting youtube search about ' + keyword);
+										Youtube.youtubeSearchAPI(keyword, function(err, youtubeFeed) {
+											if (err)
+												return cb3(err);
+											socialCache = socialCache.concat(youtubeFeed);
+											console('End extracting youtube search about ' + keyword);
+											cb3();
+										});
+									}, function(err) {
+										if (err)
+											return cb2(err);
+										cb2();
+									});
+								}
+							}, function(err) {
 								if (err)
 									return cb1(err);
-								socialCache = socialCache.concat(fbFeed);
-								console.log('End extracting suggestion from ' + user.name);
 								cb1();
 							});
 						}, function(err) {

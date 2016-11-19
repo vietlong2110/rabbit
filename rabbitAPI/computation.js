@@ -9,7 +9,11 @@ var saved = true;
 		saved = false;
 		var Compute = require('./serverController/compute.js');
 							
-		Compute.computeKeywordsWeight(function(keywords) {
+		Compute.computeKeywordsWeight(function(err, keywords) {
+			if (err) {
+				console.log(err);
+				return;
+			}
 			console.log('Evaluated weight of all keywords!');
 			var Algo = require('./libs/classic-algorithm.js');
 			var segmentTree = Algo.initializeSegmentTree(keywords);

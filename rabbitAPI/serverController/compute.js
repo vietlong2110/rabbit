@@ -6,34 +6,25 @@ var computeKeywordsWeight = function(callback) {
 	var OriginKeyword = require('../models/originkeywords.js');
 
 	OriginKeyword.find({}, null, {sort: {word: 1}}).exec(function(err, originkeywords) {
-		if (err) {
-			console.log(err);
-			callback();
-		}
-		else {
-			async.each(originkeywords, function(originkeyword, cb) {
-				var keyword = originkeyword.word;
+		if (err)
+			return callback(err);
+		async.each(originkeywords, function(originkeyword, cb) {
+			Rank.keyword_weight(originkeyword, function(weight) {
+				var query = {word: keyword};
+				var update = { $set: {weight: weight} };
 
-				Rank.keyword_weight(keyword, function(weight) {
-					var query = {word: keyword};
-					var update = {
-						$set: {weight: weight}
-					};
-
-					OriginKeyword.findOneAndUpdate(query, update, function(err, item) {
-						if (err) 
-							console.log(weight);
-						
-						cb();
-					});
+				OriginKeyword.findOneAndUpdate(query, update, function(err, item) {
+					if (err) 
+						return cb(err);
+					cb();
 				});
-			}, function(err) {
-				if (err)
-					console.log(err);
-
-				callback(originkeywords);
 			});
-		}
+		}, function(err) {
+			if (err)
+				return callback(err);
+
+			callback(null, originkeywords);
+		});
 	})
 };
 module.exports.computeKeywordsWeight = computeKeywordsWeight;

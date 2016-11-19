@@ -13,6 +13,7 @@ var saved = true;
 			console.log('Evaluated weight of all keywords!');
 			var Algo = require('./libs/classic-algorithm.js');
 			var segmentTree = Algo.initializeSegmentTree(keywords);
+			console.log('Initialized successfully!')
 			var query = {key: 'keywordTree'};
 			var update = {$set: {value: segmentTree}};
 			var options = {upsert: true};

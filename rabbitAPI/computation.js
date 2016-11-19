@@ -11,28 +11,16 @@ var saved = true;
 							
 		Compute.computeKeywordsWeight(function(keywords) {
 			console.log('Evaluated weight of all keywords!');
-
-			var query = {key: 'keywordArray'};
-			var update = {$set: {value: keywords}};
+			var Algo = require('./libs/classic-algorithm.js');
+			var segmentTree = Algo.initializeSegmentTree(keywords);
+			var query = {key: 'keywordTree'};
+			var update = {$set: {value: segmentTree}};
 			var options = {upsert: true};
-			myCache.findOneAndUpdate(query, update, options).exec(function(err, doc) {
-				if (err) {
-					console.log(err);
-					callback();
-				}
-				else {
-					var Algo = require('./libs/classic-algorithm.js');
-					var segmentTree = Algo.initializeSegmentTree(keywords);
-					var query = {key: 'keywordTree'};
-					var update = {$set: {value: segmentTree}};
-					var options = {upsert: true};
 
-					myCache.findOneAndUpdate(query, update, options).exec(function(err, doc) {
-						if (err)
-							console.log(err);
-						saved = true;
-					});
-				}
+			myCache.findOneAndUpdate(query, update, options).exec(function(err, doc) {
+				if (err)
+					console.log(err);
+				saved = true;
 			});
 		});
 	}

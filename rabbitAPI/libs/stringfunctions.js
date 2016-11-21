@@ -11,7 +11,7 @@ var preProcess = function(content) {
     content = content.replace(/[\n\r]+/g,' ');
 
     //remove unnecssary character
-    content = content.replace(/[\*\^\+\?\\\.\[\]\^\$\|\{\)\(\}\'\"\-~!\/@#£$%&=`´“”‘’;><:,]+/g,''); 
+    content = content.replace(/[\*\^\+\?\\\.\[\]\^\$\|\{\)\(\}\'\"\-~!\/@£$%&=`´“”‘’;><:,]+/g,''); 
 
     //remove duplicate space
     content = content.replace(/\s\s+/g,' ');
